@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+#Se instala solo
+package-lock.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
