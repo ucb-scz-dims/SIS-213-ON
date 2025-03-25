@@ -1,0 +1,32 @@
+ .user-box {
+    position: relative;
+  }
+  
+ .user-box input {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #000;
+    margin-bottom: 30px;
+    border: none;
+    border-bottom: 1px solid #000;
+    outline: none;
+    background: transparent;
+  }
+ .user-box label {
+    position: absolute;
+    top:0;
+    left: 0;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #000;
+    pointer-events: none;
+    transition: .2s;
+  }
+  
+ .user-box input:focus ~ label {
+    top: -20px;
+    left: 0;
+    color: #254445;
+    font-size: 12px;
+  }
