@@ -1,0 +1,13 @@
+input {
+    --accent-color: dodgerBlue;
+    background-color: var(--accent-color);
+    border: none;
+    color: black;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+}
