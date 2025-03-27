@@ -1,12 +1,10 @@
 import './App.css'
-import NavBar from './components/nav-bar/NavBar'
-
+import Home from './pages/Home.jsx'
 
 function App() {
   return (
     <>
-      <NavBar />
-      <h1 class="text-x1 font-bold">Hello TailwindCSS with Vite + react</h1>
+      <Home />
     </>
   )
 }
