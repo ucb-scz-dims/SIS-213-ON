@@ -1,10 +1,12 @@
-import NavBar from '../components/nav-bar/NavBar'
+import React from 'react'
+import Layout from './Layout'
 
 function Home() {
   return (
     <>
-      <NavBar />
-      <h1 class="text-x1 font-bold">Hello TailwindCSS with Vite + react</h1>
+      <Layout>
+      <h1 className="text-x1 font-bold">Hello TailwindCSS with Vite + react</h1>
+      </Layout>
     </>
   )
 }
