@@ -1,3 +1,5 @@
+import friedChickenImage from '../assets/images/pollo.jfif'
+
 function OrderCard(props) {
  
   return (
@@ -8,8 +10,8 @@ function OrderCard(props) {
       <div>
         <img 
         className="w-1/1" 
-        src="src/assets/images/pollo.jfif"
-        alt="" 
+        src={friedChickenImage}
+        alt="Product" 
         />
         <p>
         </p>

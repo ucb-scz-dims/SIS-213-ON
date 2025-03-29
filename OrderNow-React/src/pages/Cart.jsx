@@ -1,5 +1,5 @@
-import OrderCard from "../components/OrderCard";
-import PayButton from "../components/PayButton";
+import OrderCard from '../components/OrderCard';
+import Button from '../components/atoms/Button'
 
 function Cart() {
   return (
@@ -9,7 +9,7 @@ function Cart() {
       <OrderCard />
       <div className="flex flex-col items-center">
         <h3 className="text-xl m-2">Bs. 20</h3>{/*Precio total del producto*/}
-        <PayButton />
+        <Button text='continuar'/>
       </div>
     </div>
   );
