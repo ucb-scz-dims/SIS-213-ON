@@ -1,27 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import "./input-field.css";
-
-const InputField = ({children, type, id, required}) => {
+const InputField = ({type, id, placeholder, required}) => {
     return (
-        <div className="user-box">
-            <input type={type} id={id} name={id} required={required} />
-            <label>{children}</label>
-        </div>
+        <input class="w-full h-12 border border-gray-800 px-3 rounded-lg"
+               type={type}
+               id={id}
+               name={id}
+               placeholder={placeholder}
+               required={required}
+        ></input>
     )
 };
 
-InputField.propTypes = {
-    children: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(["text", "email", "password", "date", "tel"]),
+InputField.PropTypes = {
+    type: PropTypes.oneOf(["text", "email", "password", "date", "color", "number", "tel"]),
     id: PropTypes.string.isRequired,
+    placeholder: PropTypes.string,
     required: PropTypes.bool,
 };
-
-InputField.defaultProps = {
-    id: "Example",
-    required: false,
-}
 
 export default InputField;

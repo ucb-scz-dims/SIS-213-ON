@@ -1,10 +1,11 @@
-import Button from "./Button";
+import Button from "./button";
 
 export default {
-    title: "components/Button",
+    title: "components/Botón",
     component: Button,
     args: {
-        children: "Boton",
+        label: "Botón",
+        type: "button"
     }
 };
 
@@ -12,15 +13,6 @@ const Template = (args) => <Button{...args}/>;
 
 export const Primary = Template.bind({});
 Primary.args = {
-    type: "primary",
-}
-
-export const Secondary = Template.bind({});
-Secondary.args = {
-    type: "secondary",
-}
-
-export const Tertiary = Template.bind({});
-Tertiary.args = {
-    type: "tertiary",
+    label: "Presiona aquí",
+    type: "button",
 }

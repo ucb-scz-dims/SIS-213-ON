@@ -2,14 +2,25 @@ import Card from "./card";
 import ReactLogo from "../../assets/react.svg";
 
 export default {
-    title: "components/card",
+    title: "components/Card",
     component: Card,
     args: {
         path: {ReactLogo},
         alt: "Example",
         fit: "object-cover",
         disabled: false,
-    }
+    },
+    argTypes: {
+        handleClick: {action: "handleClick"},
+        fit: {control: 'select', options: ["object-cover", "object-contain", "object-fill", "object-scale-down", "object-none"] },
+    },
+    parameters: {
+        docs: {
+            description: {
+              component: 'Tarjeta con imagen, ideal para listar productos de restaurantes',
+            },
+        },
+    },
 };
 
 const Template = (args) => <Card{...args}/>;

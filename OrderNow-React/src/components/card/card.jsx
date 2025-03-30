@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Card = ({path, alt, fit, title, desc, price, disabled}) => {
+const Card = ({path, alt, fit, title, desc, price, disabled, handleClick}) => {
     return (
         /* From Uiverse.io by Javierrocadev */ 
         <div
@@ -19,6 +19,7 @@ const Card = ({path, alt, fit, title, desc, price, disabled}) => {
         <button
             disabled={disabled}
             class="enabled:hover:bg-indigo-700 bg-indigo-500 font-bold text-neutral-50 rounded p-2 disabled:bg-indigo-300 disabled:pointer-events-none"
+            onClick={handleClick}
         >
             {price}
         </button>
