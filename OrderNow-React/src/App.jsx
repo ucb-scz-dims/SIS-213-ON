@@ -10,8 +10,7 @@ import Cart from './pages/Cart.jsx'
 
 const App = () => {
   return (
-    <>
-      <BrowserRouter>
+      <Router>
         <Layout>
           <Routes>
             <Route path='/' element={ <Home/> }></Route>
@@ -20,8 +19,7 @@ const App = () => {
             <Route path='/restaurant/:id/cart' element={ <Cart /> }></Route>
           </Routes>
         </Layout>
-      </BrowserRouter>
-    </>
+      </Router>
   )
 }
 
