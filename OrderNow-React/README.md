@@ -6,6 +6,7 @@ Para poder ejecutar este proyecto es necesario ejecutar los siguientes comandos:
     cd OrderNow <br>
     npm install -g npm@latest <br>
     npm install <br>
+    npm install react-router-dom <br>
     npm install tailwindcss @tailwindcss/vite <br>
     npm run dev <br>
 
