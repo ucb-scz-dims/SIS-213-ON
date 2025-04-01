@@ -1,19 +1,25 @@
+
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Restaurantes from './pages/Restaurantes'
+import Restaurante from './pages/Restaurante';
+import Layout from './pages/Layout'
 import './App.css'
-import Home from './pages/Home.jsx'
 import Cart from './pages/Cart.jsx'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-
-function App() {
+const App = () => {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={ <Home/> }></Route>
-          <Route path='/restaurant/:id/cart' element={ <Cart /> }></Route>
-        </Routes>
-      </BrowserRouter>
-    </>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path='/' element={ <Home/> }></Route>
+            <Route path="/restaurantes" element={<Restaurantes />} />
+            <Route path="/restaurante/:id" element={<Restaurante />} />
+            <Route path='/restaurant/:id/cart' element={ <Cart /> }></Route>
+          </Routes>
+        </Layout>
+      </Router>
   )
 }
 
