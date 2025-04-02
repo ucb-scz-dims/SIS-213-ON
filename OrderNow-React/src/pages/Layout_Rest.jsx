@@ -24,6 +24,7 @@ function Restaurante()
                     </div>
 
                     {/* Categories */}
+                    {/* 
                     <div className="flex gap-4 mb-8 overflow-x-auto pb-2">
                     {["Ofertas", "Novedades", "Postres", "Acompañantes y ensaladas", "Bebidas", "Tu primer pedido"].map((cat) => (
                         <button
@@ -34,6 +35,8 @@ function Restaurante()
                         </button>
                     ))}
                     </div>
+                    */}
+
 
                     {/* Product Sections */}
                     <Section title="Productos con descuentos">
@@ -52,7 +55,8 @@ function Restaurante()
                     </div>
                     </Section>
 
-                    {/* Order Sidebar */}
+                    {/* Order Sidebar or downbar */}
+                    {/* 
                     <div className="fixed bottom-4 w-80 bg-gray-200 rounded-lg shadow-xl p-4 z-50">
                         <h3 className="text-gray-800 font-bold mb-4">Mi pedido</h3>
                         <div className="mb-4">
@@ -62,6 +66,7 @@ function Restaurante()
                             </p>
                         </div>
                     </div>
+                    */}
                 </main>
 
         </>
