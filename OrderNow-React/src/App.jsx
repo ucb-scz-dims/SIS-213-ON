@@ -9,9 +9,16 @@ import Cart from './pages/Cart.jsx'
 
 const App = () => {
   return (
-    <>
-      <Home />
-    </>
+    <Router>
+        <Layout>
+          <Routes>
+            <Route path='/' element={ <Home/> }></Route>
+            <Route path="/restaurantes" element={<Restaurantes />} />
+            <Route path="/restaurante/:id" element={<Restaurante />} />
+            <Route path='/restaurant/:id/cart' element={ <Cart /> }></Route>
+          </Routes>
+        </Layout>
+      </Router>
   )
 }
 
