@@ -1,25 +1,16 @@
-import React from 'react'
-import Layout from './Layout'
-import { Link } from 'react-router-dom';
 
-function Home() {
-  let restaurantes = ["Burger B", "MacFrio", "Pollo KI"];
+import React from 'react';
+import BotonRestaurantes from '../components/BotonRestaurantes'; 
 
+
+const Home = () => {
   return (
-    <>
-      <Layout>
-      <h1 className="text-x1 font-bold">Hello TailwindCSS with Vite + react</h1>
-      <h2>Restaurantes</h2>
-      <ul>
-        {restaurantes.map((restaurante, index) => (
-          <><li key={index}></li><Link to='/Layout_Rest' className="text-blue-500 hover:underline">
-            {restaurante}
-          </Link></>
-        ))}
-      </ul>
-      </Layout>
-    </>
-  )
-}
+      <div className="flex flex-col items-center ">
+        <h1 className="text-4xl font-bold mb-6">HOME PAGE</h1>
+        <BotonRestaurantes />
+      </div>
+  );
+};
 
-export default Home
+export default Home;
+
