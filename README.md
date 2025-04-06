@@ -9,7 +9,15 @@ Para poder ejecutar este proyecto, es necesario instalar las dependencias de nod
     npm install -g npm@latest
     npm install
     ```
-Para ejecutar el proyecto, se debe ejecutar el siguiente comando en la carpeta raíz:
+
+## Ejecución
+
+Para ejecutar el proyecto, se debe ejecutar el siguiente comando en la carpeta "OrderNow-React":
     ```
     npx vite
+    ```
+
+Para iniciar el sandbox de Storybooks, se debe ejecutar en la misma carpeta:
+    ```
+    npm run storybook
     ```
