@@ -6,7 +6,6 @@ import Home from './pages/Home'
 import Restaurantes from './pages/Restaurantes'
 import Restaurante from './pages/Restaurante';
 import Layout from './pages/Layout'
-import './App.css'
 import Cart from './pages/Cart.jsx'
 import Perfil from './pages/Perfil.jsx'
 import LoginForm from './components/login-form/login-form.jsx'
@@ -15,7 +14,7 @@ import RegisterForm from './components/register-form/register-form.jsx'
 
 const App = () => {
   return (
-      <Router>
+    <Router>
         <Layout>
           <Routes>
             <Route path='/' element={ <Home/> }></Route>
