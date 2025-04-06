@@ -16,12 +16,6 @@ const RegisterForm = () => {
             alert("Las contraseñas no coinciden");
             return;
         }
-
-        console.log("Nombre:", firstName, lastName);
-        console.log("Correo:", email);
-        console.log("Fecha de nacimiento:", birthDate);
-        console.log("Contraseña:", password);
-
         signUpClicked(email, password);
     };
 

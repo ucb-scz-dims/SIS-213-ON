@@ -4,7 +4,6 @@ import {getUserId} from "../Supertokens";
 
 const Perfil = () => {
     const handleLogout = () => {
-        console.log("Cerrar sesión");
         logout();
     };
     const [userId, setUserId] = useState(null);

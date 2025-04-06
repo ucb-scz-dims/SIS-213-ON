@@ -9,8 +9,6 @@ const LoginForm = ({ recoveryLink }) => {
 
     const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Correo:", email);
-    console.log("Contraseña:", password);
     signInClicked(email, password);
     };
 

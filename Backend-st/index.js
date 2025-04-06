@@ -15,8 +15,9 @@ supertokens.init({
     },
     appInfo: {
         appName: "OrderNow",
-        apiDomain: "http://localhost:3001",
-        websiteDomain: "http://localhost:3000",
+        apiDomain: "http://localhost:3001", // este dominio debe contener la ruta donde se ejecutara el backend
+                                            // deveria definirse un deployer independiente al deployer del front 
+        websiteDomain: "https://ordernowapp-sis213.netlify.app/",
         apiBasePath: "/auth",
         websiteBasePath: "/auth",
     },
@@ -30,7 +31,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: "https://ordernowapp-sis213.netlify.app/",
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
         credentials: true,
     })
