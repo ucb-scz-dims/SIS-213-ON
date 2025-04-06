@@ -23,3 +23,8 @@ Para poder ejecutar este proyecto es necesario ejecutar los siguientes comandos:
 
 Una vez en el sandbox solo elige una historia cualquiera, personalízalo en los docs y dale en `show code` y copiar para pegar el contenido en la página que desee. Recuerde añadir `import ComponenteElegido from './components/componente-elegido';` en la página para que funcione el componente.
 
+
+Cada que se clone el repositorio en /OrderNow-React hacer `cp .env.example .env`
+para crear el archivo .env donde se tendran que rellenar las variables que se piden para que pueda correr el programa.
+
+
