@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
-import Business from './pages/Business'
+import Businesses from './pages/Business'
 import Restaurante from './pages/Restaurante';
 import Layout from './pages/Layout'
 import Cart from './pages/Cart.jsx'
@@ -12,7 +12,7 @@ const App = () => {
       <Layout>
         <Routes>
           <Route path='/' element={<Home />}></Route>
-          <Route path="/business" element={<Business />} />
+          <Route path="/restaurantes" element={<Businesses />} />
           <Route path="/restaurante/:id" element={<Restaurante />} />
           <Route path='/restaurant/:id/cart' element={<Cart />}></Route>
         </Routes>
