@@ -8,8 +8,8 @@ import Restaurante from './pages/Restaurante';
 import Layout from './pages/Layout'
 import Cart from './pages/Cart.jsx'
 import Perfil from './pages/Perfil.jsx'
-import LoginForm from './components/login-form/login-form.jsx'
-import RegisterForm from './components/register-form/register-form.jsx'
+import LoginPage from './pages/LoginPage.jsx'
+import RegisterPage from './pages/RegisterPage.jsx'
 
 
 const App = () => {
@@ -18,13 +18,13 @@ const App = () => {
         <Layout>
           <Routes>
             <Route path='/' element={ <Home/> }></Route>
-            <Route path="/restaurantes" element={<Restaurantes />} />
             <Route path="/restaurantes" element={<Businesses />} />
-            <Route path="/perfil" element={<VerifySesion><Perfil /></VerifySesion>} />
-            <Route path="/auth/signIn" element={<LoginForm />} />
-            <Route path="/auth/signUp" element={<RegisterForm />} />
             <Route path="/restaurante/:id" element={<Restaurante />} />
-            <Route path='/restaurant/:id/cart' element={ <Cart /> }></Route>
+            <Route path='/restaurant/:id/cart' element={<Cart />}></Route>
+            <Route path="/perfil" element={<VerifySesion><Perfil /></VerifySesion>} />
+            <Route path="/auth/signIn" element={<LoginPage />} />
+            <Route path="/auth/signUp" element={<RegisterPage />} />
+            <Route path="/restaurante/:id" element={<Restaurante />} />
           </Routes>
         </Layout>
       </Router>
