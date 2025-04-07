@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import Button from "../button/button";
+import Button from "../Button/Button.jsx";
 import { signInClicked } from "../../Supertokens.jsx";
 
 const LoginForm = ({ recoveryLink }) => {
