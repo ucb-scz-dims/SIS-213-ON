@@ -18,19 +18,19 @@ const Business = () => {
 
     if (error) {
       error.message;
-    } else {
-      const abiertos = data.filter(b => b.is_open);
-      const cerrados = data.filter(b => !b.is_open);
-      setOpenRestaurants(abiertos);
-      setClosedRestaurants(cerrados);
+      return;
     }
+    const abiertos = data.filter(b => b.is_open);
+    const cerrados = data.filter(b => !b.is_open);
+    setOpenRestaurants(abiertos);
+    setClosedRestaurants(cerrados);
   };
 
   return (
     <div className="flex flex-col justify-center space-y-10">
       <div>
         <h1 className="text-4xl font-bold mb-6">RESTAURANTES DISPONIBLES</h1>
-        {openRestaurants.length > 0 ? (
+        {openRestaurants.length > 0 && (
           openRestaurants.map((item) => (
             <TarjetaRestaurante
               key={item.id}
@@ -41,14 +41,12 @@ const Business = () => {
               comidas={[{ nombre: "comida 1", precio: "15" }]}
             />
           ))
-        ) : (
-          <p>No hay restaurantes disponibles.</p>
         )}
       </div>
 
       <div>
         <h1 className="text-4xl font-bold mb-6">RESTAURANTES NO DISPONIBLES</h1>
-        {closedRestaurants.length > 0 ? (
+        {closedRestaurants.length > 0 && (
           closedRestaurants.map((item) => (
             <TarjetaRestaurante
               key={item.id}
@@ -59,8 +57,6 @@ const Business = () => {
               comidas={[{ nombre: "comida 1", precio: "15" }]}
             />
           ))
-        ) : (
-          <p>Todos los restaurantes están disponibles.</p>
         )}
       </div>
     </div>
