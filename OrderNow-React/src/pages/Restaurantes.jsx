@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import TarjetaRestaurante from '../components/TarjetaRestaurante';
-import supabase from '../supabase-client';
+import getSupaBaseClient from '../supabase-client';
 
 const Business = () => {
   const [openRestaurants, setOpenRestaurants] = useState([]);
   const [closedRestaurants, setClosedRestaurants] = useState([]);
+  const supaBaseCom = getSupaBaseClient('com')
 
   useEffect(() => {
     fetchBusiness();
   }, []);
 
   const fetchBusiness = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await supaBaseCom
       .from('businesses')
       .select('*');
 
