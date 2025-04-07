@@ -1,5 +1,5 @@
 import React from 'react';
-import Businesses from './Business'
+import Businesses from './Businesses'
 
 const Home = () => {
   return (
