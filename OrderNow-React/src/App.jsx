@@ -1,15 +1,16 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import VerifySesion from './pages/VerifySesion.jsx'
+import VerifySesion from './pages/VerifySesion'
 
 import Home from './pages/Home'
-import Businesses from './pages/Businesses.jsx'
+import Businesses from './pages/Businesses'
 import Restaurante from './pages/Restaurante';
 import Layout from './pages/Layout'
-import Cart from './pages/Cart.jsx'
-import Perfil from './pages/Perfil.jsx'
-import LoginPage from './pages/LoginPage.jsx'
-import RegisterPage from './pages/RegisterPage.jsx'
+import Cart from './pages/Cart'
+import Perfil from './pages/Perfil'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import Checkout from './pages/Checkout'
 
 
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
             <Route path="/auth/signUp" element={<RegisterPage />} />
             <Route path="/restaurante/:id" element={<Restaurante />} />
             <Route path='/cart/test' element={<Cart />}></Route>
+            <Route path='/checkout' element={<Checkout></Checkout>}></Route>
           </Routes>
         </Layout>
       </Router>

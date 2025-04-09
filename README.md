@@ -17,9 +17,6 @@ Para ejecutar el proyecto, se debe ejecutar el siguiente comando en la carpeta "
     npx vite
     ```
 
-Para iniciar el sandbox de Storybooks, se debe ejecutar en la misma carpeta:
-    ```
-    npm run storybook
 o tambien
     ```
     npm run dev

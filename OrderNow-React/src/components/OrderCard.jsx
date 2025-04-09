@@ -6,27 +6,28 @@ function OrderCard({
   title,
   description,
   price,
+  quantity,
   onIncrease,
   onDecrease,
   onDelete,
 }) {
-  const [quantity, setQuantity] = useState(1);
+  const [quantityLocal, setQuantity] = useState(quantity);
 
   const handleIncrease = () => {
-    const newQuantity = quantity + 1;
+    const newQuantity = quantityLocal + 1;
     setQuantity(newQuantity);
 
     onIncrease(price);
   };
 
   const handleDecrease = () => {
-    const newQuantity = quantity - 1;
+    const newQuantity = quantityLocal - 1;
     setQuantity(newQuantity);
 
-    onDecrease(newQuantity, price, id);
+    onDecrease(price);
   };
   const handleDelete = () => {
-    onDelete(quantity, price, id);
+    onDelete(quantityLocal, price, id);
   }
   return (
     <div className="flex flex-row items-center bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 w-full max-w-6xl h-[168px] overflow-hidden mx-auto mt-1">
@@ -48,7 +49,7 @@ function OrderCard({
           </p>{" "}
           {/*Descripcion del producto*/}
           <span className="text-lg font-semibold text-gray-900 dark:text-white">
-            Bs. {price * quantity}
+            Bs. {price * quantityLocal}
           </span>
           {/*Precio*/}
         </div>
@@ -64,14 +65,13 @@ function OrderCard({
             <button
               className=" bg-black text-white rounded-lg enabled:hover:bg-red-500 w-8 h-8 disabled:cursor-not-allowed"
               onClick={handleDecrease}
-              disabled={quantity < 2 ? true : false}
+              disabled={quantityLocal < 2 ? true : false}
             >
               -
             </button>
             <span className="text-lg font-medium text-gray-900 dark:text-white">
-              {quantity}
-            </span>{" "}
-            {/*Cantidad*/}
+              {quantityLocal}
+            </span>
             <button
               className=" bg-black text-white rounded-lg hover:bg-green-500 w-8 h-8"
               onClick={handleIncrease}
