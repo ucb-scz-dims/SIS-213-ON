@@ -14,11 +14,11 @@ const OrdersDashboard = () => {
 
   const getStatusText = (id) => {
     switch (id) {
-      case 1: return '🟡 Pendiente';
-      case 2: return '🟠 En camino';
-      case 3: return '🟢 Entregado';
-      case 4: return '🔴 Cancelado';
-      default: return '❔ Desconocido';
+      case 1: return 'Pendiente';
+      case 2: return 'En camino';
+      case 3: return 'Entregado';
+      case 4: return 'Cancelado';
+      default: return 'Desconocido';
     }
   };
 
