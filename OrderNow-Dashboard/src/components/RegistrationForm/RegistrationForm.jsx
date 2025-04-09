@@ -16,6 +16,7 @@ export default function RegistrationForm() {
 
   const validateForm = () => {
     const newErrors = {};
+    const phoneRegex = /^\+?[\d\s-]{8,}$/;
 
     if (!formData.name.trim()) {
       newErrors.name = 'El nombre es requerido';
@@ -31,7 +32,7 @@ export default function RegistrationForm() {
 
     if (!formData.phone.trim()) {
       newErrors.phone = 'El teléfono es requerido';
-    } else if (!/^\+?[\d\s-]{8,}$/.test(formData.phone.trim())) {
+    } else if (!phoneRegex.test(formData.phone.trim())) {
       newErrors.phone = 'Número de teléfono inválido';
     }
 
@@ -55,18 +56,14 @@ export default function RegistrationForm() {
     if (validateForm()) {
       console.log('Form submitted:', formData);
       setSubmitted(true);
-
-      setTimeout(() => {
-        setFormData({
-          name: '',
-          address: '',
-          description: '',
-          phone: '',
-          openingTime: '',
-          closingTime: ''
-        });
-        setSubmitted(false);
-      }, 3000);
+      setFormData({
+        name: '',
+        address: '',
+        description: '',
+        phone: '',
+        openingTime: '',
+        closingTime: ''
+      });
     }
   };
 
