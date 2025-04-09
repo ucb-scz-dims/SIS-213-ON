@@ -17,11 +17,14 @@ function Business() {
         .eq('id', id)
         .single();
 
-      if (error) {
-        console.error('Error al obtener el negocio:', error.message);
-      } else {
-        setBusiness(data);
-      }
+        if (error) {
+          console.error('Error al obtener el negocio:', error.message);
+          alert('Error al obtener los datos del negocio.');
+          setLoading(false);
+          return;
+        }
+  
+      setBusiness(data);
       setLoading(false);
     };
 
@@ -50,7 +53,7 @@ function Business() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 pt-24 pb-8">
-      {/* Se puede cambiar por un componente de advertencia */}
+      {/* TODO: Se puede cambiar por un componente de advertencia */}
       {!isActuallyOpen && (
         <div className="bg-red-100 text-red-800 text-center py-3 font-semibold rounded mb-4">
           Este negocio está cerrado actualmente
