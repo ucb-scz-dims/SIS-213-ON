@@ -1,0 +1,40 @@
+[
+    {
+      "id": 101,
+      "date": "2025-04-06 13:45",
+      "total_price": 42.99,
+      "address": "Calle Falsa 123",
+      "consumer_name": "Juan",
+      "state_type_id": 1,
+      "business_id": 1,
+      "details": [
+        { "product_name": "Chuleta", "quantity": 2 },
+        { "product_name": "Cocacola", "quantity": 1 }
+      ]
+    },
+    {
+      "id": 102,
+      "date": "2025-04-06 14:15",
+      "total_price": 18.5,
+      "address": "Av. Siempre Viva 742",
+      "consumer_name": "Pedro",
+      "state_type_id": 2,
+      "business_id": 1,
+      "details": [
+        { "product_name": "Pollo picante", "quantity": 3 }
+      ]
+    },
+    {
+      "id": 103,
+      "date": "2025-04-06 14:50",
+      "total_price": 25.0,
+      "address": "Calle Inventada 456",
+      "consumer_name": "Lucía",
+      "state_type_id": 3,
+      "business_id": 1,
+      "details": [
+        { "product_name": "Tacos", "quantity": 2 }
+      ]
+    }
+  ]
+  
