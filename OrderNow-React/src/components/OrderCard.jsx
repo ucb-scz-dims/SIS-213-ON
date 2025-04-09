@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function OrderCard({
+const OrderCard = ({
   id,
   srcImage,
   title,
@@ -10,7 +10,7 @@ function OrderCard({
   onIncrease,
   onDecrease,
   onDelete,
-}) {
+}) => {
   const [quantityLocal, setQuantity] = useState(quantity);
 
   const handleIncrease = () => {

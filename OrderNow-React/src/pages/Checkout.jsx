@@ -1,46 +1,19 @@
 import Button from "../components/button/button";
 import { useNavigate } from "react-router-dom";
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
-import CheckoutElement from "../components/checkout-element/checkout-element";
+import { CartListContext } from "../Contexts";
 
-const fakeProducts = [
-  {
-    id: 1,
-    title: "Pollos Campeón 1/4",
-    description:
-      "Pollo Campeón es un restaurante que sirve pollo a la brasa y es conocido por su salsa picante.",
-    price: 10,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    title: "Pollos Campeón 1/2",
-    description:
-      "Pollo Campeón es un restaurante que sirve pollo a la brasa y es conocido por su salsa picante.",
-    price: 20,
-    quantity: 4,
-  },
-  {
-    id: 3,
-    title: "Pollos Campeón Nuggets",
-    description:
-      "Pollo Campeón es un restaurante que sirve pollo a la brasa y es conocido por su salsa picante.",
-    price: 30,
-    quantity: 5,
-  },
-];
-
-let totalPrice = fakeProducts.reduce(
-  (partialSum, { price, quantity }) => partialSum + price * quantity,
-  0
-);
-
-function Checkout() {
-  const [products, setProducts] = useState(fakeProducts);
+const Checkout = () => {
+  // const [products, setProducts] = useState(fakeProducts);
+  const products = useContext(CartListContext);
+  let totalPrice = products.reduce(
+    (partialSum, { price, quantity }) => partialSum + price * quantity,
+    0
+  );
   const [price, setPrice] = useState(totalPrice);
   const navigate = useNavigate();
-  const restaurant = () => {
+  const goToBusiness = () => {
     navigate(`/restaurantes`);
   };
   return (
@@ -75,7 +48,7 @@ function Checkout() {
       </div>
       <div className="flex flex-col items-center">
         <h3 className="text-xl m-2">Total del pedido: {price} Bs.</h3>
-        <div onClick={restaurant}>
+        <div onClick={goToBusiness}>
           <Button label="Confirmar pedido" type="button" />
         </div>
       </div>
