@@ -2,34 +2,48 @@ import OrderCard from "../components/OrderCard";
 import Button from "../components/button/button";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import { useState } from "react";
-import { CartListContext } from "../Contexts";
-import { useContext } from "react";
-
-
+import { useState, useContext } from "react";
+import { useCart, useCartDispatch } from "../context/CartContext";
 
 function Cart() {
-  const [CartList, SetCartList] = useState(CartListContext);
-  const products = useContext(CartListContext);
+  const products = useCart();
+  const dispatch = useCartDispatch();
+
   let totalPrice = products.reduce(
     (partialSum, { price, quantity }) => partialSum + price * quantity,
     0
   );
   const [price, setPrice] = useState(totalPrice);
 
-  const onIncrease = (productPrice) => {
+  const onIncrease = (productPrice, quantity) => {
     const newPrice = price + productPrice;
     setPrice(newPrice);
+    dispatch({
+      type: "changed",
+      product: {
+        ...product,
+        quantity: quantity + 1,
+      },
+    });
   };
 
-  const onDecrease = (productPrice) => {
+  const onDecrease = (productPrice, quantity) => {
     const newPrice = price - productPrice;
     setPrice(newPrice);
+    dispatch({
+      type: "changed",
+      product: {
+        ...product,
+        quantity: quantity - 1,
+      },
+    });
   };
 
   const onDelete = (quantity, productPrice, productId) => {
-    const update = products.filter((product) => product.id !== productId);
-    SetCartList(update);
+    dispatch({
+      type: "deleted",
+      id: productId,
+    });
 
     const newPrice = price - productPrice * quantity;
     setPrice(newPrice);

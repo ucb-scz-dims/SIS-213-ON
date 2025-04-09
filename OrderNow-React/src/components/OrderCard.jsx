@@ -17,18 +17,18 @@ const OrderCard = ({
     const newQuantity = quantityLocal + 1;
     setQuantity(newQuantity);
 
-    onIncrease(price);
+    onIncrease(price, quantity);
   };
 
   const handleDecrease = () => {
     const newQuantity = quantityLocal - 1;
     setQuantity(newQuantity);
 
-    onDecrease(price);
+    onDecrease(price, quantity);
   };
   const handleDelete = () => {
     onDelete(quantityLocal, price, id);
-  }
+  };
   return (
     <div className="flex flex-row items-center bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 w-full max-w-6xl h-[168px] overflow-hidden mx-auto mt-1">
       {/* Imagen del producto */}
@@ -89,6 +89,6 @@ const OrderCard = ({
       </div>
     </div>
   );
-}
+};
 
 export default OrderCard;

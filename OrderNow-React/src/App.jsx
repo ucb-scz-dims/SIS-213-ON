@@ -2,8 +2,6 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import VerifySesion from "./pages/VerifySesion";
 
-import { createContext, useState } from "react";
-
 import Home from "./pages/Home";
 import Businesses from "./pages/Businesses";
 import Restaurante from "./pages/Restaurante";
@@ -13,42 +11,11 @@ import Perfil from "./pages/Perfil";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Checkout from "./pages/Checkout";
-import { CartListContext } from "./Contexts";
-
-const fakeProducts = [
-  {
-    id: 1,
-    srcImage: "https://upload.wikimedia.org/wikipedia/commons/a/a5/Roast_chicken.jpg",
-    title: "Pollos Campeón",
-    description:
-      "Pollo Campeón es un restaurante que sirve pollo a la brasa y es conocido por su salsa picante.",
-    price: 10,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    srcImage: "https://upload.wikimedia.org/wikipedia/commons/a/a5/Roast_chicken.jpg",
-    title: "Pollos Campeón",
-    description:
-      "Pollo Campeón es un restaurante que sirve pollo a la brasa y es conocido por su salsa picante.",
-    price: 20,
-    quantity: 4,
-  },
-  {
-    id: 3,
-    srcImage: "https://upload.wikimedia.org/wikipedia/commons/a/a5/Roast_chicken.jpg",
-    title: "Pollos Campeón",
-    description:
-      "Pollo Campeón es un restaurante que sirve pollo a la brasa y es conocido por su salsa picante.",
-    price: 30,
-    quantity: 5,
-  },
-];
+import { CartProvider } from "./context/CartContext";
 
 const App = () => {
-  const [CartList, SetCartList] = useState(fakeProducts);
   return (
-    <CartListContext.Provider value={CartList}>
+    <CartProvider>
       <Router>
         <Layout>
           <Routes>
@@ -65,7 +32,7 @@ const App = () => {
           </Routes>
         </Layout>
       </Router>
-    </CartListContext.Provider>
+    </CartProvider>
   );
 };
 
