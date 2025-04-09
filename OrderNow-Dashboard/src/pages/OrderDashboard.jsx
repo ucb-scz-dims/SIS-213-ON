@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import mockOrders from '../fakeData/mockOrders.json' // Ajusta la ruta si es necesario
+import mockOrders from '../fakeData/mockOrders.json'
 import { formatDate } from '../utils/formatDate';
 
 const OrdersDashboard = () => {
