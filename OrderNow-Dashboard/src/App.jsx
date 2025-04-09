@@ -5,8 +5,9 @@ import OrderDashboard from './pages/OrderDashboard';
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<OrderDashboard/>}/>
       <Route path="/about" element={<About />} />
-      <Route path='/Order' element={<OrderDashboard/>}/>
+      
     </Routes>
   );
 }
