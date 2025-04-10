@@ -12,9 +12,6 @@ dist
 dist-ssr
 *.local
 
-#Archivos de entorno
-.env
-
 #Se instala solo
 package-lock.json
 
