@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '../components/IconInfo';
 import Modal from '../components/information/InfoRestaurante';
+import IconInfo from '../components/IconInfo';
 
 function Business() 
 {
@@ -23,7 +24,7 @@ function Business()
                         </p>
                         </div>
                         <div  className="cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors">
-                        <Icon onClick={() => setIsModalOpen(true)} />
+                        <IconInfo onClick={() => setIsModalOpen(true)} />
                         </div>
                     </div>
                     </div>
