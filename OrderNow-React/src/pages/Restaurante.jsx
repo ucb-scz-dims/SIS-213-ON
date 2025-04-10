@@ -1,10 +1,11 @@
+import Rating from '../components/atoms/Rating';
+
 function Restaurante() 
 {
     return(
         <>
 
                 <main className="max-w-6xl mx-auto px-4 pt-24 pb-8">
-                    {/* Restaurant Info */}
                     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
                     <div className="flex items-center gap-6">
                         <div className="w-24 h-24 bg-gray-200 rounded-lg"></div>
@@ -13,13 +14,13 @@ function Restaurante()
                             Burger King - Centro Santa Cruz
                         </h2>
                         <p className="text-gray-600">Calle Sucre 24 →</p>
-                        <p className="text-sm text-gray-600">
+                        <Rating rating={4.5} />
+                        <p className="text-sm text-gray-600 mt-2">
                         20 - 30 min • Bs 4 Min • Bs 15
                         </p>
                         </div>
                     </div>
                     </div>
-                    {/* Product Sections */}
                     <Section title="Productos con descuentos">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <ProductCard />
