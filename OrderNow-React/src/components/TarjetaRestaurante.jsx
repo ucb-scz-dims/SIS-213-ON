@@ -19,11 +19,8 @@ const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas, minim
           <h2 className="text-xl font-bold">{nombre}</h2>
           <p className="text-sm text-gray-500">{descripcion}</p>
           <p className="text-sm text-yellow-500">⭐ {estrellas} estrellas</p>
+          <p className="mt-2 text-sm text-gray-700">Mínimo: {minimum_order_amount} Bs</p>
         </div>
-      </div>
-
-      <div className="mt-2">
-        <p className="text-sm text-gray-700">Monto mínimo: {minimum_order_amount} Bs</p>
       </div>
 
       {/* Contenedor para las comidas recomendadas con desplazamiento funcional */}
