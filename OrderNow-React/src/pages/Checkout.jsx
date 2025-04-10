@@ -36,7 +36,7 @@ const Checkout = () => {
       <div className="bg-gray-100 rounded-lg p-4 space-y-2">
         <h3 className="text-sm font-semibold text-gray-700">Método de pago</h3>
         <div className="flex justify-between">
-          <p className="text-sm">Tigo Money</p>
+          <p className="text-sm">Efectivo</p>
           <p className="text-sm">Bs. {totalPrice.toFixed(2)}</p>
         </div>
         <button className="text-blue-500 text-sm">Agregar cupón</button>
