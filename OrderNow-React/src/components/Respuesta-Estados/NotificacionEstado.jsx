@@ -15,6 +15,7 @@ const NotificationEstado = ({
       style={{
         backgroundColor: bgColor,
         top: topOffset,
+        color: '#fff'
       }}
       className="w-full max-w-md mx-auto py-3 px-4 flex items-center justify-between gap-3 shadow-lg rounded-md fixed left-0 right-0 z-50"
     >
