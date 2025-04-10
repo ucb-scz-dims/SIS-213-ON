@@ -15,7 +15,7 @@ supertokens.init({
     },
     appInfo: {
         appName: "OrderNow",
-        apiDomain: "https://st-backend-e1xs.onrender.com",
+        apiDomain: "https://st-backend-e1xs.onrender.com/",
         websiteDomain: "https://ordernowapp-sis213.netlify.app/",
         apiBasePath: "/auth",
         websiteBasePath: "/auth",
