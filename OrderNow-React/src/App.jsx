@@ -4,7 +4,7 @@ import VerifySesion from './pages/VerifySesion.jsx'
 
 import Home from './pages/Home'
 import Businesses from './pages/Businesses.jsx'
-import Bussines from './pages/Bussines.jsx';
+import Business from './pages/Business.jsx';
 import Layout from './pages/Layout'
 import Cart from './pages/Cart.jsx'
 import Perfil from './pages/Perfil.jsx'
@@ -19,12 +19,12 @@ const App = () => {
           <Routes>
             <Route path='/' element={ <Home/> }></Route>
             <Route path="/restaurantes" element={<Businesses />} />
-            <Route path="/Bussines/:id" element={<Bussines />} />
+            <Route path="/Business/:id" element={<Business />} />
             <Route path='/restaurant/:id/cart' element={<Cart />}></Route>
             <Route path="/perfil" element={<VerifySesion><Perfil /></VerifySesion>} />
             <Route path="/auth/signIn" element={<LoginPage />} />
             <Route path="/auth/signUp" element={<RegisterPage />} />
-            <Route path="/restaurante/:id" element={<Bussines />} />
+            <Route path="/restaurante/:id" element={<Business />} />
           </Routes>
         </Layout>
       </Router>
