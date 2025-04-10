@@ -15,8 +15,7 @@ supertokens.init({
     },
     appInfo: {
         appName: "OrderNow",
-        apiDomain: "http://localhost:3001", // este dominio debe contener la ruta donde se ejecutara el backend
-                                            // deveria definirse un deployer independiente al deployer del front 
+        apiDomain: "https://st-backend-e1xs.onrender.com/",
         websiteDomain: "https://ordernowapp-sis213.netlify.app/",
         apiBasePath: "/auth",
         websiteBasePath: "/auth",
