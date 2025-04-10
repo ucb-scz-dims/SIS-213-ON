@@ -1,5 +1,10 @@
+import React, { useState } from 'react';
+import Icon from '../components/IconInfo';
+import Modal from '../components/information/InfoRestaurante';
+
 function Restaurante() 
 {
+  const [isModalOpen, setIsModalOpen] = useState(false);
     return(
         <>
 
@@ -16,6 +21,9 @@ function Restaurante()
                         <p className="text-sm text-gray-600">
                         20 - 30 min • Bs 4 Min • Bs 15
                         </p>
+                        </div>
+                        <div  className="cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors">
+                        <Icon onClick={() => setIsModalOpen(true)} />
                         </div>
                     </div>
                     </div>
@@ -36,6 +44,10 @@ function Restaurante()
                     </div>
                     </Section>
                 </main>
+                <Modal 
+                  isOpen={isModalOpen} 
+                  onClose={() => setIsModalOpen(false)} 
+                />
 
         </>
     )
