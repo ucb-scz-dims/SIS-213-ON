@@ -1,71 +1,90 @@
-import React, { useState } from 'react';
-import Modal from '../components/information/InfoRestaurante';
-import IconInfo from '../components/IconInfo';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import getSupaBaseClient from '../supabase-client';
+import ProductsList from '../components/ProductList';
 
-function Business() 
-{
-  const [isModalOpen, setIsModalOpen] = useState(false);
-    return(
-        <>
+function Business() {
+  const { id } = useParams();
+  const supaBaseCom = getSupaBaseClient('com');
+  const [business, setBusiness] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-                <main className="max-w-6xl mx-auto px-4 pt-24 pb-8">
-                    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                    <div className="flex items-center gap-6">
-                        <div className="w-24 h-24 bg-gray-200 rounded-lg"></div>
-                        <div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                            Burger King - Centro Santa Cruz
-                        </h2>
-                        <p className="text-gray-600">Calle Sucre 24 →</p>
-                        <p className="text-sm text-gray-600">
-                        20 - 30 min • Bs 4 Min • Bs 15
-                        </p>
-                        </div>
-                        <div  className="cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors">
-                        <IconInfo onClick={() => setIsModalOpen(true)} />
-                        </div>
-                    </div>
-                    </div>
-                    <Section title="Productos con descuentos">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <ProductCard />
-                        <ProductCard />
-                        <ProductCard />
-                    </div>
-                    </Section>
+  useEffect(() => {
+    const fetchBusiness = async () => {
+      const { data, error } = await supaBaseCom
+        .from('businesses')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-                    <Section title="Platos recomendados">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <ProductCard />
-                        <ProductCard />
-                        <ProductCard />
-                    </div>
-                    </Section>
-                </main>
-                <Modal 
-                  isOpen={isModalOpen} 
-                  onClose={() => setIsModalOpen(false)} 
-                />
-
-        </>
-    )
-}
-const Section = ({ title, children }) => (
-    <section className="mb-12">
-      <h2 className="text-xl font-bold mb-6 text-gray-800">{title}</h2>
-      {children}
-    </section>
-  );
+        if (error) {
+          console.error('Error al obtener el negocio:', error.message);
+          alert('Error al obtener los datos del negocio.');
+          setLoading(false);
+          return;
+        }
   
-  const ProductCard = () => (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="h-48 bg-gray-200"></div>
-      <div className="p-4">
-        <h3 className="font-semibold mb-2">Nombre del producto</h3>
-        <p className="text-sm text-gray-600 mb-2">Descripcion del producto</p>
-        <p className="text-lg font-bold text-gray-800">Bs 100</p>
-      </div>
-    </div>
-  );
+      setBusiness(data);
+      setLoading(false);
+    };
 
-export default Business
+    fetchBusiness();
+  }, [id, supaBaseCom]);
+
+  if (loading) return <div className="pt-24 text-center">Cargando detalles...</div>;
+  if (!business) return <div className="pt-24 text-center">No se encontró el negocio.</div>;
+
+  const { name, description, address, is_open, open_time, close_time } = business;
+
+  const timeToMinutes = (timeStr) => {
+    if (!timeStr) return 0;
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const openingMinutes = timeToMinutes(open_time);
+  const closingMinutes = timeToMinutes(close_time);
+
+  const withinOperatingHours = (currentMinutes >= openingMinutes) && (currentMinutes < closingMinutes);
+  const isActuallyOpen = is_open && withinOperatingHours;
+
+  return (
+    <main className="max-w-6xl mx-auto px-4 pt-24 pb-8">
+      {/* TODO: Se puede cambiar por un componente de advertencia */}
+      {!isActuallyOpen && (
+        <div className="bg-red-100 text-red-800 text-center py-3 font-semibold rounded mb-4">
+          Este negocio está cerrado actualmente
+        </div>
+      )}
+
+      <div
+        className={`bg-white rounded-lg shadow-md p-6 mb-8 transition-all ${
+          isActuallyOpen ? '' : 'opacity-50 grayscale'
+        }`}
+      >
+        <div className="flex items-center gap-6">
+          {/* Si cuentas con imagen, reemplaza este div */}
+          <div className="w-24 h-24 bg-gray-200 rounded-lg"></div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">{name}</h2>
+            {description && <p className="text-gray-600">{description}</p>}
+            {address && <p className="text-gray-600">{address}</p>}
+            <p className="text-sm text-gray-600">
+              Horario: {open_time} - {close_time}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <section className="mb-12">
+        <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
+        <ProductsList businessId={id} />
+      </section>
+    </main>
+  );
+}
+
+export default Business;
