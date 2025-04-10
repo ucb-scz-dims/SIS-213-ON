@@ -32,8 +32,6 @@ const ProductCard = ({ product, isMenuEnabled }) => {
             </div>
           )}
         </div>
-
-        {/* Detalles */}
         <h3 className="text-lg font-semibold">{product.name}</h3>
         <p className="text-gray-600">{product.description}</p>
         <p className="text-sm font-bold font-semibold mt-2">${product.price.toFixed(2)}</p>
