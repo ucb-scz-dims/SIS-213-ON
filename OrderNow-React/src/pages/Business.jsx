@@ -83,8 +83,8 @@ function Business() {
             </p>
           </div>
           <div  className="cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors">
-                        <IconInfo onClick={() => setIsModalOpen(true)} />
-                        </div>
+              <IconInfo onClick={() => setIsModalOpen(true)} />
+          </div>
         </div>
       </div>
 
@@ -93,9 +93,9 @@ function Business() {
         <ProductsList businessId={id} />
       </section>
       <Modal 
-                  isOpen={isModalOpen} 
-                  onClose={() => setIsModalOpen(false)} 
-                />
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </main>
 
     
