@@ -3,13 +3,11 @@ function Modal({ isOpen, onClose }) {
   
     return (
       <>
-        {/* Fondo semitransparente */}
         <div 
-           className="fixed inset-0 bg-gray-900/90 z-40" // 90% opacidad
-          onClick={onClose} // Cierra al hacer clic fuera del modal
+           className="fixed inset-0 bg-gray-900/90 z-40" 
+          onClick={onClose} 
         />
         
-        {/* Contenido del modal */}
         <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
           <div className="bg-white rounded-lg max-w-md w-full mx-4 p-6 pointer-events-auto">
             <div className="flex justify-between items-center mb-4">
