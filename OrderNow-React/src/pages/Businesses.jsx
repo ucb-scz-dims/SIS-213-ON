@@ -38,7 +38,7 @@ const Businesses = () => {
                 nombre={item.name}
                 descripcion={item.description}
                 estrellas={3.5}
-                minimum_order_amount={item.minimum_order_amount} // Pasando el monto mínimo de pedido
+                minimum_order_amount={item.minimum_order_amount}
                 comidas={[{ nombre: "comida 1", precio: "15" }]}
               />
             )
@@ -57,7 +57,7 @@ const Businesses = () => {
                 nombre={item.name}
                 descripcion={item.description}
                 estrellas={3.5}
-                minimum_order_amount={item.minimum_order_amount} // Pasando el monto mínimo de pedido
+                minimum_order_amount={item.minimum_order_amount}
                 comidas={[{ nombre: "comida 1", precio: "15" }]}
               />
             )

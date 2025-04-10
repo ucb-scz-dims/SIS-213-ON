@@ -22,7 +22,6 @@ const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas, minim
         </div>
       </div>
 
-      {/* Monto mínimo de pedido */}
       <div className="mt-2">
         <p className="text-sm text-gray-700">Monto mínimo: {minimum_order_amount} Bs</p>
       </div>
