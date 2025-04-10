@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Icon from '../components/IconInfo';
 import Modal from '../components/information/InfoRestaurante';
 
-function Restaurante() 
+function Bussines() 
 {
   const [isModalOpen, setIsModalOpen] = useState(false);
     return(
@@ -70,4 +70,4 @@ const Section = ({ title, children }) => (
     </div>
   );
 
-export default Restaurante
+export default Bussines
