@@ -15,26 +15,26 @@ function Cart() {
   );
   const [price, setPrice] = useState(totalPrice);
 
-  const onIncrease = (productPrice, quantity) => {
-    const newPrice = price + productPrice;
+  const onIncrease = (product) => {
+    const newPrice = price + product.price;
     setPrice(newPrice);
     dispatch({
       type: "changed",
       product: {
         ...product,
-        quantity: quantity + 1,
+        quantity: product.quantity + 1,
       },
     });
   };
-
-  const onDecrease = (productPrice, quantity) => {
-    const newPrice = price - productPrice;
+  
+  const onDecrease = (product) => {
+    const newPrice = price - product.price;
     setPrice(newPrice);
     dispatch({
       type: "changed",
       product: {
         ...product,
-        quantity: quantity - 1,
+        quantity: product.quantity - 1,
       },
     });
   };

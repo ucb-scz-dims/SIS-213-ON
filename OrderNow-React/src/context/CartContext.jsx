@@ -41,8 +41,8 @@ function cartReducer(products, action) {
     }
     case "changed": {
       return products.map((t) => {
-        if (t.id === action.task.id) {
-          return action.task;
+        if (t.id === action.product.id) {
+          return action.product;
         } else {
           return t;
         }
