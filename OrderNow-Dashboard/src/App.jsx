@@ -12,8 +12,8 @@ function App() {
   return (
 
     <Routes>
-      <Route path="/about" element={<About />} />
-      <Route path='/Order' element={<OrderDashboard/>}/>
+      <Route path='/' element={<OrderDashboard/>}/>
+      <Route path='/about' element={<About />} />
       <Route path='/Registration' element={<RegistrationForm/>}/>
     </Routes>
   );
