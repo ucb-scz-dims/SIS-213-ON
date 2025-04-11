@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
+import fakeProducts from "../fakeData/mockCart.json";
 
 const CartContext = createContext(null);
 
@@ -56,36 +57,3 @@ function cartReducer(products, action) {
     }
   }
 }
-
-const fakeProducts = [
-  {
-    id: 1,
-    srcImage:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a5/Roast_chicken.jpg",
-    title: "Pollos Campeón",
-    description:
-      "Pollo Campeón es un restaurante que sirve pollo a la brasa y es conocido por su salsa picante.",
-    price: 10,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    srcImage:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a5/Roast_chicken.jpg",
-    title: "Pollos Campeón",
-    description:
-      "Pollo Campeón es un restaurante que sirve pollo a la brasa y es conocido por su salsa picante.",
-    price: 20,
-    quantity: 4,
-  },
-  {
-    id: 3,
-    srcImage:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a5/Roast_chicken.jpg",
-    title: "Pollos Campeón",
-    description:
-      "Pollo Campeón es un restaurante que sirve pollo a la brasa y es conocido por su salsa picante.",
-    price: 30,
-    quantity: 5,
-  },
-];

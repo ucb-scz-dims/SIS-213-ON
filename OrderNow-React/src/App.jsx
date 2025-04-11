@@ -4,7 +4,7 @@ import VerifySesion from "./pages/VerifySesion";
 
 import Home from "./pages/Home";
 import Businesses from "./pages/Businesses";
-import Restaurante from "./pages/Restaurante";
+import Business from "./pages/Business";
 import Layout from "./pages/Layout";
 import Cart from "./pages/Cart";
 import Perfil from "./pages/Perfil";
@@ -21,7 +21,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />}/>
             <Route path="/restaurantes" element={<Businesses />} />
-            <Route path="/restaurante/:id" element={<Restaurante />} />
+            <Route path="/restaurante/:id" element={<Business />} />
             <Route path="/restaurant/:id/cart" element={<Cart />}/>
             <Route path="/perfil" element={<VerifySesion><Perfil /></VerifySesion>}/>
             <Route path="/auth/signIn" element={<LoginPage />} />

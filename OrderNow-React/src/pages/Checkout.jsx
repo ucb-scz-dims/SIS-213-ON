@@ -12,8 +12,8 @@ const Checkout = () => {
   );
   const [price, setPrice] = useState(totalPrice);
   const navigate = useNavigate();
-  const goToBusiness = () => {
-    navigate(`/restaurantes`);
+  const goToHome = () => {
+    navigate(`/`);
   };
   return (
     <div className="space-y-4 flex flex-col items-center mt-3 pt-24">
@@ -50,7 +50,7 @@ const Checkout = () => {
       </div>
       <div className="flex flex-col items-center">
         <h3 className="text-xl m-2">Total del pedido: {price} Bs.</h3>
-        <div onClick={goToBusiness}>
+        <div onClick={goToHome}>
           <Button label="Confirmar pedido" type="button" />
         </div>
       </div>
