@@ -12,12 +12,17 @@ const Checkout = () => {
     0
   );
 
-  const currentDirection = "Av. Palmar";
-  const metodoPago = "Efectivo";
+  const [currentDirection, setCurrentDirection] = useState("Av. Palmar");
+  const [editingDirection, setEditingDirection] = useState(false);
+
+  const [metodoPago, setMetodoPago] = useState("Efectivo");
+  const [editingPago, setEditingPago] = useState(false);
+  const opcionesPago = ["Efectivo", "Tarjeta", "QR"];
+
   const [stateMessage, setStateMessage] = useState(false);
   const [showResumen, setShowResumen] = useState(false);
 
-  const goToBusiness = () => {
+  const goToBusiness = async () => {
     setStateMessage(true);
     setTimeout(() => {
       setStateMessage(false);
@@ -34,28 +39,70 @@ const Checkout = () => {
       <div className="bg-gray-100 rounded-lg p-4 space-y-2">
         <h3 className="text-sm font-semibold text-gray-700">Detalle de entrega</h3>
         <div className="flex justify-between items-center">
-          <p className="text-sm font-medium text-gray-800">
-            Dirección: {currentDirection}
-          </p>
-          <button className="text-blue-500 text-sm">Editar</button>
+          {editingDirection ? (
+            <input
+              type="text"
+              value={currentDirection}
+              onChange={(e) => setCurrentDirection(e.target.value)}
+              className="text-sm text-gray-800 border px-2 py-1 rounded w-full mr-2"
+            />
+          ) : (
+            <p className="text-sm font-medium text-gray-800">
+              Dirección: {currentDirection}
+            </p>
+          )}
+          <button
+            onClick={() => setEditingDirection(!editingDirection)}
+            className="text-blue-500 text-sm ml-2"
+          >
+            {editingDirection ? "Guardar" : "Editar"}
+          </button>
         </div>
       </div>
 
       {/* Métodos de pago */}
       <div className="bg-gray-100 rounded-lg p-4 space-y-2">
         <h3 className="text-sm font-semibold text-gray-700">Método de pago</h3>
-        <div className="flex justify-between">
-          <p className="text-sm">
-            {metodoPago}: Bs. {totalPrice.toFixed(2)}
-          </p>
-          <button className="text-blue-500 text-sm">Editar</button>
+        <div className="flex justify-between items-center">
+          {editingPago ? (
+            <>
+              <select
+                value={metodoPago}
+                onChange={(e) => setMetodoPago(e.target.value)}
+                className="text-sm text-gray-800 border px-2 py-1 rounded mr-2 w-full"
+              >
+                {opcionesPago.map((opcion) => (
+                  <option key={opcion} value={opcion}>
+                    {opcion}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={() => setEditingPago(false)}
+                className="text-blue-500 text-sm ml-2"
+              >
+                Guardar
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm">
+                {metodoPago}: Bs. {(totalPrice+5).toFixed(2)}
+              </p>
+              <button
+                onClick={() => setEditingPago(true)}
+                className="text-blue-500 text-sm ml-2"
+              >
+                Editar
+              </button>
+            </>
+          )}
         </div>
         <button className="text-blue-500 text-sm">Agregar cupón</button>
       </div>
 
       {/* Sección de resumen */}
       <div className="bg-gray-100 rounded-lg p-4 space-y-2">
-        {/* Botón de cabecera para toggle de tabla */}
         <button
           className="w-full text-sm font-semibold text-gray-700 flex justify-between items-center"
           onClick={() => setShowResumen(!showResumen)}
@@ -64,7 +111,6 @@ const Checkout = () => {
           <span className="text-lg">{showResumen ? "−" : "+"}</span>
         </button>
 
-        {/* Tabla de productos */}
         {showResumen && (
           <div className="overflow-x-auto transition-all duration-300 ease-in-out mt-2">
             <table className="min-w-full text-sm text-gray-700">
@@ -92,7 +138,7 @@ const Checkout = () => {
           </div>
         )}
 
-        {/* Desglose de precios (siempre visible) */}
+        {/* Desglose de precios */}
         <div className="text-sm space-y-1 pt-2 border-t border-gray-300">
           <div className="flex justify-between">
             <span>Productos</span>

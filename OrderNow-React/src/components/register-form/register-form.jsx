@@ -3,6 +3,7 @@ import Button from "../Button/Button.jsx";
 import { signUpClicked } from "../../Supertokens.jsx";
 import { crearUsuario } from "../../SupaBase.jsx";
 import { crearConsumer } from "../../SupaBase.jsx";
+import { Link } from "react-router-dom";
 
 const RegisterForm = () => {
     const [firstName, setFirstName] = useState("");
@@ -122,6 +123,12 @@ const RegisterForm = () => {
                 <div className="text-center">
                     <Button label="Submit" type="submit" />
                 </div>
+                <p className="mt-4 text-sm text-gray-600 text-center">
+                    ¿Ya estas registrado?{" "}
+                    <Link to="/auth/signIn" className="text-blue-600 hover:underline font-semibold">
+                        Iniciar Sesion
+                    </Link>
+                </p>
             </form>
         </div>
     );

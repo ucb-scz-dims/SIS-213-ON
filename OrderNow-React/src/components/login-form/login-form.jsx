@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Button from "../Button/Button.jsx";
 import { signInClicked } from "../../Supertokens.jsx";
+import { Link } from "react-router-dom";
 
-const LoginForm = ({ recoveryLink }) => {
+const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -42,6 +43,12 @@ const LoginForm = ({ recoveryLink }) => {
                 <div className="text-center">
                     <Button type="submit" label="Sign in" />
                 </div>
+                <p className="mt-4 text-sm text-gray-600 text-center">
+                    ¿No tienes una cuenta?{" "}
+                    <Link to="/auth/signup" className="text-blue-600 hover:underline font-semibold">
+                        Regístrate
+                    </Link>
+                </p>
             </form>
         </div>
     );
