@@ -37,8 +37,7 @@ const Businesses = () => {
                 id={item.id}
                 nombre={item.name}
                 descripcion={item.description}
-                estrellas={3.5}
-                minimum_order_amount={item.minimum_order_amount}
+                estrellas={item.rating}
                 comidas={[{ nombre: "comida 1", precio: "15" }]}
               />
             )
@@ -56,8 +55,7 @@ const Businesses = () => {
                 id={item.id}
                 nombre={item.name}
                 descripcion={item.description}
-                estrellas={3.5}
-                minimum_order_amount={item.minimum_order_amount}
+                estrellas={item.rating}
                 comidas={[{ nombre: "comida 1", precio: "15" }]}
               />
             )
