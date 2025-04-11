@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import getSupaBaseClient from '../supabase-client'; // Asegúrate de la ruta correcta
+import getSupaBaseClient from '../supabase-client';
 import ProductCard from './ProductCard';
 
-const ProductsList = ({ businessId }) => {
+const ProductsList = ({ businessId, isMenuEnabled }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // Obtenemos el cliente configurado para el schema 'com'
   const supaBaseCom = getSupaBaseClient('com');
 
   useEffect(() => {
@@ -38,7 +36,7 @@ const ProductsList = ({ businessId }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} isMenuEnabled={isMenuEnabled} />
       ))}
     </div>
   );
