@@ -28,7 +28,7 @@ const Businesses = () => {
   return (
     <div className="flex flex-col justify-center space-y-10">
       <div>
-        <h1 className="text-4xl font-bold mb-6">RESTAURANTES DISPONIBLES</h1>
+        <h1 className="text-4xl font-bold mb-6">Disponibles</h1>
         {businesses.some(r => r.is_open) && (
           businesses.map((item) =>
             item.is_open && (
@@ -46,7 +46,7 @@ const Businesses = () => {
       </div>
 
       <div>
-        <h1 className="text-4xl font-bold mb-6">RESTAURANTES NO DISPONIBLES</h1>
+        <h1 className="text-4xl font-bold mb-6">No disponibles</h1>
         {businesses.some(r => !r.is_open) && (
           businesses.map((item) =>
             !item.is_open && (

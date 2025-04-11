@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Rating from './atoms/Rating';
 
-const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas }) => {
+const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas, minimum_order_amount }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -10,7 +10,7 @@ const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas }) => 
   };
 
   return (
-    <div 
+    <div
       onClick={handleClick}
       className="border border-gray-300 rounded-xl p-4 shadow-md flex flex-col md:flex-row cursor-pointer hover:shadow-lg transition-shadow mb-4"
     >
