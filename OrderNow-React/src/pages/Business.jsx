@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import getSupaBaseClient from '../supabase-client';
 import ProductsList from '../components/ProductList';
+import IconInfo from '../components/IconInfo';
+import Modal from '../components/information/InfoRestaurante';
 import Rating from '../components/atoms/Rating';
 
 function Business() {
@@ -10,6 +12,8 @@ function Business() {
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   useEffect(() => {
     const fetchBusiness = async () => {
       const { data, error } = await supaBaseCom
@@ -77,6 +81,9 @@ function Business() {
               Horario: {open_time} - {close_time}
             </p>
           </div>
+          <div  className="cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors">
+              <IconInfo onClick={() => setIsModalOpen(true)} />
+          </div>
         </div>
       </div>
 
@@ -84,7 +91,13 @@ function Business() {
         <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
         <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
       </section>
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </main>
+
+    
   );
 }
 
