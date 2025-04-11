@@ -1,37 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import SearchResults from '../SearchResults/SearchResults'
+
+const debounce = (func, delay) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
+};
 
 const SearchBar = ({ isMobile = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState(null);
 
   const searchElasticsearch = async (term) => {
-    if (!term.trim()) return [];
+    if (!term.trim()) {
+      setSearchResults([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
 
     try {
-      const query = {
-        bool: {
-          should: [
-            { wildcard: { nombre: { value: `*${term.toLowerCase()}*` } } },
-            { wildcard: { categoria: { value: `*${term.toLowerCase()}*` } } },
-            { wildcard: { direccion: { value: `*${term.toLowerCase()}*` } } }
-          ],
-          minimum_should_match: 1
-        }
-      };
-      console.log(import.meta.env.VITE_ELASTICSEARCH_URL)
-
-      const response = await fetch(import.meta.env.VITE_ELASTICSEARCH_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-          size: 10
-        })
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/restaurant/search-name?name=${term}`, {
+        method: "GET",
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -39,44 +36,37 @@ const SearchBar = ({ isMobile = false }) => {
       }
 
       const data = await response.json();
-      return data.hits.hits.map(hit => hit._source);
+      if (data.length === 0) {
+        setError('No se encontraron resultados.');
+      } else {
+        setSearchResults(data);
+      }
     } catch (error) {
       console.error('Error al buscar en Elasticsearch:', error);
       setError('Ocurrió un error al buscar. Verifica tu conexión.');
-      return [];
+      setSearchResults([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleInputChange = (e) => {
+  const debouncedFetchResults = useCallback(
+    debounce((value) => searchElasticsearch(value), 500),
+    []
+  );
+
+  const handleChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    setError(null);
-
-    if (window.searchTimeout) {
-      clearTimeout(window.searchTimeout);
-    }
-
-    window.searchTimeout = setTimeout(async () => {
-      if (value.trim()) {
-        setLoading(true);
-        try {
-          const results = await searchElasticsearch(value);
-          setSearchResults(results);
-          setShowResults(results.length > 0);
-        } catch (error) {
-          console.error('Error en la búsqueda:', error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setSearchResults([]);
-        setShowResults(false);
-      }
-    }, 150);
+    debouncedFetchResults(value);
   };
 
-  const handleBlur = () => {
-    setTimeout(() => setShowResults(false), 200);
+  const handleBlur = (e) => {
+    setTimeout(() => {
+      if (!e.currentTarget.contains(e.relatedTarget)) {
+        setSearchResults([]);
+      }
+    }, 200);
   };
 
   return (
@@ -84,10 +74,8 @@ const SearchBar = ({ isMobile = false }) => {
       <div className="flex items-center">
         <div className="relative flex-grow">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-              fill="none" viewBox="0 0 20 20">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+            <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
             </svg>
             <span className="sr-only">Ícono de búsqueda</span>
           </div>
@@ -97,10 +85,7 @@ const SearchBar = ({ isMobile = false }) => {
             className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Buscar restaurantes..."
             value={searchTerm}
-            onChange={handleInputChange}
-            onFocus={() => {
-              if (searchResults.length > 0) setShowResults(true);
-            }}
+            onChange={handleChange}
             onBlur={handleBlur}
           />
           {loading && (
@@ -111,34 +96,17 @@ const SearchBar = ({ isMobile = false }) => {
         </div>
       </div>
 
-      {(showResults) || error ? (
+      {searchResults.length > 0 || error ? (
         <div className="absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg dark:bg-gray-800 max-h-60 overflow-auto">
-          {error ? (
-            <div className="px-4 py-3 text-sm text-red-700 bg-red-100 dark:bg-red-900 dark:text-red-300 border-b border-red-300 dark:border-red-700 rounded-md">
-              <span>{error}</span>
-            </div>
-          ) : (
-            <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
-              {searchResults.map((restaurant, index) => (
-                <li key={index} className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-500"></div>
-                    <div>
-                      <div className="font-medium">{restaurant.nombre}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 flex justify-between">
-                        <span>4.5 km</span>
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {Array.isArray(restaurant.categoria) ? restaurant.categoria.join(", ") : restaurant.categoria}
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+          <SearchResults results={searchResults} error={error} />
         </div>
       ) : null}
+
+      {searchResults.length > 0 && (
+        <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          {searchResults.length} resultados encontrados
+        </div>
+      )}
     </div>
   );
 };
