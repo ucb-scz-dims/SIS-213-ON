@@ -1,35 +1,79 @@
 import React, { useEffect, useState } from "react";
-import mockOrders from "../fakeData/mockOrders.json";
+import { getSupaBaseClient } from "../supabaseClient";
 import { formatDate } from "../utils/formatDate";
-import OrderDetail from '../components/order-detail/OrderDetail'
+import OrderDetail from "../components/order-detail/OrderDetail";
 
 const OrdersDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const ordersupabase = getSupaBaseClient('com');
+  const usersupabase = getSupaBaseClient('sec');
 
-  const closeModal = () => setModalOpen(false);
-  const openModal = () => setModalOpen(true);
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedOrderId(null);
+  };
+
+  const openModal = (orderId) => {
+    setSelectedOrderId(orderId);
+    setModalOpen(true);
+  };
 
   useEffect(() => {
-    setOrders(mockOrders);
-    setLoading(false);
-  }, []);
+    const fetchOrders = async () => {
+      const { data: ordersData, error: ordersError } = await ordersupabase
+        .from("orders")
+        .select(`
+          id,
+          date,
+          address,
+          total_price,
+          consumer_id,
+          state_type_id,
+          state_types ( name )
+        `);
 
-  const getStatusText = (id) => {
-    switch (id) {
-      case 1:
-        return "Pendiente";
-      case 2:
-        return "En camino";
-      case 3:
-        return "Entregado";
-      case 4:
-        return "Cancelado";
-      default:
-        return "Desconocido";
-    }
-  };
+      const { data: consumerData, error: consumerError } = await ordersupabase
+        .from("consumers")
+        .select(`
+          id,
+          user_id
+        `);
+
+      const { data: usersData, error: usersError } = await usersupabase
+          .from("users")
+          .select(`
+            id,
+            name,
+            last_name
+            `)
+  
+      if (ordersError || usersError || consumerError) {
+        console.error("Error fetching data:", ordersError || usersError);
+      } else {
+        const enrichedOrders = ordersData.map(order => {
+          const consumer = consumerData.find(c => c.id === order.consumer_id);
+          const user = consumer ? usersData.find(u => u.id === consumer.user_id) : null;
+        
+          return {
+            ...order,
+            consumer_name: user ? `${user.name} ${user.last_name}` : "Desconocido",
+            status: order.state_types?.name || "Desconocido"
+          };
+        });
+        
+  
+        setOrders(enrichedOrders);
+      }
+  
+      setLoading(false);
+    };
+  
+    fetchOrders();
+  }, []);
+  
 
   return (
     <>
@@ -68,9 +112,7 @@ const OrdersDashboard = () => {
                   <div className="w-20 font-medium text-green-700 text-right">
                     Bs. {order.total_price.toFixed(2)}
                   </div>
-                  <div className="w-24">
-                    {getStatusText(order.state_type_id)}
-                  </div>
+                  <div className="w-24">{order.status}</div>
                   <div className="w-24 flex space-x-2">
                     <button className="text-green-600 hover:underline">
                       Aceptar
@@ -79,12 +121,13 @@ const OrdersDashboard = () => {
                       Rechazar
                     </button>
                   </div>
-
                   <div className="w-24 flex space-x-2">
-                    <button className="text-gray-500 hover:underline" onClick={openModal}>
+                    <button
+                      className="text-gray-500 hover:underline"
+                      onClick={() => openModal(order.id)}
+                    >
                       Ver detalle
                     </button>
-    
                   </div>
                 </div>
               ))}
@@ -94,7 +137,7 @@ const OrdersDashboard = () => {
       </div>
 
       {isModalOpen && (
-        <OrderDetail orderId={1} closeModal={closeModal}/>
+        <OrderDetail orderId={selectedOrderId} closeModal={closeModal} />
       )}
     </>
   );
