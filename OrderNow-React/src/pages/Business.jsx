@@ -4,8 +4,7 @@ import getSupaBaseClient from '../supabase-client';
 import ProductsList from '../components/ProductList';
 import IconInfo from '../components/IconInfo';
 import Modal from '../components/information/InfoRestaurante';
-
-
+import Rating from '../components/atoms/Rating';
 
 function Business() {
   const { id } = useParams();
@@ -29,7 +28,6 @@ function Business() {
           setLoading(false);
           return;
         }
-  
       setBusiness(data);
       setLoading(false);
     };
@@ -40,7 +38,7 @@ function Business() {
   if (loading) return <div className="pt-24 text-center">Cargando detalles...</div>;
   if (!business) return <div className="pt-24 text-center">No se encontró el negocio.</div>;
 
-  const { name, description, address, is_open, open_time, close_time } = business;
+  const { name, description, address, is_open, open_time, close_time, rating } = business;
 
   const timeToMinutes = (timeStr) => {
     if (!timeStr) return 0;
@@ -76,6 +74,7 @@ function Business() {
           <div className="w-24 h-24 bg-gray-200 rounded-lg"></div>
           <div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">{name}</h2>
+            <Rating rating={rating} />
             {description && <p className="text-gray-600">{description}</p>}
             {address && <p className="text-gray-600">{address}</p>}
             <p className="text-sm text-gray-600">
@@ -90,7 +89,7 @@ function Business() {
 
       <section className="mb-12">
         <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
-        <ProductsList businessId={id} />
+        <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
       </section>
       <Modal 
         isOpen={isModalOpen} 
