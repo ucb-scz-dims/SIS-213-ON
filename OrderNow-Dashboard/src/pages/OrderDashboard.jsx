@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import mockOrders from "../fakeData/mockOrders.json";
 import { formatDate } from "../utils/formatDate";
 import OrderDetail from '../components/order-detail/OrderDetail'
+import getSupaBaseClient from "../supabase/supabase-client";
+
+const supaBaseCom = getSupaBaseClient('com');
 
 const OrdersDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -11,6 +14,20 @@ const OrdersDashboard = () => {
   const closeModal = () => setModalOpen(false);
   const openModal = () => setModalOpen(true);
 
+  const handleOrderStatusChange = async (orderId, newStatusId) => {
+    const { error } = await supaBaseCom
+      .from('orders')
+      .update({ state_type_id: newStatusId})
+      .eq('id', orderId)
+
+    if(error) {
+      alert(error.message);
+      return;
+    }
+
+    closeModal();
+  }
+   
   useEffect(() => {
     setOrders(mockOrders);
     setLoading(false);
@@ -94,7 +111,11 @@ const OrdersDashboard = () => {
       </div>
 
       {isModalOpen && (
-        <OrderDetail orderId={1} closeModal={closeModal}/>
+        <OrderDetail 
+          orderId={1} 
+          closeModal={closeModal}
+          onStatusChange={handleOrderStatusChange}
+        />
       )}
     </>
   );
