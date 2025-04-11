@@ -52,7 +52,9 @@ const OrdersDashboard = () => {
   
       if (ordersError || usersError || consumerError) {
         console.error("Error fetching data:", ordersError || usersError);
-      } else {
+      } 
+      
+      else {
         const enrichedOrders = ordersData.map(order => {
           const consumer = consumerData.find(c => c.id === order.consumer_id);
           const user = consumer ? usersData.find(u => u.id === consumer.user_id) : null;
