@@ -7,12 +7,11 @@ import { doesEmailExist } from "supertokens-web-js/recipe/emailpassword";
 import { signIn } from "supertokens-web-js/recipe/emailpassword";
 import { signUp } from "supertokens-web-js/recipe/emailpassword";
 
-export function SuperTokensConfig(){
+export function SuperTokensConfig() {
     SuperTokens.init({
         appInfo: {
-            apiDomain: "http://localhost:3001",// este dominio debe contener la ruta donde se ejecutara el backend
-                                               // deveria definirse un deployer independiente al deployer del front
-            
+            apiDomain: import.meta.env.VITE_API_URL,
+
             apiBasePath: "/auth",
             appName: "OrderNow",
         },
@@ -109,14 +108,14 @@ export async function signInClicked(email, password) {
     }
 }
 
-export async function logout () {
-    await Session.signOut(); 
+export async function logout() {
+    await Session.signOut();
     window.location.href = "/auth/signIn";
 }
 
 export async function checkEmail(email) {
     try {
-        let response = await doesEmailExist({email});
+        let response = await doesEmailExist({ email });
         if (response.doesExist) {
             //window.alert("Email already exists. Please sign in instead")
             return true;
