@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas }) => {
+const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas, minimum_order_amount, delivery_time_min, delivery_time_max }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -9,7 +9,7 @@ const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas }) => 
   };
 
   return (
-    <div 
+    <div
       onClick={handleClick}
       className="border border-gray-300 rounded-xl p-4 shadow-md flex flex-col md:flex-row cursor-pointer hover:shadow-lg transition-shadow mb-4"
     >
@@ -19,9 +19,17 @@ const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas }) => 
           <h2 className="text-xl font-bold">{nombre}</h2>
           <p className="text-sm text-gray-500">{descripcion}</p>
           <p className="text-sm text-yellow-500">⭐ {estrellas} estrellas</p>
+          <div className="flex items-center space-x-4 mt-2">
+            {minimum_order_amount && (
+              <p className="text-sm text-gray-500">Minimo: {minimum_order_amount} Bs</p>
+            )}
+            {delivery_time_min && delivery_time_max && (
+              <p className="text-sm text-gray-500">⏱️ {delivery_time_min}-{delivery_time_max} min</p>
+            )}
+          </div>
         </div>
       </div>
-      
+
       {/* Contenedor para las comidas recomendadas con desplazamiento funcional */}
       <div className="overflow-x-auto whitespace-nowrap w-100 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 md:ml-2">
         <div className="flex space-x-4">
