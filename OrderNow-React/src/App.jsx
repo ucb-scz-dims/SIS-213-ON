@@ -26,7 +26,6 @@ const App = () => {
             <Route path="/perfil" element={<VerifySesion><Perfil /></VerifySesion>}/>
             <Route path="/auth/signIn" element={<LoginPage />} />
             <Route path="/auth/signUp" element={<RegisterPage />} />
-            <Route path="/restaurante/:id" element={<Restaurante />} />
             <Route path="/cart/test" element={<Cart />}></Route>
             <Route path="/checkout" element={<Checkout></Checkout>}/>
           </Routes>
