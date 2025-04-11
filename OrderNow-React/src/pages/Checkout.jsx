@@ -113,6 +113,11 @@ const Checkout = () => {
 
         {showResumen && (
           <div className="overflow-x-auto transition-all duration-300 ease-in-out mt-2">
+            <div className="flex justify-end mb-2">
+              <button onClick={() => navigate("/cart/test")} className="text-blue-500 text-sm">
+                Editar productos
+              </button>
+            </div>
             <table className="min-w-full text-sm text-gray-700">
               <thead>
                 <tr className="bg-gray-200 text-xs text-gray-600 uppercase tracking-wide">
