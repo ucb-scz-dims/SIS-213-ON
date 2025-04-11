@@ -30,3 +30,5 @@ package-lock.json
 *.sw?
 
 *storybook.log
+
+vitest.workspace.js
