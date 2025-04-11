@@ -24,7 +24,6 @@ function Business() {
           setLoading(false);
           return;
         }
-  
       setBusiness(data);
       setLoading(false);
     };
@@ -83,7 +82,7 @@ function Business() {
 
       <section className="mb-12">
         <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
-        <ProductsList businessId={id} />
+        <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
       </section>
     </main>
   );
