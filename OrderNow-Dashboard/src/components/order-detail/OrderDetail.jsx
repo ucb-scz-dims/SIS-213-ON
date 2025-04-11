@@ -2,17 +2,19 @@ import React from "react";
 import { useState, useEffect } from "react";
 import getSupaBaseClient from "../../supabase/supabase-client";
 import CloseIcon from "../../subcomponents/icons/CloseIcon";
+import { ORDER_STATUS } from "../../config/order-status";
 
-function OrderDetail({ orderId, closeModal }) {
+const supaBaseCom = getSupaBaseClient("com");
+
+function OrderDetail({ orderId, closeModal, onStatusChange }) {
   const [orderDetail, setOrderDetail] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const supaBaseCom = getSupaBaseClient("com");
-
+  
   let content;
 
   useEffect(() => {
-    fetchBusiness();
+    fetchOrderDetails();
   }, []);
 
   if (loading) {
@@ -41,7 +43,7 @@ function OrderDetail({ orderId, closeModal }) {
     );
   }
 
-  const fetchBusiness = async () => {
+  const fetchOrderDetails = async () => {
     const { data, error } = await supaBaseCom
       .from("orders")
       .select(
@@ -103,13 +105,14 @@ function OrderDetail({ orderId, closeModal }) {
               <button
                 type="button"
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50"
-                onClick={() => closeModal()}
+                onClick={() => onStatusChange(orderId, ORDER_STATUS.CANCELED)}
               >
                 Rechazar
               </button>
               <button
                 type="button"
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700"
+                onClick={() => onStatusChange(orderId, ORDER_STATUS.PREPARING)}
               >
                 Aceptar
               </button>
