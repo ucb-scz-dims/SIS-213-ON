@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { use } from 'react';
+import { useState } from 'react';
 
 const EstadoPantalla = ({
   message = 'Definir Mensaje',
   subMessage = 'Definir sub-mensaje',
-  icon = '✅',
-  bgColor = '#00C48C', // #00C48C // #FF4D4F
-  duration = 3000
+  visible = false,
+  correct = true
 }) => {
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisible(false);
-    }, duration);
-
-    return () => clearTimeout(timer);
-  }, [duration]);
-
+  const [icon, setIcon] = useState('✅');
+  const [bgColor, setBgColor] = useState('#00C48C');
   if (!visible) return null;
+  if(!correct){
+    setIcon('⚠️');
+    setBgColor('#FF4D4F');
+  }
 
   return (
     <div

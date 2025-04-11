@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 
 const NotificationEstado = ({
   message = 'Definir mensaje - notificacion',
-  bgColor = '#00C48C', // #00C48C // #FF4D4F
-  icon = '✅',
-  topOffset = '80px',
+  correct = true
 }) => {
   const [visible, setVisible] = useState(true);
-
-  if (!visible) return null;
+  const [icon, setIcon] = useState('✅');
+  const [bgColor, setBgColor] = useState('#00C48C');
+  const topOffset = '80px';
+    if (!visible) return null;
+    if(!correct){
+      setIcon('⚠️');
+      setBgColor('#FF4D4F');
+    }
 
   return (
     <div

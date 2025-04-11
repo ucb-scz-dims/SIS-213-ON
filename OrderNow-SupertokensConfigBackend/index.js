@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const supertokens = require("supertokens-node");
 const Session = require("supertokens-node/recipe/session");
 const EmailPassword = require("supertokens-node/recipe/emailpassword");
@@ -10,13 +12,13 @@ const { middleware, errorHandler } = require("supertokens-node/framework/express
 supertokens.init({
     framework: "express",
     supertokens: {
-        connectionURI: "https://st-dev-4becb8e0-0546-11f0-9c21-311d8840c7c1.aws.supertokens.io",
-        apiKey: "PaqML7h7LMxiijTM7ZedJJZddf"
+        connectionURI: process.env.CONECTION_URI_ST,
+        apiKey: process.env.API_KEY_ST 
     },
     appInfo: {
         appName: "OrderNow",
-        apiDomain: "https://st-backend-e1xs.onrender.com/",
-        websiteDomain: "https://ordernowapp-sis213.netlify.app/",
+        apiDomain: process.env.BACKEND_ST,
+        websiteDomain: process.env.FRONTEND,
         apiBasePath: "/auth",
         websiteBasePath: "/auth",
     },
@@ -30,7 +32,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: "https://ordernowapp-sis213.netlify.app/",
+        origin: process.env.FRONTEND,
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
         credentials: true,
     })
@@ -51,5 +53,5 @@ app.use(errorHandler());
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`✅ Backend corriendo en el puerto ${PORT}`);
-    console.log(`🌍 En producción visita: https://st-backend-e1xs.onrender.com`);
+    console.log(`🌍 En producción visita: ${process.env.BACKEND_ST}`);
 });

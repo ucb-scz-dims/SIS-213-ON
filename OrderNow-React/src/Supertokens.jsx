@@ -10,7 +10,7 @@ import { signUp } from "supertokens-web-js/recipe/emailpassword";
 export function SuperTokensConfig(){
     SuperTokens.init({
         appInfo: {
-            apiDomain: "https://st-backend-e1xs.onrender.com",
+            apiDomain: import.meta.env.VITE_BACKEND_ST,
             apiBasePath: "/auth",
             appName: "OrderNow",
         },
@@ -40,12 +40,12 @@ export async function getUserId() {
     }
 }
 
-export async function signUpClicked(email, password) {
+export async function signUpClicked(correo, password) {
     try {
         let response = await signUp({
             formFields: [{
                 id: "email",
-                value: email
+                value: correo
             }, {
                 id: "password",
                 value: password
@@ -59,11 +59,12 @@ export async function signUpClicked(email, password) {
                 } else if (formField.id === "password") {
                     window.alert(formField.error)
                 }
-            })
+            }); return null;
         } else if (response.status === "SIGN_UP_NOT_ALLOWED") {
-            window.alert(response.reason)
+            window.alert(response.reason);
+            return null;
         } else {
-            window.location.href = "/auth/signIn"
+            return response.user.id;
         }
     } catch (err) {
         if (err.isSuperTokensGeneralError === true) {
@@ -71,6 +72,7 @@ export async function signUpClicked(email, password) {
         } else {
             window.alert("Oops! Something went wrong.");
         }
+        return null;
     }
 }
 
