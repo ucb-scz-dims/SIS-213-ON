@@ -7,7 +7,7 @@ const Home = () => {
     <>
       <div className="flex justify-center w-full ">
         <div className="w-full max-w-3xl p-4">
-          <h2 className="text-xl font-bold text-left">Bienvenido. ¿Que vas a pedir hoy?</h2>
+          <h2 className="text-xl font-bold text-left">Bienvenido. ¿Qué vas a pedir hoy?</h2>
         </div>
       </div>
 
