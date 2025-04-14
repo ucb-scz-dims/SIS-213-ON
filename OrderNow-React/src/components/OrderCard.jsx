@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 const OrderCard = ({
   id,
   srcImage,
@@ -11,24 +9,18 @@ const OrderCard = ({
   onDecrease,
   onDelete,
 }) => {
-  const [quantityLocal, setQuantity] = useState(quantity);
-
   const handleIncrease = () => {
-    const newQuantity = quantityLocal + 1;
-    setQuantity(newQuantity);
-
-    onIncrease(price, quantity);
+    onIncrease({ id, srcImage, title, description, price, quantity });
   };
 
   const handleDecrease = () => {
-    const newQuantity = quantityLocal - 1;
-    setQuantity(newQuantity);
+    onDecrease({ id, srcImage, title, description, price, quantity });
+  };
 
-    onDecrease(price, quantity);
-  };
   const handleDelete = () => {
-    onDelete(quantityLocal, price, id);
+    onDelete(quantity, price, id);
   };
+
   return (
     <div className="flex flex-row items-center bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 w-full max-w-6xl h-[168px] overflow-hidden mx-auto mt-1">
       {/* Imagen del producto */}
@@ -42,16 +34,16 @@ const OrderCard = ({
         <div className="flex-col flex justify-around">
           <h5 className="text-lg font-bold text-gray-900 dark:text-white">
             {title}
-          </h5>{" "}
-          {/*Nombre del producto*/}
+          </h5>
+          {/* Nombre del producto */}
           <p className="text-sm text-gray-700 dark:text-gray-400 text-ellipsis">
             {description}
-          </p>{" "}
-          {/*Descripcion del producto*/}
+          </p>
+          {/* Descripción del producto */}
           <span className="text-lg font-semibold text-gray-900 dark:text-white">
-            Bs. {price * quantityLocal}
+            Bs. {price * quantity}
           </span>
-          {/*Precio*/}
+          {/* Precio */}
         </div>
       </div>
 
@@ -65,12 +57,12 @@ const OrderCard = ({
             <button
               className=" bg-black text-white rounded-lg enabled:hover:bg-red-500 w-8 h-8 disabled:cursor-not-allowed"
               onClick={handleDecrease}
-              disabled={quantityLocal < 2 ? true : false}
+              disabled={quantity < 2}
             >
               -
             </button>
             <span className="text-lg font-medium text-gray-900 dark:text-white">
-              {quantityLocal}
+              {quantity}
             </span>
             <button
               className=" bg-black text-white rounded-lg hover:bg-green-500 w-8 h-8"

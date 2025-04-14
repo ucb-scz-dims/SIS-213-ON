@@ -1,7 +1,55 @@
 import React, { useState } from 'react';
 import { Store, Clock, Home, Phone, AlignLeft } from 'lucide-react';
 
+import getSupaBaseClient from '../../supabase-client';
+
+
+
 export default function RegistrationForm() {
+  const supaBaseCom = getSupaBaseClient('com')
+
+  const fetchBusiness = async () => {
+    const { data, error } = await supaBaseCom
+      .from('businesses')
+      .select('*');
+
+    if (error) {
+      error.message;
+      return;
+    }
+
+    const ordered = data.sort((a, b) => b.is_open - a.is_open);
+    setBusinesses(ordered);
+
+  };
+
+  const insertBusiness = async (businessData) => {
+    try {
+      const { data, error } = await supaBaseCom
+        .from('businesses')
+        .insert([{
+          name: businessData.name,
+          address: businessData.address,
+          description: businessData.description,
+          open_time: businessData.openingTime,
+          close_time: businessData.closingTime,
+          is_open: true,
+          user_id: 1,
+        }]);
+  
+      if (error) {
+        console.error('Error inserting data:', error.message);
+        return false;
+      }
+  
+      console.log('Data inserted successfully:', data);
+      return true;
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      return false;
+    }
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -50,20 +98,23 @@ export default function RegistrationForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validateForm()) {
-      console.log('Form submitted:', formData);
-      setSubmitted(true);
-      setFormData({
-        name: '',
-        address: '',
-        description: '',
-        phone: '',
-        openingTime: '',
-        closingTime: ''
-      });
+      const success = await insertBusiness(formData);
+      if (success) {
+        console.log('Form submitted:', formData);
+        setSubmitted(true);
+        setFormData({
+          name: '',
+          address: '',
+          description: '',
+          phone: '',
+          openingTime: '',
+          closingTime: ''
+        });
+      }
     }
   };
 
