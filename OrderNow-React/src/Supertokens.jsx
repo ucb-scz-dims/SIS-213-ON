@@ -10,9 +10,7 @@ import { signUp } from "supertokens-web-js/recipe/emailpassword";
 export function SuperTokensConfig(){
     SuperTokens.init({
         appInfo: {
-            apiDomain: "http://localhost:3001",// este dominio debe contener la ruta donde se ejecutara el backend
-                                               // deveria definirse un deployer independiente al deployer del front
-            
+            apiDomain: import.meta.env.VITE_BACKEND_ST,
             apiBasePath: "/auth",
             appName: "OrderNow",
         },

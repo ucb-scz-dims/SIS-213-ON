@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const supertokens = require("supertokens-node");
 const Session = require("supertokens-node/recipe/session");
 const EmailPassword = require("supertokens-node/recipe/emailpassword");
@@ -10,14 +12,13 @@ const { middleware, errorHandler } = require("supertokens-node/framework/express
 supertokens.init({
     framework: "express",
     supertokens: {
-        connectionURI: "https://st-dev-4becb8e0-0546-11f0-9c21-311d8840c7c1.aws.supertokens.io",
-        apiKey: "PaqML7h7LMxiijTM7ZedJJZddf"
+        connectionURI: process.env.CONECTION_URI_ST,
+        apiKey: process.env.API_KEY_ST 
     },
     appInfo: {
         appName: "OrderNow",
-        apiDomain: "http://localhost:3001", // este dominio debe contener la ruta donde se ejecutara el backend
-                                            // deveria definirse un deployer independiente al deployer del front 
-        websiteDomain: "https://ordernowapp-sis213.netlify.app/",
+        apiDomain: process.env.BACKEND_ST,
+        websiteDomain: process.env.FRONTEND,
         apiBasePath: "/auth",
         websiteBasePath: "/auth",
     },
@@ -31,18 +32,26 @@ const app = express();
 
 app.use(
     cors({
-        origin: "https://ordernowapp-sis213.netlify.app/",
+        origin: process.env.FRONTEND,
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
         credentials: true,
     })
 );
 
+// 🔹 Ruta básica para verificar que el backend está vivo
+app.get("/", (req, res) => {
+    res.send("✅ Backend OrderNow activo y corriendo en Render");
+});
+
 app.use(middleware());
 
-// -------- APIs -------- //
-
-// -------- en este apartado se pueden manejar apis en relacion a las sesiones -------- //
+// Aquí puedes manejar tus APIs relacionadas a sesiones, etc.
 
 app.use(errorHandler());
 
-app.listen(3001, () => console.log("Backend corriendo en http://localhost:3001"));
+// Usa el puerto que Render asigna o 3001 en local
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+    console.log(`✅ Backend corriendo en el puerto ${PORT}`);
+    console.log(`🌍 En producción visita: ${process.env.BACKEND_ST}`);
+});
