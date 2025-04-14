@@ -13,6 +13,7 @@ import RegisterPage from "./pages/RegisterPage";
 import Checkout from "./pages/Checkout";
 import { CartProvider } from "./context/CartContext";
 
+
 const App = () => {
   return (
     <CartProvider>
@@ -27,7 +28,7 @@ const App = () => {
             <Route path="/auth/signIn" element={<LoginPage />} />
             <Route path="/auth/signUp" element={<RegisterPage />} />
             <Route path="/cart/test" element={<Cart />}></Route>
-            <Route path="/checkout" element={<Checkout></Checkout>}/>
+            <Route path="/checkout" element={<VerifySesion><Checkout/></VerifySesion>}/>
           </Routes>
         </Layout>
       </Router>
