@@ -108,7 +108,7 @@ export async function signInClicked(email, password) {
         } else if (response.status === "SIGN_IN_NOT_ALLOWED") {
             window.alert(response.reason)
         } else {
-            id = true;
+            return true;
         }
         return false;
     } catch (err) {
