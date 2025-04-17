@@ -37,17 +37,16 @@ export async function sesionExist() {
 export async function getUserId() {
     try{
         if(await sesionExist()) return await Session.getUserId;
-        return "";
+        return null;
     }catch(e){
         window.alert("error consumiendo userId de st.");
         console.log(e);
-        return "";
+        return null;
     }
 }
 
 export async function signUpClicked(email, password) {
     try {
-        let id = "";
         let response = await signUp({
             formFields: [
                 { id: "email", value: email },
@@ -73,23 +72,22 @@ export async function signUpClicked(email, password) {
             window.alert("correo ya registrado.");
         } 
         else {
-            id = response.user.id;
+            return response.user.id;
         }
-        return id;
+        return null;
     } catch (err) {
         if (err.isSuperTokensGeneralError === true) {
             window.alert(err.message);
         } else {
             window.alert("error registrando en st.");
         }
-        return "";
+        return null;
     }
 }
 
 
 export async function signInClicked(email, password) {
-    try {
-        let id = "";
+    try{
         let response = await signIn({
             formFields: [{
                 id: "email",
@@ -110,16 +108,16 @@ export async function signInClicked(email, password) {
         } else if (response.status === "SIGN_IN_NOT_ALLOWED") {
             window.alert(response.reason)
         } else {
-            id = response.user.id;
+            id = true;
         }
-        return id;
+        return false;
     } catch (err) {
         if (err.isSuperTokensGeneralError === true) {
             window.alert(err.message);
         } else {
             window.alert("error iniciando sesion en st.");
         }
-        return "";
+        return false;
     }
 }
 
