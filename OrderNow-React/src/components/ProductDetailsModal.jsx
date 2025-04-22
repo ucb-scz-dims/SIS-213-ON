@@ -1,30 +1,52 @@
-import React, { useState } from 'react';
-import { useCartDispatch } from '../context/CartContext.jsx';
-
+import React, { useState } from "react";
+import { useCartDispatch } from "../context/CartContext.jsx";
+import { useCart } from "../context/CartContext";
 
 const ProductDetailsModal = ({ product, closeModal }) => {
-
+  const products = useCart();
   const [quantity, setQuantity] = useState(1);
   const dispatch = useCartDispatch();
 
-  const increment = () => setQuantity(prev => prev + 1);
+  const increment = () => setQuantity((prev) => prev + 1);
   const decrement = () => {
-    if (quantity > 1) setQuantity(prev => prev - 1);
+    if (quantity > 1) setQuantity((prev) => prev - 1);
   };
 
   const handleAccept = () => {
     {
-      dispatch({
-          type: 'added',
+      if (products != null) {
+        const existingProduct = products.find((p) => p.id === product.id);
+        if (existingProduct) {
+          dispatch({
+            type: "changed",
+            product: {
+              ...existingProduct,
+              quantity: existingProduct.quantity + quantity,
+            },
+          });
+        } else {
+          dispatch({
+            type: "added",
+            id: product.id,
+            srcImage: product.image_url,
+            title: product.name,
+            description: product.description,
+            price: product.price,
+            quantity: quantity,
+          });
+        }
+      } else {
+        dispatch({
+          type: "added",
           id: product.id,
           srcImage: product.image_url,
           title: product.name,
           description: product.description,
           price: product.price,
           quantity: quantity,
-      }); 
+        });
       }
-    console.log("Producto seleccionado:", product, "Cantidad:", quantity);
+    }
     closeModal();
   };
 
@@ -39,7 +61,7 @@ const ProductDetailsModal = ({ product, closeModal }) => {
           onClick={closeModal}
           className="absolute top-1 right-3 text-gray-600 hover:text-gray-800"
         >
-        X
+          X
         </button>
         {product.image_url && product.image_url !== "NA" ? (
           <img
@@ -52,7 +74,9 @@ const ProductDetailsModal = ({ product, closeModal }) => {
         )}
         <h3 className="text-xl font-bold mb-2">{product.name}</h3>
         <p className="text-gray-600 mb-4">{product.description}</p>
-        <p className="text-lg font-bold text-gray-800 mb-4">Bs {product.price}</p>
+        <p className="text-lg font-bold text-gray-800 mb-4">
+          Bs {product.price}
+        </p>
         <div className="flex items-center justify-center mb-4">
           <button
             onClick={decrement}

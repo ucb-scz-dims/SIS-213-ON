@@ -6,6 +6,8 @@ import IconInfo from '../components/IconInfo';
 import Modal from '../components/information/InfoRestaurante';
 import Rating from '../components/atoms/Rating';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from "../context/CartContext";
+import { useContext } from "react";
 
 function Business() {
   const { id } = useParams();
@@ -15,6 +17,8 @@ function Business() {
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const products = useCart();
   
   useEffect(() => {
     const fetchBusiness = async () => {
@@ -60,6 +64,7 @@ function Business() {
   const handleClick = () => {
     navigate(`/restaurante/${id}/cart`);
   }
+  const getQuantity = products.reduce((acc, product) => acc + /*product.quantity*/1, 0);
 
   return (
     <main className="max-w-6xl mx-auto px-4 pt-24 pb-8">
@@ -95,7 +100,7 @@ function Business() {
 
       <section className="mb-12">
       <button>
-      <h2 className="text-xl font-bold mb-6 text-gray-800 cursor-pointer"  onClick={handleClick}>Carrito</h2>
+      <h2 className="text-xl font-bold mb-6 text-gray-800 cursor-pointer" onClick={handleClick}>Productos en el carrito: {getQuantity}</h2>
       </button>
       <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
       <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
