@@ -94,9 +94,9 @@ function Business() {
       </div>
 
       <section className="mb-12">
-      <i class="fa-solid fa-cart-shopping">
-        <h2 className="text-xl font-bold mb-6 text-gray-800"  onClick={handleClick}>Carrito</h2>
-      </i>
+      <button>
+      <h2 className="text-xl font-bold mb-6 text-gray-800 cursor-pointer"  onClick={handleClick}>Carrito</h2>
+      </button>
       <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
       <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
       </section>
