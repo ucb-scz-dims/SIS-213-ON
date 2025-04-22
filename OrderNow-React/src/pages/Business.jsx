@@ -5,12 +5,14 @@ import ProductsList from '../components/ProductList';
 import IconInfo from '../components/IconInfo';
 import Modal from '../components/information/InfoRestaurante';
 import Rating from '../components/atoms/Rating';
+import { useNavigate } from 'react-router-dom';
 
 function Business() {
   const { id } = useParams();
   const supaBaseCom = getSupaBaseClient('com');
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   
@@ -55,6 +57,10 @@ function Business() {
   const withinOperatingHours = (currentMinutes >= openingMinutes) && (currentMinutes < closingMinutes);
   const isActuallyOpen = is_open && withinOperatingHours;
 
+  const handleClick = () => {
+    navigate(`/restaurante/${id}/cart`);
+  }
+
   return (
     <main className="max-w-6xl mx-auto px-4 pt-24 pb-8">
       {/* TODO: Se puede cambiar por un componente de advertencia */}
@@ -88,8 +94,11 @@ function Business() {
       </div>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
-        <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
+      <i class="fa-solid fa-cart-shopping">
+        <h2 className="text-xl font-bold mb-6 text-gray-800"  onClick={handleClick}>Carrito</h2>
+      </i>
+      <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
+      <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
       </section>
       <Modal 
         isOpen={isModalOpen} 

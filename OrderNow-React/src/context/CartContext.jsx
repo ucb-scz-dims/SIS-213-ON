@@ -1,12 +1,11 @@
 import { createContext, useContext, useReducer } from "react";
-import fakeProducts from "../fakeData/mockCart.json";
 
 const CartContext = createContext(null);
 
 const CartDispatchContext = createContext(null);
 
 export function CartProvider({ children }) {
-  const [cartList, dispatch] = useReducer(cartReducer, fakeProducts);
+  const [cartList, dispatch] = useReducer(cartReducer, new Array(0));
 
   return (
     <CartContext.Provider value={cartList}>

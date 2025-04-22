@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { useCartDispatch } from '../context/CartContext.jsx';
+
 
 const ProductDetailsModal = ({ product, closeModal }) => {
 
   const [quantity, setQuantity] = useState(1);
+  const dispatch = useCartDispatch();
 
   const increment = () => setQuantity(prev => prev + 1);
   const decrement = () => {
@@ -10,7 +13,17 @@ const ProductDetailsModal = ({ product, closeModal }) => {
   };
 
   const handleAccept = () => {
-    // TODO: Aqui se tiene que manejar la logica para mandar el producto al carrito
+    {
+      dispatch({
+          type: 'added',
+          id: product.id,
+          srcImage: product.image_url,
+          title: product.name,
+          description: product.description,
+          price: product.price,
+          quantity: quantity,
+      }); 
+      }
     console.log("Producto seleccionado:", product, "Cantidad:", quantity);
     closeModal();
   };

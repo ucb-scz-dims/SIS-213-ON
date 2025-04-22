@@ -4,7 +4,6 @@ import { SuperTokensConfig } from './Supertokens.jsx'
 import App from './App.jsx'
 import './index.css'
 
-SuperTokensConfig();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
