@@ -1,19 +1,28 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useReducer, useState } from "react";
 
 const CartContext = createContext(null);
 
 const CartDispatchContext = createContext(null);
 
+export const RestaurantContext = createContext(null);
+
 export function CartProvider({ children }) {
   const [cartList, dispatch] = useReducer(cartReducer, new Array(0));
+  const [restaurantId, setRestaurantId] = useState(null);
 
   return (
-    <CartContext.Provider value={cartList}>
-      <CartDispatchContext.Provider value={dispatch}>
-        {children}
-      </CartDispatchContext.Provider>
-    </CartContext.Provider>
+    <RestaurantContext.Provider value={{ restaurantId, setRestaurantId }}>
+      <CartContext.Provider value={cartList}>
+        <CartDispatchContext.Provider value={dispatch}>
+          {children}
+        </CartDispatchContext.Provider>
+      </CartContext.Provider>
+    </RestaurantContext.Provider>
   );
+}
+
+export function useRestaurant() {
+  return useContext(RestaurantContext);
 }
 
 export function useCart() {
@@ -50,6 +59,9 @@ function cartReducer(products, action) {
     }
     case "deleted": {
       return products.filter((t) => t.id !== action.id);
+    }
+    case "reset": {
+      return new Array(0);
     }
     default: {
       throw Error("Unknown action: " + action.type);

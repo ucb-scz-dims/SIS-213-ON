@@ -1,39 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import getSupaBaseClient from '../supabase-client';
-import ProductsList from '../components/ProductList';
-import IconInfo from '../components/IconInfo';
-import Modal from '../components/information/InfoRestaurante';
-import Rating from '../components/atoms/Rating';
-import { useNavigate } from 'react-router-dom';
-import { useCart } from "../context/CartContext";
-import { useContext } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import getSupaBaseClient from "../supabase-client";
+import ProductsList from "../components/ProductList";
+import IconInfo from "../components/IconInfo";
+import Modal from "../components/information/InfoRestaurante";
+import Rating from "../components/atoms/Rating";
+import { useRestaurant } from "../context/CartContext";
 
 function Business() {
   const { id } = useParams();
-  const supaBaseCom = getSupaBaseClient('com');
+  const { setRestaurantId } = useRestaurant();
+  const supaBaseCom = getSupaBaseClient("com");
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const products = useCart();
-  
   useEffect(() => {
+    setRestaurantId(id);
     const fetchBusiness = async () => {
       const { data, error } = await supaBaseCom
-        .from('businesses')
-        .select('*')
-        .eq('id', id)
+        .from("businesses")
+        .select("*")
+        .eq("id", id)
         .single();
 
-        if (error) {
-          console.error('Error al obtener el negocio:', error.message);
-          alert('Error al obtener los datos del negocio.');
-          setLoading(false);
-          return;
-        }
+      if (error) {
+        console.error("Error al obtener el negocio:", error.message);
+        alert("Error al obtener los datos del negocio.");
+        setLoading(false);
+        return;
+      }
       setBusiness(data);
       setLoading(false);
     };
@@ -41,14 +38,17 @@ function Business() {
     fetchBusiness();
   }, [id, supaBaseCom]);
 
-  if (loading) return <div className="pt-24 text-center">Cargando detalles...</div>;
-  if (!business) return <div className="pt-24 text-center">No se encontró el negocio.</div>;
+  if (loading)
+    return <div className="pt-24 text-center">Cargando detalles...</div>;
+  if (!business)
+    return <div className="pt-24 text-center">No se encontró el negocio.</div>;
 
-  const { name, description, address, is_open, open_time, close_time, rating } = business;
+  const { name, description, address, is_open, open_time, close_time, rating } =
+    business;
 
   const timeToMinutes = (timeStr) => {
     if (!timeStr) return 0;
-    const [hours, minutes] = timeStr.split(':').map(Number);
+    const [hours, minutes] = timeStr.split(":").map(Number);
     return hours * 60 + minutes;
   };
 
@@ -58,13 +58,9 @@ function Business() {
   const openingMinutes = timeToMinutes(open_time);
   const closingMinutes = timeToMinutes(close_time);
 
-  const withinOperatingHours = (currentMinutes >= openingMinutes) && (currentMinutes < closingMinutes);
+  const withinOperatingHours =
+    currentMinutes >= openingMinutes && currentMinutes < closingMinutes;
   const isActuallyOpen = is_open && withinOperatingHours;
-
-  const handleClick = () => {
-    navigate(`/restaurante/${id}/cart`);
-  }
-  const getQuantity = products.reduce((acc, product) => acc + /*product.quantity*/1, 0);
 
   return (
     <main className="max-w-6xl mx-auto px-4 pt-24 pb-8">
@@ -77,7 +73,7 @@ function Business() {
 
       <div
         className={`bg-white rounded-lg shadow-md p-6 mb-8 transition-all ${
-          isActuallyOpen ? '' : 'opacity-50 grayscale'
+          isActuallyOpen ? "" : "opacity-50 grayscale"
         }`}
       >
         <div className="flex items-center gap-6">
@@ -92,26 +88,18 @@ function Business() {
               Horario: {open_time} - {close_time}
             </p>
           </div>
-          <div  className="cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors">
-              <IconInfo onClick={() => setIsModalOpen(true)} />
+          <div className="cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors">
+            <IconInfo onClick={() => setIsModalOpen(true)} />
           </div>
         </div>
       </div>
 
       <section className="mb-12">
-      <button>
-      <h2 className="text-xl font-bold mb-6 text-gray-800 cursor-pointer" onClick={handleClick}>Productos en el carrito: {getQuantity}</h2>
-      </button>
-      <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
-      <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
+        <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
+        <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
       </section>
-      <Modal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </main>
-
-    
   );
 }
 
