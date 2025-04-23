@@ -48,27 +48,33 @@ const OrdersDashboard = () => {
             id,
             name,
             last_name
+            `);
+      const { data: detailData, error: detailError } = await ordersupabase
+          .from("order_details")
+          .select(`
+            id, 
+            quantity,
+            product_id,
+            order_id
             `)
   
       if (ordersError || usersError || consumerError) {
-        console.error("Error fetching data:", ordersError || usersError);
-      } 
-      
-      else {
-        const enrichedOrders = ordersData.map(order => {
-          const consumer = consumerData.find(c => c.id === order.consumer_id);
-          const user = consumer ? usersData.find(u => u.id === consumer.user_id) : null;
-        
-          return {
-            ...order,
-            consumer_name: user ? `${user.name} ${user.last_name}` : "Desconocido",
-            status: order.state_types?.name || "Desconocido"
-          };
-        });
-        
-  
-        setOrders(enrichedOrders);
+        return console.error("Error fetching data:", ordersError || usersError);
       }
+      
+      const enrichedOrders = ordersData.map(order => {
+        const consumer = consumerData.find(c => c.id === order.consumer_id);
+        const user = consumer ? usersData.find(u => u.id === consumer.user_id) : null;
+        
+        return {
+          ...order,
+          consumer_name: user ? `${user.name} ${user.last_name}` : "Desconocido",
+          status: order.state_types?.name || "Desconocido"
+        };
+      });     
+  
+      setOrders(enrichedOrders);
+
   
       setLoading(false);
     };
