@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { getSupaBaseClient } from "../supabaseClient";
 import { formatDate } from "../utils/formatDate";
 import OrderDetail from '../components/order-detail/OrderDetail'
 import getSupaBaseClient from "../supabase/supabase-client";
 import { ORDER_STATUS } from "../config/order-status";
 import ConfirmationModal from "../components/confirmation-modal/ConfirmationModal";
+import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient";
 
-const supaBaseCom = getSupaBaseClient('com');
+const supaBase = getSupaBaseClient();
 
 const OrdersDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -36,7 +36,8 @@ const OrdersDashboard = () => {
     if(!selectedOrderId || !confirmAction)
         return;
 
-    const { error } = await supaBaseCom
+    const { error } = await supaBase
+      .schema("com")
       .from('orders')
       .update({ state_type_id: confirmAction})
       .eq('id', selectedOrderId)
@@ -52,7 +53,8 @@ const OrdersDashboard = () => {
    
   useEffect(() => {
     const fetchOrders = async () => {
-      const { data: ordersData, error: ordersError } = await ordersupabase
+      const { data: ordersData, error: ordersError } = await supaBase
+        .schema("com")
         .from("orders")
         .select(`
           id,
@@ -64,29 +66,23 @@ const OrdersDashboard = () => {
           state_types ( name )
         `);
 
-      const { data: consumerData, error: consumerError } = await ordersupabase
+      const { data: consumerData, error: consumerError } = await supaBase
+        .schema("com")
         .from("consumers")
         .select(`
           id,
           user_id
         `);
 
-      const { data: usersData, error: usersError } = await usersupabase
+      const { data: usersData, error: usersError } = await supaBase
+          .schema("sec")
           .from("users")
           .select(`
             id,
             name,
             last_name
             `);
-      const { data: detailData, error: detailError } = await ordersupabase
-          .from("order_details")
-          .select(`
-            id, 
-            quantity,
-            product_id,
-            order_id
-            `)
-  
+
       if (ordersError || usersError || consumerError) {
         return console.error("Error fetching data:", ordersError || usersError);
       }
@@ -103,8 +99,6 @@ const OrdersDashboard = () => {
       });     
   
       setOrders(enrichedOrders);
-
-  
       setLoading(false);
     };
   
@@ -151,7 +145,6 @@ const OrdersDashboard = () => {
                   </div>
                   <div className="w-24">{order.status}</div>
 
-                  {/* TODO: Cambiar el parametro del la funcion "openConfirmationModal" por el verdadero Id cuando se consulte a la BD */}
                   {order.state_type_id == ORDER_STATUS.PENDING ? (<div className="w-24 flex space-x-2">
                     <button className="text-green-600 hover:underline" onClick={() => openConfirmationModal(order.id, ORDER_STATUS.ACCEPTED)}>
                       Aceptar
