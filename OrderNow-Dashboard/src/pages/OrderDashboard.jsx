@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import mockOrders from "../fakeData/mockOrders.json";
+import { getSupaBaseClient } from "../supabaseClient";
 import { formatDate } from "../utils/formatDate";
 import OrderDetail from '../components/order-detail/OrderDetail'
 import getSupaBaseClient from "../supabase/supabase-client";
@@ -51,24 +51,66 @@ const OrdersDashboard = () => {
   }
    
   useEffect(() => {
-    setOrders(mockOrders);
-    setLoading(false);
-  }, []);
+    const fetchOrders = async () => {
+      const { data: ordersData, error: ordersError } = await ordersupabase
+        .from("orders")
+        .select(`
+          id,
+          date,
+          address,
+          total_price,
+          consumer_id,
+          state_type_id,
+          state_types ( name )
+        `);
 
-  const getStatusText = (id) => {
-    switch (id) {
-      case 1:
-        return "Pendiente";
-      case 2:
-        return "En camino";
-      case 3:
-        return "Entregado";
-      case 4:
-        return "Cancelado";
-      default:
-        return "Desconocido";
-    }
-  };
+      const { data: consumerData, error: consumerError } = await ordersupabase
+        .from("consumers")
+        .select(`
+          id,
+          user_id
+        `);
+
+      const { data: usersData, error: usersError } = await usersupabase
+          .from("users")
+          .select(`
+            id,
+            name,
+            last_name
+            `);
+      const { data: detailData, error: detailError } = await ordersupabase
+          .from("order_details")
+          .select(`
+            id, 
+            quantity,
+            product_id,
+            order_id
+            `)
+  
+      if (ordersError || usersError || consumerError) {
+        return console.error("Error fetching data:", ordersError || usersError);
+      }
+      
+      const enrichedOrders = ordersData.map(order => {
+        const consumer = consumerData.find(c => c.id === order.consumer_id);
+        const user = consumer ? usersData.find(u => u.id === consumer.user_id) : null;
+        
+        return {
+          ...order,
+          consumer_name: user ? `${user.name} ${user.last_name}` : "Desconocido",
+          status: order.state_types?.name || "Desconocido"
+        };
+      });     
+  
+      setOrders(enrichedOrders);
+
+  
+      setLoading(false);
+    };
+  
+    fetchOrders();
+  }, []);
+  
 
   return (
     <>
@@ -107,16 +149,14 @@ const OrdersDashboard = () => {
                   <div className="w-20 font-medium text-green-700 text-right">
                     Bs. {order.total_price.toFixed(2)}
                   </div>
-                  <div className="w-24">
-                    {getStatusText(order.state_type_id)}
-                  </div>
+                  <div className="w-24">{order.status}</div>
 
                   {/* TODO: Cambiar el parametro del la funcion "openConfirmationModal" por el verdadero Id cuando se consulte a la BD */}
                   {order.state_type_id == ORDER_STATUS.PENDING ? (<div className="w-24 flex space-x-2">
-                    <button className="text-green-600 hover:underline" onClick={() => openConfirmationModal(1, ORDER_STATUS.ACCEPTED)}>
+                    <button className="text-green-600 hover:underline" onClick={() => openConfirmationModal(order.id, ORDER_STATUS.ACCEPTED)}>
                       Aceptar
                     </button>
-                    <button className="text-red-600 hover:underline" onClick={() => openConfirmationModal(1, ORDER_STATUS.CANCELED)}>
+                    <button className="text-red-600 hover:underline" onClick={() => openConfirmationModal(order.id, ORDER_STATUS.CANCELED)}>
                       Rechazar
                     </button>
                   </div>) : ( <div className="w-24 flex space-x-2">
@@ -129,10 +169,9 @@ const OrdersDashboard = () => {
                   </div>)}
 
                   <div className="w-24 flex space-x-2">
-                    <button className="text-gray-500 hover:underline" onClick={() => openDetailModal(1)}>
+                    <button className="text-gray-500 hover:underline" onClick={() => openDetailModal(order.id)}>
                       Ver detalle
                     </button>
-    
                   </div>
                 </div>
               ))}
