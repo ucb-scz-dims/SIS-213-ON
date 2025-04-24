@@ -3,29 +3,51 @@ import mockOrders from "../fakeData/mockOrders.json";
 import { formatDate } from "../utils/formatDate";
 import OrderDetail from '../components/order-detail/OrderDetail'
 import getSupaBaseClient from "../supabase/supabase-client";
+import { ORDER_STATUS } from "../config/order-status";
+import ConfirmationModal from "../components/confirmation-modal/ConfirmationModal";
 
 const supaBaseCom = getSupaBaseClient('com');
 
 const OrdersDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isDetailModalOpen, setDetailModalOpen] = useState(false);
 
-  const closeModal = () => setModalOpen(false);
-  const openModal = () => setModalOpen(true);
+  const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
 
-  const handleOrderStatusChange = async (orderId, newStatusId) => {
+  const closeDetailModal = () => setDetailModalOpen(false);
+  const closeConfirmationModal = () => setConfirmationModalOpen(false);
+
+  const openDetailModal = (orderId) => {
+    setSelectedOrderId(orderId);
+    setDetailModalOpen(true);
+  }
+
+  const openConfirmationModal = (orderId, newStatusId) => {
+    setSelectedOrderId(orderId);
+    setConfirmAction(newStatusId);
+    setConfirmationModalOpen(true);
+  }
+
+  const handleOrderStatusChange = async () => {
+
+    if(!selectedOrderId || !confirmAction)
+        return;
+
     const { error } = await supaBaseCom
       .from('orders')
-      .update({ state_type_id: newStatusId})
-      .eq('id', orderId)
+      .update({ state_type_id: confirmAction})
+      .eq('id', selectedOrderId)
 
     if(error) {
-      alert(error.message);
+      alert("Error al actualizar el estado. Intentalo otra vez.");
+      console.log(error.message);
       return;
     }
 
-    closeModal();
+    closeConfirmationModal();
   }
    
   useEffect(() => {
@@ -88,17 +110,26 @@ const OrdersDashboard = () => {
                   <div className="w-24">
                     {getStatusText(order.state_type_id)}
                   </div>
-                  <div className="w-24 flex space-x-2">
-                    <button className="text-green-600 hover:underline">
+
+                  {/* TODO: Cambiar el parametro del la funcion "openConfirmationModal" por el verdadero Id cuando se consulte a la BD */}
+                  {order.state_type_id == ORDER_STATUS.PENDING ? (<div className="w-24 flex space-x-2">
+                    <button className="text-green-600 hover:underline" onClick={() => openConfirmationModal(1, ORDER_STATUS.ACCEPTED)}>
                       Aceptar
                     </button>
-                    <button className="text-red-600 hover:underline">
+                    <button className="text-red-600 hover:underline" onClick={() => openConfirmationModal(1, ORDER_STATUS.CANCELED)}>
                       Rechazar
                     </button>
-                  </div>
+                  </div>) : ( <div className="w-24 flex space-x-2">
+                    <button className="text-gray-400">
+                      Aceptar
+                    </button>
+                    <button className="text-gray-400">
+                      Rechazar
+                    </button>
+                  </div>)}
 
                   <div className="w-24 flex space-x-2">
-                    <button className="text-gray-500 hover:underline" onClick={openModal}>
+                    <button className="text-gray-500 hover:underline" onClick={() => openDetailModal(1)}>
                       Ver detalle
                     </button>
     
@@ -110,13 +141,27 @@ const OrdersDashboard = () => {
         </div>
       </div>
 
-      {isModalOpen && (
+      {isDetailModalOpen && selectedOrderId && (
         <OrderDetail 
-          orderId={1} 
-          closeModal={closeModal}
-          onStatusChange={handleOrderStatusChange}
+          orderId={selectedOrderId} 
+          onClose={closeDetailModal}
+          onRequestAction={openConfirmationModal}
         />
       )}
+
+
+      {isConfirmationModalOpen && selectedOrderId && (
+        <ConfirmationModal
+          title="Confirmar"
+          message="Está seguro de realizar esta acción?"
+          cancelText="Cancelar"
+          confirmText="Confirmar"
+          onClose={closeConfirmationModal}
+          onConfirm={handleOrderStatusChange}
+        />
+      )
+
+      }
     </>
   );
 };

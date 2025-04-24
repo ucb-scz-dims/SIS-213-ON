@@ -3,5 +3,6 @@ export const ORDER_STATUS = {
     ON_THE_WAY: 2,
     DELIVERED: 3,
     CANCELED: 4,
-    PREPARING: 5
+    PREPARING: 5,
+    ACCEPTED: 6
 };

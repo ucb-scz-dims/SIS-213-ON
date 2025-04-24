@@ -6,11 +6,11 @@ import { ORDER_STATUS } from "../../config/order-status";
 
 const supaBaseCom = getSupaBaseClient("com");
 
-function OrderDetail({ orderId, closeModal, onStatusChange }) {
+function OrderDetail({ orderId, onClose, onRequestAction }) {
   const [orderDetail, setOrderDetail] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   let content;
 
   useEffect(() => {
@@ -49,6 +49,7 @@ function OrderDetail({ orderId, closeModal, onStatusChange }) {
       .select(
         `
           total_price,
+          state_type_id,
           order_details(
             id,
             products(
@@ -87,7 +88,7 @@ function OrderDetail({ orderId, closeModal, onStatusChange }) {
               <button
                 type="button"
                 className="inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200"
-                onClick={() => closeModal()}
+                onClick={() => onClose()}
               >
                 <CloseIcon />
               </button>
@@ -102,20 +103,30 @@ function OrderDetail({ orderId, closeModal, onStatusChange }) {
             </div>
 
             <div className="flex justify-end items-center gap-x-2 py-3 px-4 border-t h-[10%]">
-              <button
-                type="button"
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50"
-                onClick={() => onStatusChange(orderId, ORDER_STATUS.CANCELED)}
-              >
-                Rechazar
-              </button>
-              <button
-                type="button"
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700"
-                onClick={() => onStatusChange(orderId, ORDER_STATUS.PREPARING)}
-              >
-                Aceptar
-              </button>
+              {orderDetail.state_type_id == ORDER_STATUS.PENDING && (
+                <>
+                  <button
+                    type="button"
+                    className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50"
+                    onClick={() => {
+                      onRequestAction(orderId, ORDER_STATUS.CANCELED);
+                      onClose();
+                    }}
+                  >
+                    Rechazar
+                  </button>
+                  <button
+                    type="button"
+                    className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700"
+                    onClick={() => {
+                      onRequestAction(orderId, ORDER_STATUS.ACCEPTED);
+                      onClose();
+                    }}
+                  >
+                    Aceptar
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
