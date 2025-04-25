@@ -12,7 +12,7 @@ const Checkout = () => {
   const servicePrice = 0.5;
   const sendPrice = 4.5;
   const totalcarrito = products.reduce( (sum, { price, quantity }) => sum + price * quantity, 0);
-  const totalPrice = ".Bs" + (totalcarrito + sendPrice + servicePrice).toFixed(2);
+  const totalPrice = "Bs. " + (totalcarrito + sendPrice + servicePrice).toFixed(2);
 
   const opcionesDireccion = ["Av. Palmar", "Universidad", "Postgrado"];
   const opcionesPago = ["Efectivo", "Tarjeta", "QR"];
@@ -70,7 +70,7 @@ const Checkout = () => {
           <hr className="my-2" />
           <div className="flex justify-between font-bold">
             <span>Total</span>
-            <span>Bs. {totalPrice}</span>
+            <span>{totalPrice}</span>
           </div>
         </div>
       </div>
