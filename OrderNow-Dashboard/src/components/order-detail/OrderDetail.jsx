@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import getSupaBaseClient from "../../supabase/supabase-client";
 import CloseIcon from "../../subcomponents/icons/CloseIcon";
 import { ORDER_STATUS } from "../../config/order-status";
+import Button from "../Button/Button"
 
 const supaBaseCom = getSupaBaseClient("com");
 
@@ -105,26 +106,23 @@ function OrderDetail({ orderId, onClose, onRequestAction }) {
             <div className="flex justify-end items-center gap-x-2 py-3 px-4 border-t h-[10%]">
               {orderDetail.state_type_id == ORDER_STATUS.PENDING && (
                 <>
-                  <button
-                    type="button"
-                    className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50"
+                  <Button
+                    text="Rechazar"
                     onClick={() => {
                       onRequestAction(orderId, ORDER_STATUS.CANCELED);
                       onClose();
                     }}
-                  >
-                    Rechazar
-                  </button>
-                  <button
-                    type="button"
-                    className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700"
+                    mainColor="gray"
+                  />
+
+                  <Button
+                    text="Aceptar"
                     onClick={() => {
                       onRequestAction(orderId, ORDER_STATUS.ACCEPTED);
                       onClose();
                     }}
-                  >
-                    Aceptar
-                  </button>
+                    mainColor="blue"
+                  />
                 </>
               )}
             </div>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { formatDate } from "../utils/formatDate";
-import OrderDetail from '../components/order-detail/OrderDetail'
+import OrderDetail from "../components/order-detail/OrderDetail";
 import getSupaBaseClient from "../supabase/supabase-client";
 import { ORDER_STATUS } from "../config/order-status";
 import ConfirmationModal from "../components/confirmation-modal/ConfirmationModal";
+import Button from "../components/Button/Button";
 
 const supaBase = getSupaBaseClient();
 
@@ -15,6 +16,8 @@ const OrdersDashboard = () => {
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
+  const [titleConfirmationModal, setTitleConfirmationModal] = useState("");
+  const [bodyConfirmationModal, setBodyConfirmationModal] = useState("");
 
   const closeDetailModal = () => setDetailModalOpen(false);
   const closeConfirmationModal = () => setConfirmationModalOpen(false);
@@ -22,26 +25,32 @@ const OrdersDashboard = () => {
   const openDetailModal = (orderId) => {
     setSelectedOrderId(orderId);
     setDetailModalOpen(true);
-  }
+  };
 
   const openConfirmationModal = (orderId, newStatusId) => {
+    if (newStatusId == ORDER_STATUS.CANCELED) {
+      setTitleConfirmationModal("Rechazar pedido");
+      setBodyConfirmationModal("¿Estás seguro de rechazar el pedido?");      
+    } else {
+      setTitleConfirmationModal("Aceptar pedido");
+      setBodyConfirmationModal("¿Estás seguro de aceptar el pedido?");      
+    }
+
     setSelectedOrderId(orderId);
     setConfirmAction(newStatusId);
     setConfirmationModalOpen(true);
-  }
+  };
 
   const handleOrderStatusChange = async () => {
-
-    if(!selectedOrderId || !confirmAction)
-        return;
+    if (!selectedOrderId || !confirmAction) return;
 
     const { error } = await supaBase
       .schema("com")
-      .from('orders')
-      .update({ state_type_id: confirmAction})
-      .eq('id', selectedOrderId)
+      .from("orders")
+      .update({ state_type_id: confirmAction })
+      .eq("id", selectedOrderId);
 
-    if(error) {
+    if (error) {
       alert("Error al actualizar el estado. Intentalo otra vez.");
       console.log(error.message);
       return;
@@ -49,13 +58,12 @@ const OrdersDashboard = () => {
 
     await fetchOrders();
     closeConfirmationModal();
-  }
+  };
 
   const fetchOrders = async () => {
     const { data: ordersData, error: ordersError } = await supaBase
       .schema("com")
-      .from("orders")
-      .select(`
+      .from("orders").select(`
         id,
         date,
         address,
@@ -67,16 +75,14 @@ const OrdersDashboard = () => {
 
     const { data: consumerData, error: consumerError } = await supaBase
       .schema("com")
-      .from("consumers")
-      .select(`
+      .from("consumers").select(`
         id,
         user_id
       `);
 
     const { data: usersData, error: usersError } = await supaBase
-        .schema("sec")
-        .from("users")
-        .select(`
+      .schema("sec")
+      .from("users").select(`
           id,
           name,
           last_name
@@ -85,26 +91,27 @@ const OrdersDashboard = () => {
     if (ordersError || usersError || consumerError) {
       return console.error("Error fetching data:", ordersError || usersError);
     }
-    
-    const enrichedOrders = ordersData.map(order => {
-      const consumer = consumerData.find(c => c.id === order.consumer_id);
-      const user = consumer ? usersData.find(u => u.id === consumer.user_id) : null;
-      
+
+    const enrichedOrders = ordersData.map((order) => {
+      const consumer = consumerData.find((c) => c.id === order.consumer_id);
+      const user = consumer
+        ? usersData.find((u) => u.id === consumer.user_id)
+        : null;
+
       return {
         ...order,
         consumer_name: user ? `${user.name} ${user.last_name}` : "Desconocido",
-        status: order.state_types?.name || "Desconocido"
+        status: order.state_types?.name || "Desconocido",
       };
-    });     
+    });
 
     setOrders(enrichedOrders);
     setLoading(false);
   };
-   
+
   useEffect(() => {
     fetchOrders();
   }, []);
-  
 
   return (
     <>
@@ -132,7 +139,7 @@ const OrdersDashboard = () => {
               {orders.map((order) => (
                 <div
                   key={order.id}
-                  className="bg-white border border-gray-200 py-4 px-5 rounded-1xl shadow hover:shadow-md transition-all duration-200 flex flex-col md:grid md:grid-cols-10 items-center gap-2 md:gap-4 text-sm"
+                  className="bg-white border border-gray-200 py-4 px-5 rounded-1xl shadow hover:shadow-md transition-all duration-200 flex flex-col md:grid md:grid-cols-11 items-center gap-2 md:gap-4 text-sm"
                 >
                   <div className="w-12 font-bold text-indigo-600">
                     #{order.id}
@@ -144,27 +151,29 @@ const OrdersDashboard = () => {
                     Bs. {order.total_price.toFixed(2)}
                   </div>
                   <div className="w-24">{order.status}</div>
-
-                  {order.state_type_id == ORDER_STATUS.PENDING ? (<div className="w-24 flex space-x-2">
-                    <button className="text-green-600 hover:underline" onClick={() => openConfirmationModal(order.id, ORDER_STATUS.ACCEPTED)}>
-                      Aceptar
-                    </button>
-                    <button className="text-red-600 hover:underline" onClick={() => openConfirmationModal(order.id, ORDER_STATUS.CANCELED)}>
-                      Rechazar
-                    </button>
-                  </div>) : ( <div className="w-24 flex space-x-2">
-                    <button className="text-gray-400">
-                      Aceptar
-                    </button>
-                    <button className="text-gray-400">
-                      Rechazar
-                    </button>
-                  </div>)}
-
-                  <div className="w-24 flex space-x-2">
-                    <button className="text-gray-500 hover:underline" onClick={() => openDetailModal(order.id)}>
-                      Ver detalle
-                    </button>
+                  <div className="w-100 flex space-x-2">
+                    <Button
+                      text="Aceptar"
+                      onClick={() => {
+                        openConfirmationModal(order.id, ORDER_STATUS.ACCEPTED);
+                      }}
+                      disabled={order.state_type_id !== ORDER_STATUS.PENDING}
+                      mainColor="green"
+                    />
+                    <Button
+                      text="Rechazar"
+                      onClick={() => {
+                        openConfirmationModal(order.id, ORDER_STATUS.CANCELED);
+                      }}
+                      disabled={order.state_type_id !== ORDER_STATUS.PENDING}
+                      mainColor="red"
+                    />
+                    <Button
+                      text="Ver detalle"
+                      onClick={() => openDetailModal(order.id)}
+                      disabled={order.state_type_id !== ORDER_STATUS.PENDING}
+                      mainColor="blue"
+                    />
                   </div>
                 </div>
               ))}
@@ -174,26 +183,23 @@ const OrdersDashboard = () => {
       </div>
 
       {isDetailModalOpen && selectedOrderId && (
-        <OrderDetail 
-          orderId={selectedOrderId} 
+        <OrderDetail
+          orderId={selectedOrderId}
           onClose={closeDetailModal}
           onRequestAction={openConfirmationModal}
         />
       )}
 
-
       {isConfirmationModalOpen && selectedOrderId && (
         <ConfirmationModal
-          title="Confirmar"
-          message="Está seguro de realizar esta acción?"
+          title={titleConfirmationModal}
+          message={bodyConfirmationModal}
           cancelText="Cancelar"
           confirmText="Confirmar"
           onClose={closeConfirmationModal}
           onConfirm={handleOrderStatusChange}
         />
-      )
-
-      }
+      )}
     </>
   );
 };
