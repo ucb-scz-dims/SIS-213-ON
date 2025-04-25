@@ -3,7 +3,7 @@ import { useCartDispatch } from "../context/CartContext.jsx";
 import { useCart } from "../context/CartContext";
 
 const ProductDetailsModal = ({ product, closeModal }) => {
-  const products = useCart();
+  const cart = useCart();
   const [quantity, setQuantity] = useState(1);
   const dispatch = useCartDispatch();
 
@@ -14,29 +14,26 @@ const ProductDetailsModal = ({ product, closeModal }) => {
 
   const handleAccept = () => {
     {
-      var existingProduct = null;
-      if(products != null){
-        existingProduct = products.find((p) => p.id === product.id);
-      }
-      if (existingProduct) {
-        dispatch({
-          type: "changed",
-          product: {
-            ...existingProduct,
-            quantity: existingProduct.quantity + quantity,
-          },
-        });
-      } else {
-        dispatch({
-          type: "added",
-          id: product.id,
-          srcImage: product.image_url,
-          title: product.name,
-          description: product.description,
-          price: product.price,
-          quantity: quantity,
-        });
-      }
+      const duplicate = cart != null ? cart.find((p) => p.id === product.id) : null;
+      dispatch(
+        duplicate
+          ? {
+              type: "changed",
+              product: {
+                ...duplicate,
+                quantity: duplicate.quantity + quantity,
+              },
+            }
+          : {
+              type: "added",
+              id: product.id,
+              srcImage: product.image_url,
+              title: product.name,
+              description: product.description,
+              price: product.price,
+              quantity: quantity,
+            }
+      );
     }
     closeModal();
   };
