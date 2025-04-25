@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getSupaBaseClient } from "../supabaseClient";
 import { formatDate } from "../utils/formatDate";
-import OrderDetail from "../components/order-detail/OrderDetail";
+import OrderDetail from '../components/order-detail/OrderDetail'
+import getSupaBaseClient from "../supabase/supabase-client";
+import { ORDER_STATUS } from "../config/order-status";
+import ConfirmationModal from "../components/confirmation-modal/ConfirmationModal";
+import { Link } from 'react-router-dom'
+
+const supaBase = getSupaBaseClient();
 
 const OrdersDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -85,6 +91,8 @@ const OrdersDashboard = () => {
 
   return (
     <>
+      {/* TODO: Quitar el link cuando se tenga implementada la navegacion por la aplicacion */}
+      <Link to='/register/product'>Formulario de registro de un producto</Link>
       <div className="min-h-screen p-6 md:p-12 font-sans">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
