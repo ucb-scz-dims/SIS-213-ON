@@ -12,7 +12,7 @@ const Checkout = () => {
   const servicePrice = 0.5;
   const sendPrice = 4.5;
   const totalcarrito = products.reduce( (sum, { price, quantity }) => sum + price * quantity, 0);
-  const totalPrice = ".Bs" + (totalcarrito + sendPrice + servicePrice).toFixed(2);
+  const totalPrice = (totalcarrito + sendPrice + servicePrice).toFixed(2) + " Bs.";
 
   const opcionesDireccion = ["Av. Palmar", "Universidad", "Postgrado"];
   const opcionesPago = ["Efectivo", "Tarjeta", "QR"];
@@ -57,20 +57,20 @@ const Checkout = () => {
         <div className="text-sm space-y-1 pt-2 border-t border-gray-300">
           <div className="flex justify-between">
             <span>Productos</span>
-            <span>Bs. {totalcarrito.toFixed(2)}</span>
+            <span>{totalcarrito.toFixed(2)} Bs.</span>
           </div>
           <div className="flex justify-between">
             <span>Envío</span>
-            <span>Bs. {sendPrice}</span>
+            <span>{sendPrice} Bs.</span>
           </div>
           <div className="flex justify-between">
             <span>Servicio</span>
-            <span>Bs. {servicePrice}</span>
+            <span>{servicePrice} Bs.</span>
           </div>
           <hr className="my-2" />
           <div className="flex justify-between font-bold">
             <span>Total</span>
-            <span>Bs. {totalPrice}</span>
+            <span> {totalPrice} Bs.</span>
           </div>
         </div>
       </div>

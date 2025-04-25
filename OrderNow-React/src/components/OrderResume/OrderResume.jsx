@@ -6,7 +6,7 @@ const OrderResume = ({products = []}) => {
     return (
         <div className="overflow-x-auto transition-all duration-300 ease-in-out mt-2">
             <div className="flex justify-end mb-2">
-                <button onClick={() => navigate(`/card/test`)} className="text-blue-500 text-sm">
+                <button onClick={() => navigate(`/cart/test`)} className="text-blue-500 text-sm">
                     Editar productos
                 </button>
             </div>
