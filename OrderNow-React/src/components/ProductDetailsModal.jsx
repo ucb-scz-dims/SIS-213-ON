@@ -14,27 +14,18 @@ const ProductDetailsModal = ({ product, closeModal }) => {
 
   const handleAccept = () => {
     {
-      if (products != null) {
-        const existingProduct = products.find((p) => p.id === product.id);
-        if (existingProduct) {
-          dispatch({
-            type: "changed",
-            product: {
-              ...existingProduct,
-              quantity: existingProduct.quantity + quantity,
-            },
-          });
-        } else {
-          dispatch({
-            type: "added",
-            id: product.id,
-            srcImage: product.image_url,
-            title: product.name,
-            description: product.description,
-            price: product.price,
-            quantity: quantity,
-          });
-        }
+      var existingProduct = null;
+      if(products != null){
+        existingProduct = products.find((p) => p.id === product.id);
+      }
+      if (existingProduct) {
+        dispatch({
+          type: "changed",
+          product: {
+            ...existingProduct,
+            quantity: existingProduct.quantity + quantity,
+          },
+        });
       } else {
         dispatch({
           type: "added",

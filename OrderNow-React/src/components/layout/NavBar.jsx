@@ -11,7 +11,7 @@ const NavBar = () => {
   const { restaurantId } = useRestaurant();
   const products = useCart();
   const getQuantity = products.reduce(
-    (acc, product) => acc + /*product.quantity*/ 1,
+    (acc, product) => acc + 1,
     0
   );
 
@@ -21,7 +21,7 @@ const NavBar = () => {
     navigate(`/restaurante/${restaurantId}/cart`);
   };
 
-  const showCart = getQuantity > 0; // Example condition to show the cart link
+  const showCart = getQuantity > 0;
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 fixed top-0 left-0 w-full">
@@ -46,7 +46,7 @@ const NavBar = () => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="h-8 w-8 text-white"
+                  class="h-8 w-8 text-black dark:text-white"
                 >
                   <path
                     stroke-linecap="round"
