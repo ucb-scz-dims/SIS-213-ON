@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Rating from './atoms/Rating';
 
-const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas, minimum_order_amount }) => {
+const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas, minimum_order_amount, delivery_time_min, delivery_time_max }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -20,9 +20,17 @@ const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas, minim
           <h2 className="text-xl font-bold">{nombre}</h2>
           <p className="text-sm text-gray-500">{descripcion}</p>
           <Rating rating={estrellas || null} />
+          <div className="flex items-center space-x-4 mt-2">
+            {minimum_order_amount && (
+              <p className="text-sm text-gray-500">Min: Bs.{minimum_order_amount}</p>
+            )}
+            {delivery_time_min && delivery_time_max && (
+              <p className="text-sm text-gray-500">⏱️ {delivery_time_min}-{delivery_time_max} min</p>
+            )}
+          </div>
         </div>
       </div>
-      
+
       <div className="overflow-x-auto whitespace-nowrap w-100 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 md:ml-2">
         <div className="flex space-x-4">
           {comidas.map((comida, index) => (
