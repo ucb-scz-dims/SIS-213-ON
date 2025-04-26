@@ -1,20 +1,24 @@
 import Button from "../components/atoms/Button";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import { useState, useContext } from "react";
-import { useCart, useCartDispatch } from "../context/CartContext";
+import { useState } from "react";
+import { useCart, useCartDispatch, useRestaurant } from "../context/CartContext";
 
 const Checkout = () => {
   const products = useCart();
+  const dispatch = useCartDispatch();
+  const { setRestaurantId } = useRestaurant();
   let totalPrice = products.reduce(
     (partialSum, { price, quantity }) => partialSum + price * quantity,
     0
   );
   const [price, setPrice] = useState(totalPrice);
   const navigate = useNavigate();
-  const goToHome = () => {
-    navigate(`/`);
-  };
+  const handleConfirmOrder = () => {
+    dispatch({ type: 'reset' });
+    setRestaurantId(null);
+    navigate('/');
+  }
   return (
     <div className="space-y-4 flex flex-col items-center mt-3 pt-24">
       <h1>Confirmación del producto</h1>
@@ -50,7 +54,7 @@ const Checkout = () => {
       </div>
       <div className="flex flex-col items-center">
         <h3 className="text-xl m-2">Total del pedido: {price} Bs.</h3>
-        <div onClick={goToHome}>
+        <div onClick={handleConfirmOrder}>
           <Button label="Confirmar pedido" type="button" />
         </div>
       </div>

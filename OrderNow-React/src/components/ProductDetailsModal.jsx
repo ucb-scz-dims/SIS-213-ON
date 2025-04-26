@@ -1,14 +1,38 @@
 import React, { useState } from 'react';
 import QuantitySelector from './atoms/QuantitySelector';
 import Button from './atoms/Button';
+import { useCartDispatch } from "../context/CartContext.jsx";
+import { useCart } from "../context/CartContext";
 
 const ProductDetailsModal = ({ product, closeModal }) => {
+  const cart = useCart();
   const [quantity, setQuantity] = useState(1);
   const [hasError, setHasError] = useState(false);
+  const dispatch = useCartDispatch();
 
   const handleAccept = (e) => {
     e.stopPropagation();
     if (!hasError && !isNaN(parseInt(quantity, 10))) {
+      const duplicate = cart != null ? cart.find((p) => p.id === product.id) : null;
+      dispatch(
+        duplicate
+          ? {
+              type: "changed",
+              product: {
+                ...duplicate,
+                quantity: duplicate.quantity + quantity,
+              },
+            }
+          : {
+              type: "added",
+              id: product.id,
+              srcImage: product.image_url,
+              title: product.name,
+              description: product.description,
+              price: product.price,
+              quantity: quantity,
+            }
+      );
       closeModal();
     }
   };
