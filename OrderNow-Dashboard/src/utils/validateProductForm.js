@@ -1,6 +1,6 @@
 export function validateProductForm(formData) {
     const newErrors = {};
-    const regOnlyNumbers = /^(\d)*(\.)?([0-9]{1})?$/;
+    const regOnlyNumbers = /^(\d)*(\.)?([0-9]{2})?$/;
 
     if (!formData.name.trim()) {
       newErrors.name = 'El nombre del producto es requerido';

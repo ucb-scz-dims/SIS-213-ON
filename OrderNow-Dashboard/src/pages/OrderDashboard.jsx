@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { getSupaBaseClient } from "../supabaseClient";
 import { formatDate } from "../utils/formatDate";
 import OrderDetail from '../components/order-detail/OrderDetail'
 import getSupaBaseClient from "../supabase/supabase-client";
-import { ORDER_STATUS } from "../config/order-status";
-import ConfirmationModal from "../components/confirmation-modal/ConfirmationModal";
 import { Link } from 'react-router-dom'
 
 const supaBase = getSupaBaseClient();
