@@ -159,6 +159,8 @@ const OrdersDashboard = () => {
                       }}
                       disabled={order.state_type_id !== ORDER_STATUS.PENDING}
                       mainColor="green"
+                      textColor="white"
+                      paddingSize="md"
                     />
                     <Button
                       text="Rechazar"
@@ -167,12 +169,16 @@ const OrdersDashboard = () => {
                       }}
                       disabled={order.state_type_id !== ORDER_STATUS.PENDING}
                       mainColor="red"
+                      textColor="white"
+                      paddingSize="md"
                     />
                     <Button
                       text="Ver detalle"
                       onClick={() => openDetailModal(order.id)}
                       disabled={order.state_type_id !== ORDER_STATUS.PENDING}
                       mainColor="blue"
+                      textColor="white"
+                      paddingSize="md"
                     />
                   </div>
                 </div>

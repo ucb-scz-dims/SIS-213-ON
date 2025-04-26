@@ -86,13 +86,16 @@ function OrderDetail({ orderId, onClose, onRequestAction }) {
               <h3 className="font-semibold text-gray-800 text-2xl">
                 Detalle del Pedido
               </h3>
-              <button
-                type="button"
-                className="inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200"
-                onClick={() => onClose()}
-              >
-                <CloseIcon />
-              </button>
+              <div className="inline-flex ">
+                <Button
+                  children={<CloseIcon />}
+                  mainColor="white"
+                  textColor="black"
+                  onClick={onClose}
+                  paddingSize="nt"
+                />
+              </div>
+
             </div>
 
             <div className="p-4 overflow-y-auto h-[80%] flex flex-col">
@@ -113,6 +116,8 @@ function OrderDetail({ orderId, onClose, onRequestAction }) {
                       onClose();
                     }}
                     mainColor="gray"
+                    textColor="white"
+                    paddingSize="md"
                   />
 
                   <Button
@@ -122,6 +127,8 @@ function OrderDetail({ orderId, onClose, onRequestAction }) {
                       onClose();
                     }}
                     mainColor="blue"
+                    textColor="white"
+                    paddingSize="md"
                   />
                 </>
               )}
