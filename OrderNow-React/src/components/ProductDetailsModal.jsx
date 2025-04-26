@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import QuantitySelector from './atoms/QuantitySelector';
+import Button from './atoms/Button';
 
 const ProductDetailsModal = ({ product, closeModal }) => {
   const [quantity, setQuantity] = useState(1);
@@ -8,7 +9,6 @@ const ProductDetailsModal = ({ product, closeModal }) => {
   const handleAccept = (e) => {
     e.stopPropagation();
     if (!hasError && !isNaN(parseInt(quantity, 10))) {
-      console.log("Producto seleccionado:", product, "Cantidad:", quantity);
       closeModal();
     }
   };
@@ -27,15 +27,14 @@ const ProductDetailsModal = ({ product, closeModal }) => {
         className="relative bg-white rounded-lg shadow-lg z-10 max-w-md w-full mx-4 p-6"
         onClick={handleModalClick}
       >
-        <button
+        <Button
+          label="X"
           onClick={(e) => {
             e.stopPropagation();
             closeModal();
           }}
-          className="absolute top-1 right-3 text-gray-600 hover:text-gray-800"
-        >
-          X
-        </button>
+          className="absolute top-1 right-3 !px-2 !py-1 bg-transparent !text-gray-600 hover:!text-gray-800 !border-0"
+        />
         {product.image_url && product.image_url !== "NA" ? (
           <img
             src={product.image_url}
@@ -60,13 +59,11 @@ const ProductDetailsModal = ({ product, closeModal }) => {
         </div>
         
         <div className="flex justify-center">
-          <button
+          <Button
+            label="Aceptar"
             onClick={handleAccept}
             disabled={hasError}
-            className={`${hasError ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white px-4 py-2 rounded`}
-          >
-            Aceptar
-          </button>
+          />
         </div>
       </div>
     </div>

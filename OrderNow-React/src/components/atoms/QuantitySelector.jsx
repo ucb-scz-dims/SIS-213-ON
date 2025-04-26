@@ -43,7 +43,9 @@ const QuantitySelector = ({
     if (quantity === '') {
       setQuantity(1);
       validateQuantity(1);
-    } else if (quantity < maxQuantity) {
+      return;
+    } 
+    if (quantity < maxQuantity) {
       const newQuantity = parseInt(quantity, 10) + 1;
       setQuantity(newQuantity);
       validateQuantity(newQuantity);
@@ -51,11 +53,12 @@ const QuantitySelector = ({
   };
 
   const decrement = () => {
-    if (quantity > minQuantity) {
-      const newQuantity = parseInt(quantity, 10) - 1;
-      setQuantity(newQuantity);
-      validateQuantity(newQuantity);
+    if (quantity < minQuantity) {
+      return;
     }
+    const newQuantity = parseInt(quantity, 10) - 1;
+    setQuantity(newQuantity);
+    validateQuantity(newQuantity);
   };
 
   const handleQuantityChange = (e) => {
@@ -82,10 +85,10 @@ const QuantitySelector = ({
     
     if (isNaN(numValue) || numValue < minQuantity || numValue > maxQuantity) {
       validateQuantity(quantity);
-    } else {
-      setQuantity(numValue);
-      setError('');
+      return;
     }
+    setQuantity(numValue);
+    setError('');
   };
 
   return (
