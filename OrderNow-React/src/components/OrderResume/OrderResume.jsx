@@ -1,14 +1,13 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import Button from "../Button/Button";
 
 const OrderResume = ({products = []}) => {
     const navigate = useNavigate();
     return (
         <div className="overflow-x-auto transition-all duration-300 ease-in-out mt-2">
             <div className="flex justify-end mb-2">
-                <button onClick={() => navigate(`/cart/test`)} className="text-blue-500 text-sm">
-                    Editar productos
-                </button>
+                <Button onClick={() => navigate(`/cart/test`)} type="button" label="editar pedido"/>
             </div>
             <table className="min-w-full text-sm text-gray-700">
                 <thead>
