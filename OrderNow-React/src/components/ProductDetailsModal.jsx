@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useCartDispatch } from "../context/CartContext.jsx";
+import { useCart } from "../context/CartContext";
 
 const ProductDetailsModal = ({ product, closeModal }) => {
-
+  const cart = useCart();
   const [quantity, setQuantity] = useState(1);
+  const dispatch = useCartDispatch();
 
-  const increment = () => setQuantity(prev => prev + 1);
+  const increment = () => setQuantity((prev) => prev + 1);
   const decrement = () => {
-    if (quantity > 1) setQuantity(prev => prev - 1);
+    if (quantity > 1) setQuantity((prev) => prev - 1);
   };
 
   const handleAccept = () => {
-    // TODO: Aqui se tiene que manejar la logica para mandar el producto al carrito
-    console.log("Producto seleccionado:", product, "Cantidad:", quantity);
+    {
+      const duplicate = cart != null ? cart.find((p) => p.id === product.id) : null;
+      dispatch(
+        duplicate
+          ? {
+              type: "changed",
+              product: {
+                ...duplicate,
+                quantity: duplicate.quantity + quantity,
+              },
+            }
+          : {
+              type: "added",
+              id: product.id,
+              srcImage: product.image_url,
+              title: product.name,
+              description: product.description,
+              price: product.price,
+              quantity: quantity,
+            }
+      );
+    }
     closeModal();
   };
 
@@ -26,7 +49,7 @@ const ProductDetailsModal = ({ product, closeModal }) => {
           onClick={closeModal}
           className="absolute top-1 right-3 text-gray-600 hover:text-gray-800"
         >
-        X
+          X
         </button>
         {product.image_url && product.image_url !== "NA" ? (
           <img
@@ -39,7 +62,9 @@ const ProductDetailsModal = ({ product, closeModal }) => {
         )}
         <h3 className="text-xl font-bold mb-2">{product.name}</h3>
         <p className="text-gray-600 mb-4">{product.description}</p>
-        <p className="text-lg font-bold text-gray-800 mb-4">Bs {product.price}</p>
+        <p className="text-lg font-bold text-gray-800 mb-4">
+          Bs {product.price}
+        </p>
         <div className="flex items-center justify-center mb-4">
           <button
             onClick={decrement}
