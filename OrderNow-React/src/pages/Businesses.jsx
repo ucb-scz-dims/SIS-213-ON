@@ -26,12 +26,33 @@ const Businesses = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center space-y-10">
+    <div className="flex">
+      <div className='mr-auto'></div>
       <div>
-        <h1 className="text-4xl font-bold mb-6">Disponibles</h1>
+        <h1 className="text-4xl font-bold mb-1">Disponibles</h1>
+        <h2 className='mb-5.5'>{businesses.filter(a => a.is_open).length} restaurantes disponibles</h2>
         {businesses.some(r => r.is_open) && (
           businesses.map((item) =>
             item.is_open && (
+              <TarjetaRestaurante
+                key={item.id}
+                id={item.id}
+                nombre={item.name}
+                descripcion={item.description}
+                estrellas={item.rating}
+                minimum_order_amount={item.minimum_order_amount}
+                delivery_time_min={item.delivery_time_min}
+                delivery_time_max={item.delivery_time_max}
+              />
+            )
+          )
+        )}
+
+        <h1 className="text-4xl font-bold mb-1">No disponibles</h1>
+        <h2 className='mb-5.5'>{businesses.filter(a => !a.is_open).length} restaurantes disponibles</h2>
+        {businesses.some(r => !r.is_open) && (
+          businesses.map((item) =>
+            !item.is_open && (
               <TarjetaRestaurante
                 key={item.id}
                 id={item.id}
@@ -47,25 +68,10 @@ const Businesses = () => {
           )
         )}
       </div>
-
-      <div>
-        <h1 className="text-4xl font-bold mb-6">No disponibles</h1>
-        {businesses.some(r => !r.is_open) && (
-          businesses.map((item) =>
-            !item.is_open && (
-              <TarjetaRestaurante
-                key={item.id}
-                id={item.id}
-                nombre={item.name}
-                descripcion={item.description}
-                estrellas={item.rating}
-                comidas={[{ nombre: "comida 1", precio: "15" }]}
-              />
-            )
-          )
-        )}
-      </div>
+      <div className='mr-auto'></div>
+      <div></div>
     </div>
+    
   );
 
 };
