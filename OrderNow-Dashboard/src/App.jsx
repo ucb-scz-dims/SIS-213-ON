@@ -12,7 +12,8 @@ function App() {
       <Route path='/' element={<OrderDashboard/>}/>
       <Route path='/about' element={<About />} />
       <Route path='/Registration' element={<RegistrationForm/>}/>
-      <Route path='/register/product' element={<ProductForm />}></Route>
+      <Route path='/product/register' element={<ProductForm />}/>
+      <Route path='/product/:id/update' element={<ProductForm productId={1}/>}/>
     </Routes>
   );
 }

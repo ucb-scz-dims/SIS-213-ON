@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import { CircleDollarSign, Link, Box, AlignLeft, CircleAlert } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { CircleDollarSign, Link, Box, AlignLeft, CircleAlert, AArrowDown } from 'lucide-react';
 import getSupaBaseClient from '../../supabase/supabase-client';
 import { validateProductForm } from '../../utils/validateProductForm';
 
 const supabaseClient = getSupaBaseClient();
 
-export default function RegistrationForm() {
+export default function ProductForm({ productId }) {
 
   const [errors, setErrors] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -16,6 +18,54 @@ export default function RegistrationForm() {
     urlImage: '',
     productState: "true"
   });
+
+
+  useEffect(() => {
+    if(!productId) {
+      return;
+    }
+
+    const fetchProduct = async () => {
+      try {
+        const { data, error } = await supabaseClient
+          .schema("com")
+          .from("products")
+          .select()
+          .eq('id', productId)
+          .single()
+
+
+        if(error) {
+          alert("Hubo un error al obtener los datos del producto");
+          console.log(error.message);
+          return;
+        }
+
+        if(!data) {
+          alert("El producto no pudo ser encontrado");
+          return;
+        }
+
+
+        setFormData({
+          name: data.name,
+          description: data.description,
+          price: String(data.price),
+          urlImage: data.image_url,
+          productState: String(data.available)
+        });
+
+        setIsEditing(true);
+      }
+      catch(err) {
+        alert("Hubo un error al acceder a la base de datos");
+        console.error(err);
+      }
+    }
+
+
+    fetchProduct();
+  }, [productId]);
 
   const validateForm = () => {
     const newErrors = validateProductForm(formData);
@@ -26,16 +76,16 @@ export default function RegistrationForm() {
 
   const insertProduct = async (productData) => {
     try {
-      const { data, error } = await supabaseClient
+      const { error } = await supabaseClient
         .schema("com")
         .from("products")
         .insert({
           name: productData.name,
           description: productData.description,
-          price: productData.price,
+          price: Number(productData.price),
           image_url: (productData.urlImage === "" ? null : productData.urlImage),
           business_id: 1, //TODO Cambiar al id de restaurante, una vez finalizado el inicio de sesion
-          available: productData.productState
+          available: (productData.productState === "true")
         });
 
       if(error){
@@ -45,32 +95,79 @@ export default function RegistrationForm() {
       }
 
       return true;
+
     } catch (err) {
       console.error("Error inesperado:", err);
       return false;
     }
   };
 
+  const updateProduct = async (productData) => {
+    if(!productId) {
+      console.error("El identificador del producto no fue encontrado");
+      alert("Hubo un error al identificar el producto. Recargue la página");
+      return false;
+    }
+
+    try {
+      const { error } = await supabaseClient
+        .schema("com")
+        .from("products")
+        .update({
+          name: productData.name,
+          description: productData.description,
+          price: Number(productData.price),
+          image_url: (productData.urlImage === "" ? null : productData.urlImage),
+          available: (productData.productState === "true")
+        })
+        .eq('id', productId);
+
+      if(error){
+        console.error(error.message);
+        alert("Error la actualizar el producto. Intentalo de nuevo");
+        return false;
+      }
+
+      return true;
+    }
+    catch(err) {
+      console.error("Error inesperado:", err);
+      return false;
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      formData.price = Number(formData.price);
-      formData.productState = formData.productState === "true";
+    if(!validateForm())
+      return;
 
-      const success = await insertProduct(formData);
-      if (success) {
-        console.log('Formulario subido correctamente', formData);
-        setSubmitted(true);
-        setFormData({
-          name: "",
-          description: "",
-          price: "",
-          urlImage: "",
-          productState: "true",
-        });
-      }
+    if(isSubmitting)
+      return;
+
+    setIsSubmitting(true); 
+    const success = (isEditing ? await updateProduct(formData) : await insertProduct(formData));
+
+    if(!success) {
+      setIsSubmitting(false);
+      return;
     }
+
+    if(!isEditing)
+      setFormData({
+        name: "",
+        description: "",
+        price: "",
+        urlImage: "",
+        productState: "true",
+      });
+     
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setIsSubmitting(false);
+    }, 1500);
+
   };
 
   const handleChange = (e) => {
@@ -85,12 +182,12 @@ export default function RegistrationForm() {
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-        Registro de producto
+        {isEditing ? "Modificación de producto" : "Registrar producto"}
       </h2>
 
       {submitted && (
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
-          ¡Registro exitoso!
+          {isEditing ? "Modificación exitosa" : "Registro exitoso"}
         </div>
       )}
 
@@ -209,9 +306,10 @@ export default function RegistrationForm() {
 
       <button
         type="submit"
-        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 ease-in-out transform hover:scale-[1.02]"
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 ease-in-out transform hover:scale-[1.02] disabled:opacity-20"
+        disabled={isSubmitting}
       >
-        Registrar producto
+        {isEditing ? "Modificar producto" : "Registrar producto"}
       </button>
     </form>
   );

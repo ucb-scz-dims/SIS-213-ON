@@ -1,6 +1,6 @@
 export function validateProductForm(formData) {
     const newErrors = {};
-    const regOnlyNumbers = /^(\d)*(\.)?([0-9]{2})?$/;
+    const regOnlyNumbers = /^\d+(\.\d{1,2})?$/;
 
     if (!formData.name.trim()) {
       newErrors.name = 'El nombre del producto es requerido';
@@ -13,12 +13,12 @@ export function validateProductForm(formData) {
     if (!formData.price.trim()) {
       newErrors.price = 'El precio es requerido';
     }
-
-    if(!regOnlyNumbers.test(formData.price.trim())) {
-        newErrors.price  = 'Campo inválido. Inserte solamente numeros con maximo un decimal.'
+    else if(!regOnlyNumbers.test(formData.price.trim())) {
+      newErrors.price  = 'Inserte números mayores a cero con máximo dos decimales'
     }
-
-
-
+    else if (isNaN(formData.price)) {
+      newErrors.price = 'El precio debe ser un numero';
+    }
+    
     return newErrors;
 }
