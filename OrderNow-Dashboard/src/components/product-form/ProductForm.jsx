@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CircleDollarSign, Link, Box, AlignLeft, CircleAlert, AArrowDown } from 'lucide-react';
 import getSupaBaseClient from '../../supabase/supabase-client';
 import { validateProductForm } from '../../utils/validateProductForm';
+import Button from '../Button/Button';
 
 const supabaseClient = getSupaBaseClient();
 
@@ -304,13 +305,11 @@ export default function ProductForm({ productId }) {
         </div>
       </div>
 
-      <button
-        type="submit"
+      <Button 
+        text={isEditing ? "Modificar producto" : "Registrar producto"}
         className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 ease-in-out transform hover:scale-[1.02] disabled:opacity-20"
         disabled={isSubmitting}
-      >
-        {isEditing ? "Modificar producto" : "Registrar producto"}
-      </button>
+      />
     </form>
   );
 }

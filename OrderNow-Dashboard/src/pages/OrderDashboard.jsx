@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { formatDate } from "../utils/formatDate";
 import OrderDetail from "../components/order-detail/OrderDetail";
 import getSupaBaseClient from "../supabase/supabase-client";
@@ -19,6 +19,7 @@ const OrdersDashboard = () => {
   const [confirmAction, setConfirmAction] = useState(null);
   const [titleConfirmationModal, setTitleConfirmationModal] = useState("");
   const [bodyConfirmationModal, setBodyConfirmationModal] = useState("");
+  const isUpdating = useRef(false);
 
   const closeDetailModal = () => setDetailModalOpen(false);
   const closeConfirmationModal = () => setConfirmationModalOpen(false);
@@ -43,8 +44,13 @@ const OrdersDashboard = () => {
   };
 
   const handleOrderStatusChange = async () => {
-    if (!selectedOrderId || !confirmAction) return;
+    if (!selectedOrderId || !confirmAction) 
+      return;
 
+    if(isUpdating.current)
+      return
+
+    isUpdating.current = true;
     const { error } = await supaBase
       .schema("com")
       .from("orders")
@@ -52,6 +58,7 @@ const OrdersDashboard = () => {
       .eq("id", selectedOrderId);
 
     if (error) {
+      isUpdating.current = false;
       alert("Error al actualizar el estado. Intentalo otra vez.");
       console.log(error.message);
       return;
@@ -59,6 +66,8 @@ const OrdersDashboard = () => {
 
     await fetchOrders();
     closeConfirmationModal();
+    
+    isUpdating.current = false;
   };
 
   const fetchOrders = async () => {
@@ -163,9 +172,7 @@ const OrdersDashboard = () => {
                         openConfirmationModal(order.id, ORDER_STATUS.ACCEPTED);
                       }}
                       disabled={order.state_type_id !== ORDER_STATUS.PENDING}
-                      mainColor="green"
-                      textColor="white"
-                      paddingSize="md"
+                      className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
                     />
                     <Button
                       text="Rechazar"
@@ -173,17 +180,13 @@ const OrdersDashboard = () => {
                         openConfirmationModal(order.id, ORDER_STATUS.CANCELED);
                       }}
                       disabled={order.state_type_id !== ORDER_STATUS.PENDING}
-                      mainColor="red"
-                      textColor="white"
-                      paddingSize="md"
+                      className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
                     />
                     <Button
                       text="Ver detalle"
                       onClick={() => openDetailModal(order.id)}
                       disabled={order.state_type_id !== ORDER_STATUS.PENDING}
-                      mainColor="blue"
-                      textColor="white"
-                      paddingSize="md"
+                      className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
                     />
                   </div>
                 </div>

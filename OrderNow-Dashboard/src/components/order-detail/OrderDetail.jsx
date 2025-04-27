@@ -88,12 +88,11 @@ function OrderDetail({ orderId, onClose, onRequestAction }) {
               </h3>
               <div className="inline-flex ">
                 <Button
-                  children={<CloseIcon />}
-                  mainColor="white"
-                  textColor="black"
                   onClick={onClose}
-                  paddingSize="nt"
-                />
+                  className="bg-white hover:bg-gray-200 disabled:opacity-20 rounded-full"
+                >
+                  <CloseIcon />
+                </Button>
               </div>
 
             </div>
@@ -115,9 +114,7 @@ function OrderDetail({ orderId, onClose, onRequestAction }) {
                       onRequestAction(orderId, ORDER_STATUS.CANCELED);
                       onClose();
                     }}
-                    mainColor="gray"
-                    textColor="white"
-                    paddingSize="md"
+                    className="bg-gray-400 hover:bg-gray-600 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
                   />
 
                   <Button
@@ -126,9 +123,7 @@ function OrderDetail({ orderId, onClose, onRequestAction }) {
                       onRequestAction(orderId, ORDER_STATUS.ACCEPTED);
                       onClose();
                     }}
-                    mainColor="blue"
-                    textColor="white"
-                    paddingSize="md"
+                    className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
                   />
                 </>
               )}

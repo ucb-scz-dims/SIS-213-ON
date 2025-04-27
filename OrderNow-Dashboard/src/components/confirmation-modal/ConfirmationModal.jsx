@@ -32,16 +32,12 @@ function ConfirmationModal({
           <Button
             text={cancelText}
             onClick={onClose}
-            mainColor="gray"
-            textColor="white"
-            paddingSize="md"
+            className="bg-gray-400 hover:bg-gray-600 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
           />
           <Button
             text={confirmText}
             onClick={onConfirm}
-            mainColor="blue"
-            textColor="white"
-            paddingSize="md"
+            className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
           />
         </footer>
       </div>
