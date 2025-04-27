@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Button = ({ children, text, onClick, textColor, disabled = false, mainColor = 'blue', paddingSize }) => {
+const Button = ({ children, className, text, onClick, disabled = false}) => {
   const colorVariants = {
     red:'bg-red-500 hover:bg-red-700',
     green: 'bg-green-500 hover:bg-green-700',
@@ -25,7 +25,7 @@ const Button = ({ children, text, onClick, textColor, disabled = false, mainColo
   return (
     <button 
       onClick={onClick}
-      className={`${colorVariants[mainColor]} ${textColorVariants[textColor]} font-bold ${paddingVariants[paddingSize]} rounded-full ${disabled ? 'opacity-20' : ''}`}
+      className={`${className}`}
       disabled={disabled}
     >
       {text}
