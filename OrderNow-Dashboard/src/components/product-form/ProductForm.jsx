@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CircleDollarSign, Link, Box, AlignLeft, CircleAlert, AArrowDown } from 'lucide-react';
+import { CircleDollarSign, Link, Box, AlignLeft, CircleAlert, AArrowDown, Podcast } from 'lucide-react';
 import getSupaBaseClient from '../../supabase/supabase-client';
 import { validateProductForm } from '../../utils/validateProductForm';
 import Button from '../Button/Button';
@@ -20,50 +20,46 @@ export default function ProductForm({ productId }) {
     productState: "true"
   });
 
+  const fetchProduct = async () => {
+    try {
+      const { data, error } = await supabaseClient
+        .schema("com")
+        .from("products")
+        .select()
+        .eq('id', productId)
+        .single()
+
+      if(error) {
+        alert("Hubo un error al obtener los datos del producto");
+        console.error(error.message);
+        return;
+      }
+
+      if(!data) {
+        alert("El producto no pudo ser encontrado");
+        return;
+      }
+
+      setFormData({
+        name: data.name,
+        description: data.description,
+        price: String(data.price),
+        urlImage: data.image_url,
+        productState: String(data.available)
+      });
+
+      setIsEditing(true);
+    }
+    catch(err) {
+      alert("Hubo un error al acceder a la base de datos");
+      console.error(err);
+    }
+  }
 
   useEffect(() => {
     if(!productId) {
       return;
     }
-
-    const fetchProduct = async () => {
-      try {
-        const { data, error } = await supabaseClient
-          .schema("com")
-          .from("products")
-          .select()
-          .eq('id', productId)
-          .single()
-
-
-        if(error) {
-          alert("Hubo un error al obtener los datos del producto");
-          console.log(error.message);
-          return;
-        }
-
-        if(!data) {
-          alert("El producto no pudo ser encontrado");
-          return;
-        }
-
-
-        setFormData({
-          name: data.name,
-          description: data.description,
-          price: String(data.price),
-          urlImage: data.image_url,
-          productState: String(data.available)
-        });
-
-        setIsEditing(true);
-      }
-      catch(err) {
-        alert("Hubo un error al acceder a la base de datos");
-        console.error(err);
-      }
-    }
-
 
     fetchProduct();
   }, [productId]);
@@ -75,57 +71,52 @@ export default function ProductForm({ productId }) {
     return Object.keys(newErrors).length === 0;
   };
 
+
   const insertProduct = async (productData) => {
-    try {
-      const { error } = await supabaseClient
-        .schema("com")
-        .from("products")
-        .insert({
-          name: productData.name,
-          description: productData.description,
-          price: Number(productData.price),
-          image_url: (productData.urlImage === "" ? null : productData.urlImage),
-          business_id: 1, //TODO Cambiar al id de restaurante, una vez finalizado el inicio de sesion
-          available: (productData.productState === "true")
-        });
+    const { error } = await supabaseClient
+      .schema("com")
+      .from("products")
+      .insert({
+        name: productData.name,
+        description: productData.description,
+        price: Number(productData.price),
+        image_url: (productData.urlImage === "" ? null : productData.urlImage),
+        business_id: 1, //TODO Cambiar al id de restaurante, una vez finalizado el inicio de sesion
+        available: (productData.productState === "true")
+      });
 
-      if(error){
-        alert("Hubo un error al crear el producto. Intenteló de nuevo");
-        console.log(error.message);
-        return false;
-      }
+    return error;
+  }
 
-      return true;
+  const updateProduct = async(productData) => {
+    const { error } = await supabaseClient
+      .schema("com")
+      .from("products")
+      .update({
+        name: productData.name,
+        description: productData.description,
+        price: Number(productData.price),
+        image_url: (productData.urlImage === "" ? null : productData.urlImage),
+        available: (productData.productState === "true")
+      })
+      .eq('id', productId);
 
-    } catch (err) {
-      console.error("Error inesperado:", err);
-      return false;
-    }
-  };
+    return error;
+  }
 
-  const updateProduct = async (productData) => {
-    if(!productId) {
+  const submitForm = async (productData) => {
+    if(isEditing && !productId) {
       console.error("El identificador del producto no fue encontrado");
       alert("Hubo un error al identificar el producto. Recargue la página");
       return false;
     }
 
     try {
-      const { error } = await supabaseClient
-        .schema("com")
-        .from("products")
-        .update({
-          name: productData.name,
-          description: productData.description,
-          price: Number(productData.price),
-          image_url: (productData.urlImage === "" ? null : productData.urlImage),
-          available: (productData.productState === "true")
-        })
-        .eq('id', productId);
+      const error = (isEditing ? await updateProduct(productData) : await insertProduct(productData));
 
-      if(error){
+      if(error) {
         console.error(error.message);
-        alert("Error la actualizar el producto. Intentalo de nuevo");
+        alert((isEditing ? "Error al actualizar el producto. Intentalo de nuevo" : "Hubo un error al crear el producto. Inténtelo de nuevo"));
         return false;
       }
 
@@ -147,7 +138,7 @@ export default function ProductForm({ productId }) {
       return;
 
     setIsSubmitting(true); 
-    const success = (isEditing ? await updateProduct(formData) : await insertProduct(formData));
+    const success = submitForm(formData);
 
     if(!success) {
       setIsSubmitting(false);
