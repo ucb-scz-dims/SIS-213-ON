@@ -10,46 +10,24 @@ const Businesses = () => {
   const supaBaseCom = getSupaBaseClient('com');
 
   useEffect(() => {
-    fetchBusiness();
-    fetchCategories();
-    fetchBusinessCategories();
+    fetchData('businesses', (data) => {
+      const ordered = data.sort((a, b) => b.is_open - a.is_open);
+      setBusinesses(ordered);
+    });
+    fetchData('category', setCategories);
+    fetchData('business_category', setBusinessCategories);
   }, []);
-
-  const fetchBusiness = async () => {
+  
+  const fetchData = async (table, setter) => {
     const { data, error } = await supaBaseCom
-      .from('businesses')
+      .from(table)
       .select('*');
-
+  
     if (error) {
       console.error(error.message);
       return;
     }
-    const ordered = data.sort((a, b) => b.is_open - a.is_open);
-    setBusinesses(ordered);
-  };
-
-  const fetchCategories = async () => {
-    const { data, error } = await supaBaseCom
-      .from('category')
-      .select('*');
-
-    if (error) {
-      console.error(error.message);
-      return;
-    }
-    setCategories(data);
-  };
-
-  const fetchBusinessCategories = async () => {
-    const { data, error } = await supaBaseCom
-      .from('business_category')
-      .select('*');
-
-    if (error) {
-      console.error(error.message);
-      return;
-    }
-    setBusinessCategories(data);
+    setter(data);
   };
 
   const getWeight = (businessId) => {
@@ -100,7 +78,7 @@ const Businesses = () => {
       <div>
         <h1 className="text-4xl font-bold mb-1">Disponibles</h1>
         <h2 className='mb-5.5'>
-          {filteredBusinesses.filter(a => a.is_open).length} Restaurantes disponibles
+        {filteredBusinesses.filter(a => a.is_open).length} restaurante{filteredBusinesses.filter(a => a.is_open).length === 1 ? '' : 's'} disponible{filteredBusinesses.filter(a => a.is_open).length === 1 ? '' : 's'}
         </h2>
         {filteredBusinesses.some(r => r.is_open) && (
           filteredBusinesses.map((item) =>
@@ -123,7 +101,7 @@ const Businesses = () => {
           <>
             <h1 className="text-4xl font-bold mb-1 mt-10">No disponibles</h1>
             <h2 className='mb-5.5'>
-              {filteredBusinesses.filter(a => !a.is_open).length} restaurantes no disponibles
+            {filteredBusinesses.filter(a => !a.is_open).length} restaurante{filteredBusinesses.filter(a => !a.is_open).length === 1 ? '' : 's'} no disponible{filteredBusinesses.filter(a => !a.is_open).length === 1 ? '' : 's'}
             </h2>
             {filteredBusinesses.map((item) =>
               !item.is_open && (
