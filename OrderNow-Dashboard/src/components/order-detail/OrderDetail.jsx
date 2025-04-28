@@ -2,17 +2,20 @@ import React from "react";
 import { useState, useEffect } from "react";
 import getSupaBaseClient from "../../supabase/supabase-client";
 import CloseIcon from "../../subcomponents/icons/CloseIcon";
+import { ORDER_STATUS } from "../../config/order-status";
+import Button from "../Button/Button"
 
-function OrderDetail({ orderId, closeModal }) {
+const supaBaseCom = getSupaBaseClient("com");
+
+function OrderDetail({ orderId, onClose, onRequestAction }) {
   const [orderDetail, setOrderDetail] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const supaBaseCom = getSupaBaseClient("com");
 
   let content;
 
   useEffect(() => {
-    fetchBusiness();
+    fetchOrderDetails();
   }, []);
 
   if (loading) {
@@ -41,12 +44,13 @@ function OrderDetail({ orderId, closeModal }) {
     );
   }
 
-  const fetchBusiness = async () => {
+  const fetchOrderDetails = async () => {
     const { data, error } = await supaBaseCom
       .from("orders")
       .select(
         `
           total_price,
+          state_type_id,
           order_details(
             id,
             products(
@@ -82,13 +86,16 @@ function OrderDetail({ orderId, closeModal }) {
               <h3 className="font-semibold text-gray-800 text-2xl">
                 Detalle del Pedido
               </h3>
-              <button
-                type="button"
-                className="inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200"
-                onClick={() => closeModal()}
-              >
-                <CloseIcon />
-              </button>
+              <div className="inline-flex ">
+                <Button
+                  children={<CloseIcon />}
+                  mainColor="white"
+                  textColor="black"
+                  onClick={onClose}
+                  paddingSize="nt"
+                />
+              </div>
+
             </div>
 
             <div className="p-4 overflow-y-auto h-[80%] flex flex-col">
@@ -100,19 +107,31 @@ function OrderDetail({ orderId, closeModal }) {
             </div>
 
             <div className="flex justify-end items-center gap-x-2 py-3 px-4 border-t h-[10%]">
-              <button
-                type="button"
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50"
-                onClick={() => closeModal()}
-              >
-                Rechazar
-              </button>
-              <button
-                type="button"
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700"
-              >
-                Aceptar
-              </button>
+              {orderDetail.state_type_id == ORDER_STATUS.PENDING && (
+                <>
+                  <Button
+                    text="Rechazar"
+                    onClick={() => {
+                      onRequestAction(orderId, ORDER_STATUS.CANCELED);
+                      onClose();
+                    }}
+                    mainColor="gray"
+                    textColor="white"
+                    paddingSize="md"
+                  />
+
+                  <Button
+                    text="Aceptar"
+                    onClick={() => {
+                      onRequestAction(orderId, ORDER_STATUS.ACCEPTED);
+                      onClose();
+                    }}
+                    mainColor="blue"
+                    textColor="white"
+                    paddingSize="md"
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>
