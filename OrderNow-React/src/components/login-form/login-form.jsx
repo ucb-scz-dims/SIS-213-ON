@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import Button from "../Button/Button.jsx";
+import Button from "../atoms/Button";
 import { signInClicked } from "../../Supertokens.jsx";
 import { Link } from "react-router-dom";
 import { GetUserId } from "../../SupaBase.jsx";

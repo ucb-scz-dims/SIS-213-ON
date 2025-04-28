@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Button from "../Button/Button.jsx";
+import Button from "../atoms/Button";
 import { signUpClicked } from "../../Supertokens.jsx";
 import { CreateUser } from "../../SupaBase.jsx";
 import { CreateConsumer } from "../../SupaBase.jsx";
