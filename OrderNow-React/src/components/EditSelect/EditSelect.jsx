@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import Button from "../Button/Button";
 
 export const EditSelect = ({name = "title", edit = false, options = ["vacio"], additionalText = ""}) => {
     const [stateEdit, setStateEdit] = useState(edit);
@@ -8,7 +9,7 @@ export const EditSelect = ({name = "title", edit = false, options = ["vacio"], a
             <h3 className="text-sm font-semibold text-gray-700">{name}</h3>
             <div className="flex justify-between items-center">
                 {stateEdit ? (
-                    <div>
+                    <div className="flex justify-between items-center">
                         <select value={currentOption} onChange={(e) => setCurrentOption(e.target.value)}
                         className="text-sm text-gray-800 border px-2 py-1 rounded mr-2 w-full">
                             {options.map((opcion) => (
@@ -17,16 +18,12 @@ export const EditSelect = ({name = "title", edit = false, options = ["vacio"], a
                                 </option>
                             ))}
                         </select>
-                        <button onClick={() => setStateEdit(false)} className="text-blue-500 text-sm ml-2">
-                            Guardar
-                        </button>
+                        <Button onClick={() => setStateEdit(false)} label="Guardar" type="button"/>
                     </div>
                 ) : (
-                    <div>
-                        <p className="text-sm"> {currentOption} {additionalText} </p>
-                        <button onClick={() => setStateEdit(true)} className="text-blue-500 text-sm ml-2">
-                            Editar
-                        </button>
+                    <div className="flex justify-between items-center">
+                        <p className="text-sm px-2 py-1"> {currentOption} {additionalText} </p>
+                        <Button onClick={() => setStateEdit(true)} label="Editar" type="button"/>
                     </div>
                 )}
             </div>
