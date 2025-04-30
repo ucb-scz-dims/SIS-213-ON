@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Button from "../Button/Button";
+import Button from "../atoms/Button";
 
 export const EditSelect = ({name = "title", edit = false, options = ["vacio"], additionalText = ""}) => {
     const [stateEdit, setStateEdit] = useState(edit);

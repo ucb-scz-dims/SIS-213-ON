@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import Button from "../Button/Button";
+import Button from "../atoms/Button";
 
 const OrderResume = ({products = []}) => {
     const navigate = useNavigate();

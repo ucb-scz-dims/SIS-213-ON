@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import { COLORS } from '../../assets/constants';
 import { ICONS } from '../../assets/constants';
-import Button from '../Button/Button';
 
 const Notification = ({
     message = 'message',

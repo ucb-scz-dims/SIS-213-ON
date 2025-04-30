@@ -4,7 +4,7 @@ import { useCart } from "../context/CartContext";
 import Notification from "../components/Notification/Notification";
 import EditSelect from "../components/EditSelect/EditSelect";
 import OrderResume from "../components/OrderResume/OrderResume";
-import Button from "../components/Button/Button";
+import Button from "../components/atoms/Button";
 
 const Checkout = () => {
   const products = useCart();
