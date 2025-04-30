@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Store, Clock, Home, Phone, AlignLeft } from 'lucide-react';
 
-import getSupaBaseClient from '../../supabase-client';
+import getSupaBaseClient from '../../supabase/supabase-client';
 
 
 

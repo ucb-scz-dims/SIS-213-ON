@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import Notification from "../components/Notification/Notification";
 import EditSelect from "../components/EditSelect/EditSelect";
 import OrderResume from "../components/OrderResume/OrderResume";
+import Button from "../components/atoms/Button";
 
 const Checkout = () => {
   const products = useCart();
@@ -12,45 +13,47 @@ const Checkout = () => {
   const servicePrice = 0.5;
   const sendPrice = 4.5;
   const totalcarrito = products.reduce( (sum, { price, quantity }) => sum + price * quantity, 0);
-  const totalPrice = (totalcarrito + sendPrice + servicePrice).toFixed(2) + " Bs.";
+
+  const totalPrice = "Bs. " + (totalcarrito + sendPrice + servicePrice).toFixed(2);
 
   const opcionesDireccion = ["Av. Palmar", "Universidad", "Postgrado"];
   const opcionesPago = ["Efectivo", "Tarjeta", "QR"];
   
-  const[messageNoti, setMessageNoti] = useState("Tu pedido se ha realizado con exito");
-  const[subMessageNoti, setSubMessageNoti] = useState("Puedes seguir comprando");
-  const[successNoti, setSuccessNoti] = useState(true);
-  const[fullNoti, setFullNoti] = useState(true);
-  const[visibleNoti, setVisibleNoti] = useState(false);
+  const [notificationConfig, setNotificationConfig] = useState({
+    message: "Tu pedido se ha realizado con exito",
+    subMessage: "Puedes seguir comprando",
+    success: true,
+    full: true,
+    visible: false
+  });
 
   const [showResumen, setShowResumen] = useState(false);
 
   const goToBusiness = async () => {
-    setVisibleNoti(true);
+    setNotificationConfig(prev => ({...prev, visible: true }));
     setTimeout(() => {
-      setVisibleNoti(false);
-      navigate(`/restaurantes`);
+      setNotificationConfig(prev => ({...prev, visible: false }));
+      navigate("/restaurantes");
     }, 3000);
   };
 
   return (
     <div className="max-w-md mx-auto mt-28 p-4 space-y-4 bg-white rounded-xl shadow-lg">
-      <Notification message={messageNoti} subMessage={subMessageNoti} success={successNoti} full={fullNoti} visible={visibleNoti}/>
+      <Notification {...notificationConfig}/>
       <h2 className="text-lg font-bold text-center">Confirma tu pedido</h2>
 
       {/* Detalle de entrega */}
       <EditSelect name="Direccion de entrega" edit={false} options={opcionesDireccion}/>
 
       {/* Métodos de pago */}
-      <EditSelect name="Metodo de pago" edit={false} options={opcionesPago} additionalText={totalPrice}/>
+      <EditSelect name="Metodo de pago" edit={false} options={opcionesPago} additionalText={"➡️ " + totalPrice}/>
 
       {/* Sección de resumen */}
       <div className="bg-gray-100 rounded-lg p-4 space-y-2">
-        <button className="w-full text-sm font-semibold text-gray-700 flex justify-between items-center"
-          onClick={() => setShowResumen(!showResumen)} >
+        <div className="flex justify-between items-center">
           <span>Resumen del pedido</span>
-          <span className="text-lg">{showResumen ? "−" : "+"}</span>
-        </button>
+          <Button onClick={() => setShowResumen(!showResumen)} type="button" label={showResumen ? "−" : "+"}/>
+        </div>
         {showResumen? ( <OrderResume products={products}/> ) : (null)}
         
         {/* Desglose de precios */}
@@ -69,16 +72,17 @@ const Checkout = () => {
           </div>
           <hr className="my-2" />
           <div className="flex justify-between font-bold">
-            <span>Total</span>
-            <span> {totalPrice} Bs.</span>
+            <span>Total</span> 
+            <span>{totalPrice}</span>
           </div>
         </div>
       </div>
 
       {/* Botón de confirmación */}
-      <button onClick={goToBusiness} className="w-full bg-[#ec135d] text-white py-3 rounded-full text-sm font-semibold shadow-md">
-        Pedir {totalPrice}
-      </button>
+      <div className="flex justify-center mt-4">
+
+        <Button onClick={goToBusiness} label={"Pedir " + totalPrice} type="button"/>
+      </div>
     </div>
   );
 };
