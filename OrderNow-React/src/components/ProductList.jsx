@@ -31,6 +31,10 @@ const ProductsList = ({ businessId, isMenuEnabled }) => {
   };
 
   const sortedProducts = [...products].sort((a, b) => {
+    if (a.available !== b.available) {
+      return b.available - a.available;
+    }
+
     if (sortOption === 'asc') return a.price - b.price;
     if (sortOption === 'desc') return b.price - a.price;
     return 0;
@@ -44,10 +48,12 @@ const ProductsList = ({ businessId, isMenuEnabled }) => {
     return <p>No hay productos para este restaurante.</p>;
   }
 
+  const availableProducts = sortedProducts.filter(p => p.available);
+  const unavailableProducts = sortedProducts.filter(p => !p.available);
+
   return (
     <div>
       <div className="flex justify-end items-center gap-2 mb-4">
-        
         <select
           value={sortOption}
           onChange={handleSortChange}
@@ -59,15 +65,35 @@ const ProductsList = ({ businessId, isMenuEnabled }) => {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sortedProducts.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            isMenuEnabled={isMenuEnabled}
-          />
-        ))}
-      </div>
+      {availableProducts.length > 0 && (
+        <>
+          <h2 className="text-2xl font-bold mb-4">Disponibles ({availableProducts.length})</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {availableProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                isMenuEnabled={isMenuEnabled}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      {unavailableProducts.length > 0 && (
+        <>
+          <h2 className="text-2xl font-bold mb-4">No disponibles ({unavailableProducts.length})</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {unavailableProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                isMenuEnabled={isMenuEnabled}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };
