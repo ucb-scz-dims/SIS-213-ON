@@ -20,10 +20,8 @@ const Layout = ({children}) => {
                     schema: 'com',
                     table: 'orders',
                     //TODO: Insertar el ID del restaurante una vez integrado el inicio de sesion
-                    filter: 'business_id=eq.1'
                 },
-                (payload) => {
-                    console.log('Pedido recibido: ', payload.new);
+                (_payload) => {
                     if(!showNotification) {
                         setShowNotification(true);
     
