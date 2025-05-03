@@ -84,7 +84,7 @@ const OrdersDashboard = () => {
   
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center gap-8">
       <div className="min-h-screen p-6 md:p-12 font-sans">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
@@ -147,7 +147,7 @@ const OrdersDashboard = () => {
       {isModalOpen && (
         <OrderDetail orderId={selectedOrderId} closeModal={closeModal} />
       )}
-    </>
+    </div>
   );
 };
 

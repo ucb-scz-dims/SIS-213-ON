@@ -7,15 +7,21 @@ import RegistrationForm from './components/RegistrationForm/RegistrationForm'
 import { Routes, Route } from 'react-router-dom';
 import About from './pages/About';
 import OrderDashboard from './pages/OrderDashboard';
+import Layout from './pages/Layout'
+import Home from './pages/Home'
+import RestaurantStatusPage from './pages/RestaurantStatusPage'
 
 function App() {
   return (
-
-    <Routes>
-      <Route path='/' element={<OrderDashboard/>}/>
-      <Route path='/about' element={<About />} />
-      <Route path='/Registration' element={<RegistrationForm/>}/>
-    </Routes>
+    <Layout>
+      <Routes>
+        <Route path='/' element={<Home/>}/>
+        <Route path='/orders' element={<OrderDashboard/>}/>
+        <Route path='/about' element={<About />} />
+        <Route path='/registration' element={<RegistrationForm/>}/>
+        <Route path='/status' element={<RestaurantStatusPage/>}/>
+      </Routes>
+    </Layout>
   );
 }
 
