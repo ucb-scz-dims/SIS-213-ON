@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Rating from './atoms/Rating';
 
-const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas, minimum_order_amount, delivery_time_min, delivery_time_max }) => {
+const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, minimum_order_amount, delivery_time_min, delivery_time_max }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -12,15 +12,15 @@ const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas, minim
   return (
     <div
       onClick={handleClick}
-      className="border border-gray-300 rounded-xl p-4 shadow-md flex flex-col md:flex-row cursor-pointer hover:shadow-lg transition-shadow mb-4"
+      className="w-full sm:w-[22rem] md:w-[24rem] lg:w-[46rem] border border-gray-300 rounded-xl p-4 shadow-md cursor-pointer hover:shadow-lg transition-shadow mb-6 overflow-hidden"
     >
-      <div className="flex items-center mb-4 md:mb-0 md:mr-4">
-        <div className="bg-purple-600 rounded-full w-12 h-12 mr-4"></div>
-        <div className="text-left">
-          <h2 className="text-xl font-bold">{nombre}</h2>
-          <p className="text-sm text-gray-500">{descripcion}</p>
-          <Rating rating={estrellas || null} />
-          <div className="flex items-center space-x-4 mt-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+        <div className="flex items-start sm:items-center space-x-4">
+          <div className="bg-gray-300 rounded-sm w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0"></div>
+          <div className="text-left flex-1">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800 truncate">{nombre}</h2>
+            <p className="text-sm text-gray-500 line-clamp-2">{descripcion}</p>
+            <div className="flex items-center space-x-4 mt-2">
             {minimum_order_amount && (
               <p className="text-sm text-gray-500">Min: Bs.{minimum_order_amount}</p>
             )}
@@ -28,20 +28,16 @@ const TarjetaRestaurante = ({ id, nombre, descripcion, estrellas, comidas, minim
               <p className="text-sm text-gray-500">⏱️ {delivery_time_min}-{delivery_time_max} min</p>
             )}
           </div>
+          </div>
+          
+        </div>
+
+        <div className="flex items-center space-x-1 flex-shrink-0">
+          <Rating rating={estrellas || null} />
+          
         </div>
       </div>
 
-      <div className="overflow-x-auto whitespace-nowrap w-100 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 md:ml-2">
-        <div className="flex space-x-4">
-          {comidas.map((comida, index) => (
-            <div key={index} className="flex flex-col items-center min-w-max">
-              <div className="bg-black rounded-full w-12 h-12 mb-2"></div>
-              <span className="text-sm font-medium">{comida.nombre}</span>
-              <span className="text-xs text-gray-500">Precio: {comida.precio} Bs</span>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
