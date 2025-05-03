@@ -128,7 +128,6 @@ const OrdersDashboard = () => {
       {/* TODO: Quitar el link cuando se tenga implementada la navegacion por la aplicacion */}
       <Link to='/product/register'>Formulario de registro de un producto | </Link>
       <Link to='/product/1/update'>Formulario de modificación de un producto</Link>
-
       <div className="min-h-screen p-6 md:p-12 font-sans">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">

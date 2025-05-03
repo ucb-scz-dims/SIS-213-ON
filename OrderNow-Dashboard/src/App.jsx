@@ -4,17 +4,20 @@ import { Routes, Route } from 'react-router-dom';
 import About from './pages/About';
 import OrderDashboard from './pages/OrderDashboard';
 import ProductForm from './components/product-form/ProductForm'
+import Layout from './pages/Layout';
 
 function App() {
   return (
-
-    <Routes>
-      <Route path='/' element={<OrderDashboard/>}/>
-      <Route path='/about' element={<About />} />
-      <Route path='/Registration' element={<RegistrationForm/>}/>
-      <Route path='/product/register' element={<ProductForm />}/>
-      <Route path='/product/:id/update' element={<ProductForm productId={1}/>}/>
-    </Routes>
+    <Layout>
+      <Routes>
+        <Route path='/' element={<OrderDashboard/>}/>
+        <Route path='/about' element={<About />} />
+        <Route path='/Registration' element={<RegistrationForm/>}/>
+        <Route path='/product/register' element={<ProductForm />}/>
+        <Route path='/product/:id/update' element={<ProductForm productId={1}/>}/>
+      </Routes>
+      
+    </Layout>
   );
 }
 
