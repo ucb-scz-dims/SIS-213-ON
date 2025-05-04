@@ -17,12 +17,11 @@ export async function CreateUser(correo, password, firstName, lastName, phone, t
             password: password,
             phone_number: phone,
             user_type_id: type_user
-        }]);
+        }]).select('id');
         if (error) {
             console.error("Error al guardar los datos en Supabase:", error.message);
-            return null;
         }
-        return data?.id;
+        return data?.[0]?.id;
     }catch(e){
         console.log(e);
         return null;
@@ -41,12 +40,11 @@ export async function CreateConsumer(userId, birthDate, user_gender) {
             date_of_birth: birthDate,
             gender: user_gender,
             user_id: userId,
-        }]);
+        }]).select('id');
     if (error) {
         console.error("Error al guardar los datos en Supabase:", error.message);
-        return null;
     }
-    return data?.id;
+    return data?.[0]?.id;
 }
 
 
@@ -60,7 +58,6 @@ export async function GetUserId(email, password) {
         .single();
     if (error) {
         console.error("Error al obtener el usuario:", error.message);
-        return null;
     }
     return data?.id;
 }
