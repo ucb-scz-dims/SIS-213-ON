@@ -5,7 +5,7 @@ import getSupaBaseClient from '../supabase-client';
 const Businesses = () => {
   const [businesses, setBusinesses] = useState([]);
   const supaBaseCom = getSupaBaseClient('com')
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     fetchBusiness();
@@ -33,7 +33,7 @@ const Businesses = () => {
       <div className="ml-4 flex items-center gap-4">
       <span className="underline cursor-pointer">Filtrar</span>
 
-      <div className={`flex items-center rounded-full px-3 py-1 cursor-pointer ${isOpen ? 'bg-green-400' : 'bg-red-400'} shadow-md w-fit`}
+      <div className={`flex items-center rounded-full px-3 py-1 cursor-pointer ${isOpen ? 'bg-green-300' : 'bg-red-300'} shadow-md w-fit`}
           onClick={() => setIsOpen(!isOpen)}
           >
             <div className={`h-6 w-6 rounded-full border-2 bg-white transition-all duration-300 ${isOpen ? 'translate-x-6' : 'translate-x-0'}`}>
