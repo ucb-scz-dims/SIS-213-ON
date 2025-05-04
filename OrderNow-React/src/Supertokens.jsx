@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 import SuperTokens from 'supertokens-web-js';
 import Session from 'supertokens-web-js/recipe/session';
 import EmailPassword from 'supertokens-web-js/recipe/emailpassword'
@@ -39,7 +39,7 @@ export async function getUserId() {
         if(await sesionExist()) return await Session.getUserId;
         return null;
     }catch(e){
-        window.alert("error consumiendo userId de st.");
+        window.alert("error consumiendo userId de st. UserId");
         console.log(e);
         return null;
     }
@@ -79,7 +79,7 @@ export async function signUpClicked(email, password) {
         if (err.isSuperTokensGeneralError === true) {
             window.alert(err.message);
         } else {
-            window.alert("error registrando en st.");
+            window.alert("error registrando en st. Register");
         }
         return null;
     }
@@ -115,7 +115,7 @@ export async function signInClicked(email, password) {
         if (err.isSuperTokensGeneralError === true) {
             window.alert(err.message);
         } else {
-            window.alert("error iniciando sesion en st.");
+            window.alert("error iniciando sesion en st. SignIn");
         }
         return false;
     }
