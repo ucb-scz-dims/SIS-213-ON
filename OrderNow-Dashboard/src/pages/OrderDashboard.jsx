@@ -1,38 +1,134 @@
-import React, { useEffect, useState } from "react";
-import mockOrders from "../fakeData/mockOrders.json";
+import React, { useEffect, useRef, useState } from "react";
 import { formatDate } from "../utils/formatDate";
-import OrderDetail from '../components/order-detail/OrderDetail'
+import OrderDetail from "../components/order-detail/OrderDetail";
+import getSupaBaseClient from "../supabase/supabase-client";
+import { ORDER_STATUS } from "../config/order-status";
+import ConfirmationModal from "../components/confirmation-modal/ConfirmationModal";
+import Button from "../components/Button/Button";
+import { Link } from 'react-router-dom';
+
+const supaBase = getSupaBaseClient();
 
 const OrdersDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isDetailModalOpen, setDetailModalOpen] = useState(false);
 
-  const closeModal = () => setModalOpen(false);
-  const openModal = () => setModalOpen(true);
+  const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [titleConfirmationModal, setTitleConfirmationModal] = useState("");
+  const [bodyConfirmationModal, setBodyConfirmationModal] = useState("");
+  const isUpdating = useRef(false);
+
+  const closeDetailModal = () => setDetailModalOpen(false);
+  const closeConfirmationModal = () => setConfirmationModalOpen(false);
+
+  const openDetailModal = (orderId) => {
+    setSelectedOrderId(orderId);
+    setDetailModalOpen(true);
+  };
+
+  const openConfirmationModal = (orderId, newStatusId) => {
+    if (newStatusId == ORDER_STATUS.CANCELED) {
+      setTitleConfirmationModal("Rechazar pedido");
+      setBodyConfirmationModal("¿Estás seguro de rechazar el pedido?");      
+    } else {
+      setTitleConfirmationModal("Aceptar pedido");
+      setBodyConfirmationModal("¿Estás seguro de aceptar el pedido?");      
+    }
+
+    setSelectedOrderId(orderId);
+    setConfirmAction(newStatusId);
+    setConfirmationModalOpen(true);
+  };
+
+  const handleOrderStatusChange = async () => {
+    if (!selectedOrderId || !confirmAction) 
+      return;
+
+    if(isUpdating.current)
+      return
+
+    isUpdating.current = true;
+    const { error } = await supaBase
+      .schema("com")
+      .from("orders")
+      .update({ state_type_id: confirmAction })
+      .eq("id", selectedOrderId);
+
+    if (error) {
+      isUpdating.current = false;
+      alert("Error al actualizar el estado. Intentalo otra vez.");
+      console.log(error.message);
+      return;
+    }
+
+    await fetchOrders();
+    closeConfirmationModal();
+    
+    isUpdating.current = false;
+  };
+
+  const fetchOrders = async () => {
+    const { data: ordersData, error: ordersError } = await supaBase
+      .schema("com")
+      .from("orders").select(`
+        id,
+        date,
+        address,
+        total_price,
+        consumer_id,
+        state_type_id,
+        state_types ( name )
+      `);
+
+    const { data: consumerData, error: consumerError } = await supaBase
+      .schema("com")
+      .from("consumers").select(`
+        id,
+        user_id
+      `);
+
+    const { data: usersData, error: usersError } = await supaBase
+      .schema("sec")
+      .from("users").select(`
+          id,
+          name,
+          last_name
+          `);
+
+    if (ordersError || usersError || consumerError) {
+      return console.error("Error fetching data:", ordersError || usersError);
+    }
+
+    const enrichedOrders = ordersData.map((order) => {
+      const consumer = consumerData.find((c) => c.id === order.consumer_id);
+      const user = consumer
+        ? usersData.find((u) => u.id === consumer.user_id)
+        : null;
+
+      return {
+        ...order,
+        consumer_name: user ? `${user.name} ${user.last_name}` : "Desconocido",
+        status: order.state_types?.name || "Desconocido",
+      };
+    });
+
+    setOrders(enrichedOrders);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    setOrders(mockOrders);
-    setLoading(false);
+    fetchOrders();
   }, []);
-
-  const getStatusText = (id) => {
-    switch (id) {
-      case 1:
-        return "Pendiente";
-      case 2:
-        return "En camino";
-      case 3:
-        return "Entregado";
-      case 4:
-        return "Cancelado";
-      default:
-        return "Desconocido";
-    }
-  };
 
   return (
     <>
+      {/* TODO: Quitar el link cuando se tenga implementada la navegacion por la aplicacion */}
+      <Link to='/product/register'>Formulario de registro de un producto | </Link>
+      <Link to='/product/1/update'>Formulario de modificación de un producto</Link>
+
       <div className="min-h-screen p-6 md:p-12 font-sans">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
@@ -57,7 +153,7 @@ const OrdersDashboard = () => {
               {orders.map((order) => (
                 <div
                   key={order.id}
-                  className="bg-white border border-gray-200 py-4 px-5 rounded-1xl shadow hover:shadow-md transition-all duration-200 flex flex-col md:grid md:grid-cols-10 items-center gap-2 md:gap-4 text-sm"
+                  className="bg-white border border-gray-200 py-4 px-5 rounded-1xl shadow hover:shadow-md transition-all duration-200 flex flex-col md:grid md:grid-cols-11 items-center gap-2 md:gap-4 text-sm"
                 >
                   <div className="w-12 font-bold text-indigo-600">
                     #{order.id}
@@ -68,23 +164,30 @@ const OrdersDashboard = () => {
                   <div className="w-20 font-medium text-green-700 text-right">
                     Bs. {order.total_price.toFixed(2)}
                   </div>
-                  <div className="w-24">
-                    {getStatusText(order.state_type_id)}
-                  </div>
-                  <div className="w-24 flex space-x-2">
-                    <button className="text-green-600 hover:underline">
-                      Aceptar
-                    </button>
-                    <button className="text-red-600 hover:underline">
-                      Rechazar
-                    </button>
-                  </div>
-
-                  <div className="w-24 flex space-x-2">
-                    <button className="text-gray-500 hover:underline" onClick={openModal}>
-                      Ver detalle
-                    </button>
-    
+                  <div className="w-24">{order.status}</div>
+                  <div className="w-100 flex space-x-2">
+                    <Button
+                      text="Aceptar"
+                      onClick={() => {
+                        openConfirmationModal(order.id, ORDER_STATUS.ACCEPTED);
+                      }}
+                      disabled={order.state_type_id !== ORDER_STATUS.PENDING}
+                      className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
+                    />
+                    <Button
+                      text="Rechazar"
+                      onClick={() => {
+                        openConfirmationModal(order.id, ORDER_STATUS.CANCELED);
+                      }}
+                      disabled={order.state_type_id !== ORDER_STATUS.PENDING}
+                      className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
+                    />
+                    <Button
+                      text="Ver detalle"
+                      onClick={() => openDetailModal(order.id)}
+                      disabled={order.state_type_id !== ORDER_STATUS.PENDING}
+                      className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
+                    />
                   </div>
                 </div>
               ))}
@@ -93,8 +196,23 @@ const OrdersDashboard = () => {
         </div>
       </div>
 
-      {isModalOpen && (
-        <OrderDetail orderId={1} closeModal={closeModal}/>
+      {isDetailModalOpen && selectedOrderId && (
+        <OrderDetail
+          orderId={selectedOrderId}
+          onClose={closeDetailModal}
+          onRequestAction={openConfirmationModal}
+        />
+      )}
+
+      {isConfirmationModalOpen && selectedOrderId && (
+        <ConfirmationModal
+          title={titleConfirmationModal}
+          message={bodyConfirmationModal}
+          cancelText="Cancelar"
+          confirmText="Confirmar"
+          onClose={closeConfirmationModal}
+          onConfirm={handleOrderStatusChange}
+        />
       )}
     </>
   );
