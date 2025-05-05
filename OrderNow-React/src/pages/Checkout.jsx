@@ -1,6 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
+
 import { useCart } from "../context/CartContext";
+import { getUserId } from "../Supertokens";
+import { CreateOrder } from "../SupaBase";
+import { CreateOrderDetail } from "../SupaBase";
+
 import Notification from "../components/Notification/Notification";
 import EditSelect from "../components/EditSelect/EditSelect";
 import OrderResume from "../components/OrderResume/OrderResume";
@@ -9,32 +14,62 @@ import Button from "../components/atoms/Button";
 const Checkout = () => {
   const products = useCart();
   const navigate = useNavigate();
-
   const servicePrice = 0.5;
   const sendPrice = 4.5;
   const totalcarrito = products.reduce( (sum, { price, quantity }) => sum + price * quantity, 0);
-
   const totalPrice = "Bs. " + (totalcarrito + sendPrice + servicePrice).toFixed(2);
 
   const opcionesDireccion = ["Av. Palmar", "Universidad", "Postgrado"];
   const opcionesPago = ["Efectivo", "Tarjeta", "QR"];
+  const [direccion, setDireccion] = useState(opcionesDireccion[0]);
+  const [metodoPago, setMetodoPago] = useState(opcionesPago[0]);
+
+  const validateData = () => {
+    return getUserId();
+  }
+  const messageBase = () => {
+    return {
+      message: "Tu pedido se ha realizado con exito",
+      subMessage: "Puedes seguir comprando",
+      success: true,
+      full: true,
+      visible: false
+    }
+  }
+  const [notificationConfig, setNotificationConfig] = useState(messageBase());
   
-  const [notificationConfig, setNotificationConfig] = useState({
-    message: "Tu pedido se ha realizado con exito",
-    subMessage: "Puedes seguir comprando",
-    success: true,
-    full: true,
-    visible: false
-  });
 
   const [showResumen, setShowResumen] = useState(false);
 
-  const goToBusiness = async () => {
-    setNotificationConfig(prev => ({...prev, visible: true }));
-    setTimeout(() => {
-      setNotificationConfig(prev => ({...prev, visible: false }));
-      navigate("/restaurantes");
-    }, 3000);
+  const SendOrder = async () => {
+    const response = validateData();
+    if(response!=null){
+      const orderId = CreateOrder(products[0].id, response, direccion,totalcarrito, metodoPago);
+      if(orderId == null || orderId == undefined){
+        setNotificationConfig(prev => ({
+          ...prev, 
+          message: "Error creando tu orden, revisa tu carrito y ordena nuevamente.",
+          success: false,
+          full: false
+        }));
+      }
+      const orderDetail = CreateOrderDetail(orderId, products);
+      if(orderDetail == false){
+        setNotificationConfig(prev => ({
+          ...prev, 
+          message: "Algunos productos no se añadieron a tu orden",
+          subMessage: "revisa tu orden y cancelala o mantenla depende a tu preferencia",
+          success: false,
+          full: true
+        }));
+      }
+      setNotificationConfig(prev => ({...prev, visible: true }));
+      setTimeout(() => {
+        if(notificationConfig.success){navigate("/restaurantes");}
+        setNotificationConfig(messageBase);
+      }, 3000);
+    }
+    
   };
 
   return (
@@ -43,10 +78,10 @@ const Checkout = () => {
       <h2 className="text-lg font-bold text-center">Confirma tu pedido</h2>
 
       {/* Detalle de entrega */}
-      <EditSelect name="Direccion de entrega" edit={false} options={opcionesDireccion}/>
+      <EditSelect name="Direccion de entrega" edit={false} options={opcionesDireccion} value={direccion} onChange={setDireccion}/>
 
       {/* Métodos de pago */}
-      <EditSelect name="Metodo de pago" edit={false} options={opcionesPago} additionalText={"➡️ " + totalPrice}/>
+      <EditSelect name="Metodo de pago" edit={false} options={opcionesPago} additionalText={"➡️ " + totalPrice} value={metodoPago} onChange={setMetodoPago}/>
 
       {/* Sección de resumen */}
       <div className="bg-gray-100 rounded-lg p-4 space-y-2">
@@ -81,7 +116,7 @@ const Checkout = () => {
       {/* Botón de confirmación */}
       <div className="flex justify-center mt-4">
 
-        <Button onClick={goToBusiness} label={"Pedir " + totalPrice} type="button"/>
+        <Button onClick={SendOrder} label={"Pedir " + totalPrice} type="button"/>
       </div>
     </div>
   );
