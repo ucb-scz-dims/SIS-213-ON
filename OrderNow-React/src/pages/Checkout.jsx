@@ -5,6 +5,9 @@ import { useCart } from "../context/CartContext";
 import { getUserId } from "../Supertokens";
 import { CreateOrder } from "../SupaBase";
 import { CreateOrderDetail } from "../SupaBase";
+import { BussinessId } from "../SupaBase";
+import { BussinessActive } from "../SupaBase";
+import { ProductActive } from "../SupaBase";
 
 import Notification from "../components/Notification/Notification";
 import EditSelect from "../components/EditSelect/EditSelect";
@@ -14,19 +17,22 @@ import Button from "../components/atoms/Button";
 const Checkout = () => {
   const products = useCart();
   const navigate = useNavigate();
+  if(products.lenght<=0){
+    window.alert("carrito vacio, selecciona productos.");
+    navigate("/restaurantes")
+    return null;
+  }
   const servicePrice = 0.5;
   const sendPrice = 4.5;
   const totalcarrito = products.reduce( (sum, { price, quantity }) => sum + price * quantity, 0);
   const totalPrice = "Bs. " + (totalcarrito + sendPrice + servicePrice).toFixed(2);
+  const [showResumen, setShowResumen] = useState(false);
 
   const opcionesDireccion = ["Av. Palmar", "Universidad", "Postgrado"];
   const opcionesPago = ["Efectivo", "Tarjeta", "QR"];
   const [direccion, setDireccion] = useState(opcionesDireccion[0]);
   const [metodoPago, setMetodoPago] = useState(opcionesPago[0]);
 
-  const validateData = () => {
-    return getUserId();
-  }
   const messageBase = () => {
     return {
       message: "Tu pedido se ha realizado con exito",
@@ -37,10 +43,41 @@ const Checkout = () => {
     }
   }
   const [notificationConfig, setNotificationConfig] = useState(messageBase());
-  
-
-  const [showResumen, setShowResumen] = useState(false);
-
+  const ShowNotification = () =>{
+    setNotificationConfig(prev => ({...prev, visible: true }));
+    setTimeout(() => {
+      if(notificationConfig.success){navigate("/restaurantes");}
+      setNotificationConfig(messageBase);
+    }, 3000);
+  }
+  const validateData = async () => {
+    if(products.lenght<=0){
+      window.alert("carrito vacio, selecciona productos.");
+      navigate("/restaurantes")
+      return null;
+    }
+    let business_id = await BussinessId(products[0]?.id);
+    if(business_id==null || business_id == undefined || await !BussinessActive(business_id)){
+      window.alert("Restaurante no disponible, vuelve a editar tu carrito.");
+      return null;
+    }
+    try{
+      product.forEach(async element => {
+        if(!await ProductActive(element.id)){
+          window.alert(`Producto "${element.title}" no disponible actualmente, actualiza tu carrito.`);
+          return null;
+        }
+        if(await BussinessId(element.id) != business_id){
+          window.alert(`El Producto "${element.title}" no pertenece al mismo restaurante que tus demas productos, actualiza tu carrito.`);
+          return null;
+        }
+      });
+    }catch(e){
+      window.alert("error obteniendo los productos de el carrito");
+      return null;
+    }
+    return await getUserId();
+  }
   const SendOrder = async () => {
     const response = validateData();
     if(response!=null){
@@ -52,6 +89,8 @@ const Checkout = () => {
           success: false,
           full: false
         }));
+        ShowNotification();
+        return null;
       }
       const orderDetail = CreateOrderDetail(orderId, products);
       if(orderDetail == false){
@@ -63,13 +102,8 @@ const Checkout = () => {
           full: true
         }));
       }
-      setNotificationConfig(prev => ({...prev, visible: true }));
-      setTimeout(() => {
-        if(notificationConfig.success){navigate("/restaurantes");}
-        setNotificationConfig(messageBase);
-      }, 3000);
+      ShowNotification();
     }
-    
   };
 
   return (
