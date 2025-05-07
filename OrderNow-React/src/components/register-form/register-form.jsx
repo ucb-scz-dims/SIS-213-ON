@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Button from "../atoms/Button";
 import { signUpClicked } from "../../Supertokens.jsx";
+import { checkEmail } from "../../Supertokens.jsx";
 import { CreateUser } from "../../SupaBase.jsx";
 import { CreateConsumer } from "../../SupaBase.jsx";
 import { Link } from "react-router-dom";
@@ -15,22 +16,49 @@ const RegisterForm = () => {
     const [phone, setPhone] = useState("");
     const [gender, setGender] = useState("");
 
+    const correctResponse = (response, message) => {
+        if(response != null && response.toString() != "" && response != undefined) return true;
+        window.alert("registro no completado en " + message +", reportanos este error.");
+        return false;
+    }
+    const isAdult = (birthDateStr) => {
+        const birthDate = new Date(birthDateStr);
+        const today = new Date();
+    
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        const dayDiff = today.getDate() - birthDate.getDate();
+    
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+            return age - 1 >= 18;
+        }
+    
+        return age >= 18;
+    };
+    const validate = () => {
+        if (!firstName.trim() || !email.trim() || !password || !confirmPassword || !phone || !birthDate || !gender) {
+            return "Todos los campos deben ser completados.";
+        }
+        if (checkEmail(email)) return "El correo ya existe, inicia sesion.";
+        if (password !== confirmPassword) return "contraseñas no coinciden.";
+        const phoneRegex = /^\d{8}$/;
+        if (!phoneRegex.test(phone)) return "El número de teléfono debe tener 8 dígitos.";
+        if (isAdult(birthDate)) return "El usuario NO puede ser un menor de edad";
+        return "correcto";
+    }
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (password !== confirmPassword) {
-            window.alert("Las contraseñas no coinciden");
-        }else{
+        const result = validate();
+        if(result == "correct"){
             const registro_st =  await signUpClicked(email, password);
-            if(registro_st != "" && registro_st != null){
-                const registro_sb_user = await CreateUser(email, password, firstName, lastName, phone, 2, registro_st);
-                if(registro_sb_user != "" && registro_sb_user != null){
-                    const registro_sb_consumer = await CreateConsumer(registro_sb_user, birthDate, gender);
-                    if(registro_sb_consumer != "" && registro_sb_consumer != null){
-                        window.location.href = "/";
-                    }else{window.alert("error al crear customer en sb")}
-                }else{window.alert("error al crear usuario en sb")}
-            }else{window.alert("error al crear en supertokens")}
+            if(!correctResponse(registro_st, "supertokens")) return;
+            const registro_sb_user = await CreateUser(email, password, firstName, lastName, phone, 2, registro_st);
+            if(!correctResponse(registro_sb_user, "supabase-user")) return;
+            const registro_sb_consumer = await CreateConsumer(registro_sb_user, birthDate, gender);
+            if(!correctResponse(registro_sb_consumer, "supabase-consumer")) return;
+            window.location.href = "/";
         }
+        window.alert(result);
     };
 
     return (

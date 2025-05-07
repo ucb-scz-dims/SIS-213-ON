@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import getSupaBaseClient from "../supabase-client";
 import ProductsList from "../components/ProductList";
 import IconInfo from "../components/IconInfo";
 import Modal from "../components/information/InfoRestaurante";
 import Rating from "../components/atoms/Rating";
 import { useRestaurant } from "../context/CartContext";
+import ClosedBusinessModal from "../components/ClosedBusinessModal";
 
 function Business() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { setRestaurantId } = useRestaurant();
   const supaBaseCom = getSupaBaseClient("com");
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [showMenu, setShowMenu] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -63,8 +66,16 @@ function Business() {
   const isActuallyOpen = is_open && withinOperatingHours;
 
   return (
+
+    
     <main className="max-w-6xl mx-auto px-4 pt-24 pb-8">
-      {/* TODO: Se puede cambiar por un componente de advertencia */}
+      
+      <ClosedBusinessModal
+        isOpen={!isActuallyOpen && !showMenu}
+        onBackToList={() => navigate("/restaurantes")}
+        onContinue={() => setShowMenu(true)}
+      />
+
       {!isActuallyOpen && (
         <div className="bg-red-100 text-red-800 text-center py-3 font-semibold rounded mb-4">
           Este negocio está cerrado actualmente
@@ -94,11 +105,13 @@ function Business() {
         </div>
       </div>
 
-      <section className="mb-12">
-        <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
-        <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
-      </section>
+        <section className="mb-12">
+          <h2 className="text-xl font-bold mb-6 text-gray-800">Menú</h2>
+          <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
+        </section>
+
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
     </main>
   );
 }

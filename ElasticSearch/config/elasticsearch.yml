@@ -1,0 +1,7 @@
+xpack.security.enabled: false
+xpack.security.transport.ssl.enabled: false
+
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+http.cors.allow-headers: "X-Requested-With, Content-Type, Content-Length, Authorization"
+http.cors.allow-credentials: true
