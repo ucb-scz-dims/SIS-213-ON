@@ -17,8 +17,8 @@ function App() {
         <Route path='/about' element={<About />} />
         <Route path='/registration' element={<RegistrationForm/>}/>
         <Route path='/status' element={<RestaurantStatusPage/>}/>
-      <Route path='/product/register' element={<ProductForm />}/>
-      <Route path='/product/:id/update' element={<ProductForm productId={1}/>}/>
+        <Route path='/product/register' element={<ProductForm />}/>
+        <Route path='/product/:id/update' element={<ProductForm productId={1}/>}/>
       </Routes>
     </Layout>
   );
