@@ -1,10 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BusinessTypeCard from '../components/BusinessTypeCard';
 import CardSlider from '../components/CardSlider';
+import getSupaBaseClient from '../supabase-client';
 
 const Home = () => {
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const supabase = getSupaBaseClient('com');
+      const { data, error } = await supabase
+        .from('orders')
+        .select('date, total_price, business_id, state_type_id, state_types(name), businesses(name)')
+        .neq('state_type_id', 4)
+        .order('date', { ascending: false })
+
+      if (!error) setOrders(data || []);
+    };
+    fetchOrders();
+  }, []);
+
   return (
     <>
+
+      <div className="w-full max-w-3xl mx-auto mt-6">
+        <h3 className="text-lg font-semibold mb-2">Tus órdenes recientes</h3>
+        <ul className="divide-y divide-gray-200 bg-white rounded shadow text-sm">
+          {orders.length === 0 && (
+            <li className="p-3 text-gray-500">No tienes órdenes recientes.</li>
+          )}
+          {orders.map(order => (
+            <li key={order.business_id} className="flex justify-between items-center p-3">
+              <div>
+                <span className="font-medium">{order.businesses?.name}</span>
+                <span className="ml-2 text-gray-400">{new Date(order.date).toLocaleDateString()}</span>
+              </div>
+              <div>
+                <span className="px-2 py-1 rounded text-xs bg-gray-100">{order.state_types?.name}</span>
+                <span className="ml-3 font-semibold">${order.total_price}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <div className="flex justify-center w-full ">
         <div className="w-full max-w-3xl p-4">
           <h2 className="text-xl font-bold text-left">Bienvenido. ¿Qué vas a pedir hoy?</h2>
@@ -23,4 +62,3 @@ const Home = () => {
 };
 
 export default Home;
-

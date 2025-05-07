@@ -127,9 +127,6 @@ const OrdersDashboard = () => {
   return (
     <>
       <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center gap-8">
-        {/* TODO: Quitar el link cuando se tenga implementada la navegacion por la aplicacion */}
-        <Link to='/product/register'>Formulario de registro de un producto | </Link>
-        <Link to='/product/1/update'>Formulario de modificación de un producto</Link>
 
 
         <div className="min-h-screen p-6 md:p-12 font-sans">
