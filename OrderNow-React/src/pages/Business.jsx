@@ -11,60 +11,86 @@ function Business() {
   const { id } = useParams();
   const { setRestaurantId } = useRestaurant();
   const supaBaseCom = getSupaBaseClient("com");
-  const [business, setBusiness] = useState(null);
-  const [loading, setLoading] = useState(true);
 
+  const [business, setBusiness] = useState(null);
+  const [todaySchedule, setTodaySchedule] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const getDayNumber = () => {
+    const d = new Date().getDay();
+    return d === 0 ? 7 : d;
+  };
 
   useEffect(() => {
     setRestaurantId(id);
-    const fetchBusiness = async () => {
-      const { data, error } = await supaBaseCom
+
+    const fetchAll = async () => {
+      setLoading(true);
+
+      const { data: biz, error: errBiz } = await supaBaseCom
         .from("businesses")
-        .select("*")
+        .select("*, rating")
         .eq("id", id)
         .single();
-
-      if (error) {
-        console.error("Error al obtener el negocio:", error.message);
-        alert("Error al obtener los datos del negocio.");
-        setLoading(false);
-        return;
+      if (errBiz) {
+        return alert("No pude cargar el negocio.");
       }
-      setBusiness(data);
+      setBusiness(biz);
+      
+      const dayNum = getDayNumber();
+      const { data: sched, error: errSched } = await supaBaseCom
+        .from("schedule")
+        .select("opening_time,clossing_time")
+        .eq("business_id", id)
+        .eq("day", dayNum)
+        .order("opening_time", { ascending: true });
+      if (errSched) {
+        return alert("No pude cargar horarios.");
+      }
+      setTodaySchedule(sched || []);
+
       setLoading(false);
     };
 
-    fetchBusiness();
-  }, [id, supaBaseCom]);
+    fetchAll();
+  }, [id, supaBaseCom, setRestaurantId]);
 
   if (loading)
     return <div className="pt-24 text-center">Cargando detalles...</div>;
   if (!business)
     return <div className="pt-24 text-center">No se encontró el negocio.</div>;
 
-  const { name, description, address, is_open, open_time, close_time, rating } =
-    business;
-
-  const timeToMinutes = (timeStr) => {
-    if (!timeStr) return 0;
-    const [hours, minutes] = timeStr.split(":").map(Number);
-    return hours * 60 + minutes;
+  const toMinutes = (t) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
   };
 
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const nowMinutes = (() => {
+    const d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  })();
 
-  const openingMinutes = timeToMinutes(open_time);
-  const closingMinutes = timeToMinutes(close_time);
+  const isOpenNow = todaySchedule.some(({ opening_time, clossing_time }) => {
+    const start = toMinutes(opening_time);
+    const end = toMinutes(clossing_time);
+    return nowMinutes >= start && nowMinutes < end;
+    
+  });
+  const isActuallyOpen = business.is_open && isOpenNow;
 
-  const withinOperatingHours =
-    currentMinutes >= openingMinutes && currentMinutes < closingMinutes;
-  const isActuallyOpen = is_open && withinOperatingHours;
+  const scheduleText =
+    todaySchedule.length > 0
+      ? todaySchedule
+          .map(
+            ({ opening_time, clossing_time }) =>
+              `${opening_time.slice(0, 5)} – ${clossing_time.slice(0, 5)}`
+          )
+          .join("  |  ")
+      : "Cerrado hoy";
 
   return (
     <main className="max-w-6xl mx-auto px-4 pt-24 pb-8">
-      {/* TODO: Se puede cambiar por un componente de advertencia */}
       {!isActuallyOpen && (
         <div className="bg-red-100 text-red-800 text-center py-3 font-semibold rounded mb-4">
           Este negocio está cerrado actualmente
@@ -77,27 +103,37 @@ function Business() {
         }`}
       >
         <div className="flex items-center gap-6">
-          {/* Si cuentas con imagen, reemplaza este div */}
+          {/* Imagen placeholder */}
           <div className="w-24 h-24 bg-gray-200 rounded-lg"></div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">{name}</h2>
-            <Rating rating={rating} />
-            {description && <p className="text-gray-600">{description}</p>}
-            {address && <p className="text-gray-600">{address}</p>}
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              {business.name}
+            </h2>
+            <Rating rating={business.rating} />
+            {business.description && (
+              <p className="text-gray-600">{business.description}</p>
+            )}
+            {business.address && (
+              <p className="text-gray-600">{business.address}</p>
+            )}
             <p className="text-sm text-gray-600">
-              Horario: {open_time} - {close_time}
+              Horario: {scheduleText}
             </p>
           </div>
-          <div className="cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors">
-            <IconInfo onClick={() => setIsModalOpen(true)} />
+          <div
+            className="cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <IconInfo />
           </div>
         </div>
       </div>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold mb-6 text-gray-800">Menu</h2>
+        <h2 className="text-xl font-bold mb-6 text-gray-800">Menú</h2>
         <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
       </section>
+
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </main>
   );
