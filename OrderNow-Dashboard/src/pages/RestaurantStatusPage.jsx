@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import getSupaBaseClient from "../supabaseClient";
+import getSupaBaseClient from "../supabase/supabase-client";
 
 export default function RestaurantStatusPage() {
   const [restaurants, setRestaurants] = useState([]);
