@@ -13,18 +13,18 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",
-    "@tailwindcss/vite": "^4.0.17",
+    "@tailwindcss/vite": "^4.1.4",
     "lucide-react": "^0.487.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.4.1",
+    "react-router-dom": "^7.5.1",
     "supertokens-web-js": "^0.15.0",
-    "tailwindcss": "^4.0.15"
+    "tailwindcss": "^4.1.4"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.6",
     "@eslint/js": "^9.21.0",
-    "@storybook/addon-docs": "^8.6.9",
+    "@storybook/addon-docs": "^8.6.12",
     "@storybook/addon-essentials": "^8.6.9",
     "@storybook/blocks": "^8.6.9",
     "@storybook/experimental-addon-test": "^8.6.9",

@@ -1,24 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
+import ProductDetailsModal from './ProductDetailsModal';
+import ProductAvailability from './atoms/ProductAvailability';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, isMenuEnabled }) => {
+  const [showModal, setShowModal] = useState(false);
+  
+  const handleCardClick = () => {
+    if (isMenuEnabled && product.available) {
+      setShowModal(true);
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      {/* Si el producto tiene imagen, se muestra; de lo contrario se muestra un placeholder */}
-      {product.image_url ? (
-        <img
-          src={'product.image_url'}
-          alt={product.name}
-          className="h-48 w-full object-cover"
-        />
-      ) : (
-        <div className="h-48 bg-gray-200"></div>
-      )}
-      <div className="p-4">
-        <h3 className="font-semibold mb-2">{product.name}</h3>
-        <p className="text-sm text-gray-600 mb-2">{product.description}</p>
-        <p className="text-lg font-bold text-gray-800">Bs {product.price}</p>
+    <>
+      <div
+        onClick={handleCardClick}
+        className={`relative bg-white rounded-lg shadow-md p-4 transition-all ${
+          !isMenuEnabled || !product.available 
+            ? 'opacity-50 grayscale cursor-not-allowed' 
+            : 'cursor-pointer hover:shadow-lg'
+        }`}
+      >
+        <ProductAvailability isAvailable={product.available} />
+        
+        <div className="w-full h-40 bg-gray-100 rounded-lg mb-4 overflow-hidden">
+          {product.image_url && product.image_url !== 'NA' ? (
+            <img
+              src={product.image_url}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+              {product.name}
+            </div>
+          )}
+        </div>
+        <h3 className="text-lg font-semibold">{product.name}</h3>
+        <p className="text-gray-600">{product.description}</p>
+        <p className="text-sm font-bold font-semibold mt-2">${product.price.toFixed(2)}</p>
       </div>
-    </div>
+
+      {showModal && product.available && (
+        <ProductDetailsModal
+          product={product}
+          closeModal={closeModal}
+        />
+      )}
+    </>
   );
 };
 
