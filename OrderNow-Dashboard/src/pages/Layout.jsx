@@ -2,6 +2,8 @@ import React from "react";
 import { useState, useEffect } from "react";
 import Notification from "../components/Notification/Notification";
 import getSupaBaseClient from "../supabase/supabase-client";
+import NavBar from '../components/layout/Navbar.jsx';
+import Footer from '../components/layout/Footer';
 
 
 
@@ -42,6 +44,7 @@ const Layout = ({children}) => {
 
     return(
         <div>
+            <NavBar/>
             <Notification
                 message="Tienes nuevos pedidos"
                 type="info"
@@ -49,9 +52,7 @@ const Layout = ({children}) => {
                 visible={showNotification}
             />
             {children}
+            <Footer />
         </div>
     );
 }
-
-
-export default Layout;
