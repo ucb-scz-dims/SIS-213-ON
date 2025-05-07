@@ -43,7 +43,7 @@ const Layout = ({children}) => {
     }, [])
 
     return(
-        <div>
+        <>
             <NavBar/>
             <Notification
                 message="Tienes nuevos pedidos"
@@ -53,6 +53,8 @@ const Layout = ({children}) => {
             />
             {children}
             <Footer />
-        </div>
+        </>
     );
 }
+
+export default Layout;
