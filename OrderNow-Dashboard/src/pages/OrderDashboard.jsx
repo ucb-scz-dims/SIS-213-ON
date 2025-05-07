@@ -6,6 +6,7 @@ import { ORDER_STATUS } from "../config/order-status";
 import ConfirmationModal from "../components/confirmation-modal/ConfirmationModal";
 import Button from "../components/Button/Button";
 import { Link } from 'react-router-dom';
+import TotalOrdersCard from "../components/TotalOrderCard/TotalOrderCard";
 
 const supaBase = getSupaBaseClient();
 
@@ -32,10 +33,10 @@ const OrdersDashboard = () => {
   const openConfirmationModal = (orderId, newStatusId) => {
     if (newStatusId == ORDER_STATUS.CANCELED) {
       setTitleConfirmationModal("Rechazar pedido");
-      setBodyConfirmationModal("¿Estás seguro de rechazar el pedido?");      
+      setBodyConfirmationModal("¿Estás seguro de rechazar el pedido?");
     } else {
       setTitleConfirmationModal("Aceptar pedido");
-      setBodyConfirmationModal("¿Estás seguro de aceptar el pedido?");      
+      setBodyConfirmationModal("¿Estás seguro de aceptar el pedido?");
     }
 
     setSelectedOrderId(orderId);
@@ -44,10 +45,10 @@ const OrdersDashboard = () => {
   };
 
   const handleOrderStatusChange = async () => {
-    if (!selectedOrderId || !confirmAction) 
+    if (!selectedOrderId || !confirmAction)
       return;
 
-    if(isUpdating.current)
+    if (isUpdating.current)
       return
 
     isUpdating.current = true;
@@ -66,7 +67,7 @@ const OrdersDashboard = () => {
 
     await fetchOrders();
     closeConfirmationModal();
-    
+
     isUpdating.current = false;
   };
 
@@ -134,10 +135,15 @@ const OrdersDashboard = () => {
             Pedidos del Restaurante
           </h1>
 
+
+
           {loading ? (
             <p className="text-center text-gray-500">Cargando pedidos...</p>
           ) : (
             <div className="space-y-4">
+              <div className="p-6">
+                <TotalOrdersCard totalOrders={orders.length} />
+              </div>
               <div className="hidden md:grid grid-cols-10 bg-gray-100 text-gray-600 font-semibold px-8 py-3 shadow-sm text-sm">
                 <span className="w-12">ID</span>
                 <span className="w-28">Fecha</span>
