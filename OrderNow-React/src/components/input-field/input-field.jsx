@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const InputField = ({type, id, placeholder, required}) => {
     return (
-        <input class="w-full h-12 border border-gray-800 px-3 rounded-lg"
+        <input className="w-full h-12 border border-gray-800 px-3 rounded-lg"
                type={type}
                id={id}
                name={id}

@@ -6,7 +6,7 @@ const Card = ({path, alt, fit, title, desc, price, disabled, handleClick}) => {
         <div
             className="w-72 h-40 flex flex-col justify-center gap-2 bg-neutral-50 rounded-lg shadow p-2 disabled:pointer-events-none" disabled={disabled}
         >
-        <div class="flex gap-2">
+        <div className="flex gap-2">
             <img className={"bg-neutral-500 w-24 h-24 shrink-0 rounded-lg " + fit} alt={alt} src={path} title={alt}/>
             <div className="flex flex-col">
             <span className="font-bold text-neutral-700 italic">{title}</span>
