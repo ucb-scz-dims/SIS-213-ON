@@ -95,31 +95,30 @@ const Businesses = () => {
         </div>
       </div>
       <div>
-  <h1 className="text-4xl font-bold mb-1">
-    {isOpen ? 'Disponibles' : 'No disponibles'}
-  </h1>
-  <h2 className="mb-5.5">
-    {
-      filteredBusinesses.filter(a => a.is_open === isOpen).length
-    } restaurante{filteredBusinesses.filter(a => a.is_open === isOpen).length === 1 ? '' : 's'} {isOpen ? 'disponible' : 'no disponible'}{filteredBusinesses.filter(a => a.is_open === isOpen).length === 1 ? '' : 's'}
-  </h2>
+        <h1 className="text-4xl font-bold mb-1">
+          {isOpen ? 'Disponibles' : 'No disponibles'}
+        </h1>
+        <h2 className="mb-5.5">
+          {
+            filteredBusinesses.filter(a => a.is_open === isOpen).length
+          } restaurante{filteredBusinesses.filter(a => a.is_open === isOpen).length === 1 ? '' : 's'} {isOpen ? 'disponible' : 'no disponible'}{filteredBusinesses.filter(a => a.is_open === isOpen).length === 1 ? '' : 's'}
+        </h2>
 
-  {filteredBusinesses
-    .filter((item) => item.is_open === isOpen)
-    .map((item) => (
-      <TarjetaRestaurante
-        key={item.id}
-        id={item.id}
-        nombre={item.name}
-        descripcion={item.description}
-        estrellas={item.rating}
-        minimum_order_amount={item.minimum_order_amount}
-        delivery_time_min={item.delivery_time_min}
-        delivery_time_max={item.delivery_time_max}
-      />
-    ))}
-</div>
-
+        {filteredBusinesses
+          .filter((item) => item.is_open === isOpen)
+          .map((item) => (
+            <TarjetaRestaurante
+              key={item.id}
+              id={item.id}
+              nombre={item.name}
+              descripcion={item.description}
+              estrellas={item.rating}
+              minimum_order_amount={item.minimum_order_amount}
+              delivery_time_min={item.delivery_time_min}
+              delivery_time_max={item.delivery_time_max}
+            />
+          ))}
+      </div>
       </div>
 
       <div className='mr-auto '></div>
