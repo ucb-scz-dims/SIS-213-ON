@@ -14,10 +14,10 @@ function Businesses() {
                 Nombre
               </th>
               <th scope="col" className="px-6 py-3">
-                Descripcion
+                Descripción
               </th>
               <th scope="col" className="px-6 py-3">
-                Direccion
+                Dirección
               </th>
               <th scope="col" className="px-6 py-3">
                 Disponibilidad
