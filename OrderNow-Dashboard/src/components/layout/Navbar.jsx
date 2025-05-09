@@ -12,6 +12,7 @@ const NavBar = () => {
   const links = [
     { url: '/', text: 'Home' },
     { url: '/orders', text: 'Ver Pedidos' },
+    { url: '/product', text: 'Productos'},
     { url: '/product/register', text: 'Crear producto' },
     { url: '/business', text: 'Restaurantes'},
     { url: '/status', text: 'Cierre Temporal' },
