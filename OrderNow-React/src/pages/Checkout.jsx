@@ -1,48 +1,40 @@
 import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { useCart } from "../context/CartContext";
 import { getUserId } from "../Supertokens";
-import { CreateOrder } from "../SupaBase";
-import { CreateOrderDetail } from "../SupaBase";
-import { BussinessId } from "../SupaBase";
-import { BussinessActive } from "../SupaBase";
-import { ProductActive } from "../SupaBase";
+import { CreateOrder, CreateOrderDetail, BussinessId, BussinessActive, ProductActive } from "../SupaBase";
 
 import Notification from "../components/Notification/Notification";
 import EditSelect from "../components/EditSelect/EditSelect";
 import OrderResume from "../components/OrderResume/OrderResume";
 import Button from "../components/atoms/Button";
+import { MESSAGES, SUBMESSAGES, VALIDATIONS, NAVIGATE } from "../assets/constants";
 
 const Checkout = () => {
-  const products = useCart();
   const navigate = useNavigate();
-  if(products.lenght<=0){
-    window.alert("carrito vacio, selecciona productos.");
-    navigate("/restaurantes")
-    return null;
+  const NOTIFICATION_BASE = {
+    message: MESSAGES.pedido_exitoso,
+    subMessage: SUBMESSAGES.pedido_exitoso,
+    success: true,
+    full: true,
+    visible: false
   }
-  const servicePrice = 0.5;
-  const sendPrice = 4.5;
-  const totalcarrito = products.reduce( (sum, { price, quantity }) => sum + price * quantity, 0);
-  const totalPrice = "Bs. " + (totalcarrito + sendPrice + servicePrice).toFixed(2);
-  const [showResumen, setShowResumen] = useState(false);
-
-  const opcionesDireccion = ["Av. Palmar", "Universidad", "Postgrado"];
-  const opcionesPago = ["Efectivo", "Tarjeta", "QR"];
-  const [direccion, setDireccion] = useState(opcionesDireccion[0]);
-  const [metodoPago, setMetodoPago] = useState(opcionesPago[0]);
-
-  const messageBase = () => {
-    return {
-      message: "Tu pedido se ha realizado con exito",
-      subMessage: "Puedes seguir comprando",
-      success: true,
-      full: true,
-      visible: false
-    }
+  const [notificationConfig, setNotificationConfig] = useState(NOTIFICATION_BASE);
+  const EDIT_NOTIFICATION = (
+    message=NOTIFICATION_BASE.message,
+    subMessage=NOTIFICATION_BASE.subMessage,
+    success=NOTIFICATION_BASE.success,
+    full=NOTIFICATION_BASE.full,
+  ) => {
+    setNotificationConfig(prev => ({
+      ...prev, 
+      message: message,
+      subMessage: subMessage,
+      success: success,
+      full: full
+    }));
   }
-  const [notificationConfig, setNotificationConfig] = useState(messageBase());
   const ShowNotification = () =>{
     setNotificationConfig(prev => ({...prev, visible: true }));
     setTimeout(() => {
@@ -50,60 +42,52 @@ const Checkout = () => {
       setNotificationConfig(messageBase);
     }, 3000);
   }
+  const products = useCart();
+  if(VALIDATIONS.ArrayVacio(products)){
+    EDIT_NOTIFICATION(message=MESSAGES.no_card, success=false, full=false);
+    ShowNotification();
+    navigate("/restaurantes")
+  };
+  const servicePrice = 0.5;
+  const sendPrice = 4.5;
+  const totalcarrito = products.reduce( (sum, { price, quantity }) => sum + price * quantity, 0);
+  const totalPrice = "Bs." + (totalcarrito + sendPrice + servicePrice).toFixed(2);
+  const [showResumen, setShowResumen] = useState(false);
+
+  const opcionesDireccion = ["Av. Palmar", "Universidad", "Postgrado"];
+  const opcionesPago = ["Efectivo", "Tarjeta", "QR"];
+  const [direccion, setDireccion] = useState(opcionesDireccion[0]);
+  const [metodoPago, setMetodoPago] = useState(opcionesPago[0]);
+
   const validateData = async () => {
-    if(products.lenght<=0){
-      window.alert("carrito vacio, selecciona productos.");
-      navigate("/restaurantes")
-      return null;
-    }
-    let business_id = await BussinessId(products[0]?.id);
-    if(business_id==null || business_id == undefined || await !BussinessActive(business_id)){
-      window.alert("Restaurante no disponible, vuelve a editar tu carrito.");
-      return null;
-    }
     try{
+      if(VALIDATIONS.OutPutNotAcceptable(await getUserId())){return (false, MESSAGES.no_user);};  
+      if(VALIDATIONS.ArrayVacio(products)){return (false, MESSAGES.no_card);};
+      let business_id = await BussinessId(products[0]?.id);
+      if(VALIDATIONS.OutPutNotAcceptable(business_id)){return (false, MESSAGES.no_bussiness);};
       product.forEach(async element => {
-        if(!await ProductActive(element.id)){
-          window.alert(`Producto "${element.title}" no disponible actualmente, actualiza tu carrito.`);
-          return null;
-        }
-        if(await BussinessId(element.id) != business_id){
-          window.alert(`El Producto "${element.title}" no pertenece al mismo restaurante que tus demas productos, actualiza tu carrito.`);
-          return null;
-        }
+        if(VALIDATIONS.OutPutNotAcceptable(await ProductActive(element.id))){return (false, MESSAGES.product_unable);}
+        if(VALIDATIONS.Equals(await BussinessId(element.id), business_id)){return (false, MESSAGES.product_different);}
       });
+      return (true, business_id);
     }catch(e){
-      window.alert("error obteniendo los productos de el carrito");
-      return null;
+      console.log("error validando datos", e);
+      return (false, "error no soportado en validacion de datos");
     }
-    return await getUserId();
   }
-  const SendOrder = async () => {
-    const response = validateData();
-    if(response!=null){
-      const orderId = CreateOrder(products[0].id, response, direccion,totalcarrito, metodoPago);
-      if(orderId == null || orderId == undefined){
-        setNotificationConfig(prev => ({
-          ...prev, 
-          message: "Error creando tu orden, revisa tu carrito y ordena nuevamente.",
-          success: false,
-          full: false
-        }));
-        ShowNotification();
-        return null;
+  const Send_Order = async () => {
+    const response = await validateData();
+    if(!response[0]){
+      EDIT_NOTIFICATION(message=response[1], success=false, full=false);
+    }else{
+      const orderId = await CreateOrder(response[1], await getUserId(), direccion,totalcarrito, metodoPago);
+      if(VALIDATIONS.OutPutNotAcceptable(orderId)){ EDIT_NOTIFICATION(message=MESSAGES.order_error, success=false, full=false);}    
+      else{
+        const orderDetail = await CreateOrderDetail(orderId, products);
+        if(VALIDATIONS.OutPutNotAcceptable(orderDetail)){ EDIT_NOTIFICATION(message=MESSAGES.order_detail_error, subMessage=SUBMESSAGES.order_detail_error, success=false, full=false);}
       }
-      const orderDetail = CreateOrderDetail(orderId, products);
-      if(orderDetail == false){
-        setNotificationConfig(prev => ({
-          ...prev, 
-          message: "Algunos productos no se añadieron a tu orden",
-          subMessage: "revisa tu orden y cancelala o mantenla depende a tu preferencia",
-          success: false,
-          full: true
-        }));
-      }
-      ShowNotification();
     }
+    ShowNotification();
   };
 
   return (
@@ -129,15 +113,15 @@ const Checkout = () => {
         <div className="text-sm space-y-1 pt-2 border-t border-gray-300">
           <div className="flex justify-between">
             <span>Productos</span>
-            <span>{totalcarrito.toFixed(2)} Bs.</span>
+            <span>Bs. {totalcarrito.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Envío</span>
-            <span>{sendPrice} Bs.</span>
+            <span>Bs. {sendPrice}</span>
           </div>
           <div className="flex justify-between">
             <span>Servicio</span>
-            <span>{servicePrice} Bs.</span>
+            <span>Bs. {servicePrice}</span>
           </div>
           <hr className="my-2" />
           <div className="flex justify-between font-bold">
@@ -150,7 +134,7 @@ const Checkout = () => {
       {/* Botón de confirmación */}
       <div className="flex justify-center mt-4">
 
-        <Button onClick={SendOrder} label={"Pedir " + totalPrice} type="button"/>
+        <Button onClick={Send_Order} label={"Pedir " + totalPrice} type="button"/>
       </div>
     </div>
   );

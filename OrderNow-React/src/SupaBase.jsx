@@ -1,21 +1,72 @@
 import getSupaBaseClient from './supabase-client'
 
-export async function BussinessId(product_id){
+async function CreateData(schema, table, columns_names, columns_values, column_return="ninguno") {
     try{
-        const supabase = getSupaBaseClient("com");
-        if (!product_id) {
-            console.warn("Identificador de producto no reconocido");
+        const supabase = getSupaBaseClient(schema);
+        if (!schema || !table || !columns_names || !columns_values || !column_return) {
+            console.warn("Datos incompletos al crear fila");
             return null;
         }
-        const { data, error } = await supabase
-        .from('products')
-        .select('business_id')
-        .eq('id', product_id)
-        .single();
-        if (error) {
-            console.error("Error al recuperar datos del producto de un restaurante en Supabase:", error.message);
+        if (columns_names.length !== columns_values.length) {
+            console.warn("Los nombres y valores de columnas no coinciden en cantidad");
+            return null;
         }
-        return data?.[0]?.business_id;
+        let body = {};
+        let process_state = true;
+        columns_names.forEach((name, index) => {
+            body[name] = columns_values[index];
+        });
+        const { data, error } = await supabase
+            .from(table)
+            .insert([
+                body
+            ]).single();
+        if (error || data == undefined) {
+            console.error("Error al guardar los datos en Supabase:", error.message);
+            process_state = false;
+        }
+        return column_return!="ninguno"? data?.[0]?.[column_return] : process_state;
+    }
+    catch(e){
+        console.log(e);
+        return null;
+    }
+}
+
+async function GetDataValue(schema, table, reference_column, reference_value, column_name="ninguno") {
+    try{
+        if (!schema || !table || !column_name || !reference_column || !reference_value) {
+            console.warn("Datos incompletos al obtener el atributo");
+            return null;
+        }
+        const supabase = getSupaBaseClient(schema);
+        const {data, error} = await supabase
+            .from(table)
+            .eq(reference_column, reference_value)
+            .single();
+        if (error) {
+            console.error("Error al obtener el atributo:", error.message);
+        }
+        return column_name!="ninguno"? data?.[0]?.[column_name] : data?.[0];
+    }
+    catch(e){
+        console.log("error en el metodo get sb: ", e);
+        return null;
+    }
+}
+
+async function GetUserId(GuID) {
+    try{
+        return await GetDataValue("sec","users","GuID",GuID,"id");
+    }catch(e){
+        console.log(e);
+        return null;
+    }
+}
+
+export async function BussinessId(product_id){
+    try{
+        return await GetDataValue("com","products","id",product_id,"business_id");
     }catch(e){
         console.log(e);
         return null;
@@ -24,20 +75,7 @@ export async function BussinessId(product_id){
 
 export async function ProductActive(product_id){
     try{
-        const supabase = getSupaBaseClient("com");
-        if (!product_id) {
-            console.warn("Identificador de producto no reconocido");
-            return false;
-        }
-        const { data, error } = await supabase
-        .from('products')
-        .select('available')
-        .eq('id', product_id)
-        .single();
-        if (error) {
-            console.error("Error al recuperar estado de un producto en Supabase:", error.message);
-        }
-        return data?.[0]?.available;
+        return await GetDataValue("com","products","id",product_id,"available");
     }catch(e){
         console.log(e);
         return false;
@@ -46,61 +84,16 @@ export async function ProductActive(product_id){
 
 export async function BussinessActive(business_id){
     try{
-        const supabase = getSupaBaseClient("com");
-        if (!business_id) {
-            console.warn("Identificador de restaurante no reconocido");
-            return false;
-        }
-        const { data, error } = await supabase
-        .from('bussinesses')
-        .select('isOpen', 'open_time', 'close_time')
-        .eq('id', business_id)
-        .single();
-        if (error) {
-            console.error("Error al recuperar datos del restaurante en Supabase:", error.message);
-        }
+        const data = await GetDataValue("com","bussinesses","id",business_id);
         if(data!= undefined && data?.isOpen == true){
             const currentTime = new Date();
             const openTime = new Date(data?.openTime);
             const closeTime = new Date(data?.closeTime);
             if(currentTime >= openTime && currentTime <= closeTime){
                 return true;
-            }else{
-                return false;
             }
         }
         return false;
-    }catch(e){
-        console.log(e);
-        return false;
-    }
-}
-
-export async function CreateOrderDetail(order_id, products){
-    let correct_creation = true;
-    try{
-        const supabase = getSupaBaseClient("com");
-        if (!order_id || !products) {
-            console.warn("Datos no reconocidos para hacer el detalle");
-            return !correct_creation;
-        }
-        products.forEach(async element => {
-            const { data, error } = await supabase
-            .from('order_details')
-            .insert([{
-                quantity: element.quantity,
-                product_id: element.id,
-                order_id: order_id
-            }]).select('id');
-            if (data?.[0]?.id == undefined) {
-                console.error(`Error al guardar el producto ${element.id} en Supabase:`);
-                correct_creation = false;
-            }
-            if (error) {
-                console.error("Error al guardar los datos en Supabase:", error.message);
-            }
-        });
-        return correct_creation;
     }catch(e){
         console.log(e);
         return false;
@@ -109,53 +102,43 @@ export async function CreateOrderDetail(order_id, products){
 
 export async function CreateOrder(business_id, GuID, address, total_price, metodoPago){
     try{
-        const supabase = getSupaBaseClient("com");
-        if (!business_id || !consumer_id || !address || !total_price || !metodoPago) {
-            console.warn("Datos no reconocidos para hacer el pedido");
-            return null;
-        }
-        const { data, error } = await supabase
-        .from('orders')
-        .insert([{
-            date: new Date(),
-            total_price: total_price,
-            address: address,
-            business_id: business_id,
-            consumer_id: await GetUserId(GuID),
-            state_type_id: 1
-        }]).select('id');
-        if (error) {
-            console.error("Error al guardar los datos en Supabase:", error.message);
-        }
-        return data?.[0]?.id;
+        const columns = ["date", "total_price", "address", "business_id", "consumer_id", "state_type_id"];
+        const values = [new Date(), total_price, address, business_id, await GetUserId(GuID), 1];
+        return await CreateData("com", "orders",columns,values,"id");
     }catch(e){
         console.log(e);
         return null;
     }
 }
 
+export async function CreateOrderDetail(order_id, products){
+    let process_state = true;
+    try{
+        products.forEach(async element => {
+            const columns = ["quantity", "product_id", "order_id"];
+            let values = [element.quantity, element.id, order_id];
+            let data = await CreateData("com", "order_details",columns,values);
+            if (!data) {
+                console.error(`Error al guardar el producto ${element.id} en Supabase:`);
+                process_state = false;
+            }
+        });
+        return process_state;
+    }catch(e){
+        console.log(e);
+        return false;
+    }
+}
+
 export async function CreateUser(correo, password, firstName, lastName, phone, type_user, userId) {
     try{
-        const supabase = getSupaBaseClient("sec");
         if (!correo || !password || !firstName || !lastName || !phone || !type_user || !userId) {
             console.warn("Datos incompletos al crear usuario");
             return null;
         }
-        const { data, error } = await supabase
-        .from('users')
-        .insert([{
-            GuID: userId,
-            name: firstName,
-            last_name: lastName,
-            email: correo,
-            password: password,
-            phone_number: phone,
-            user_type_id: type_user
-        }]).select('id');
-        if (error) {
-            console.error("Error al guardar los datos en Supabase:", error.message);
-        }
-        return data?.[0]?.id;
+        const columns = ["GuID", "name", "last_name", "email", "password", "phone_number", "user_type_id"];
+        const values = [userId, firstName, lastName, correo, password, phone, type_user];
+        return await CreateData("sec", "users",columns,values,"id");
     }catch(e){
         console.log(e);
         return null;
@@ -163,34 +146,16 @@ export async function CreateUser(correo, password, firstName, lastName, phone, t
 }
 
 export async function CreateConsumer(userId, birthDate, user_gender) {
-    const supabase = getSupaBaseClient("com");
-    if (!userId || !birthDate || !user_gender) {
-        console.warn("Datos incompletos al crear consumidor");
+    try{
+        if (!userId || !birthDate || !user_gender) {
+            console.warn("Datos incompletos al crear consumidor");
+            return null;
+        }
+        const columns = ["date_of_birth", "gender", "user_id"];
+        const values = [birthDate, user_gender, userId];
+        return await CreateData("com", "consumers",columns,values);
+    }catch(e){
+        console.log(e);
         return null;
     }
-    const { data, error } = await supabase
-        .from('consumers')
-        .insert([{
-            date_of_birth: birthDate,
-            gender: user_gender,
-            user_id: userId,
-        }]).select('id');
-    if (error) {
-        console.error("Error al guardar los datos en Supabase:", error.message);
-    }
-    return data?.[0]?.id;
-}
-
-
-export async function GetUserId(GuID) {
-    const supabase = getSupaBaseClient("sec");
-    const { data, error } = await supabase
-        .from('users')
-        .select('id')
-        .eq('GuID', GuID)
-        .single();
-    if (error) {
-        console.error("Error al obtener el usuario:", error.message);
-    }
-    return data?.id;
 }
