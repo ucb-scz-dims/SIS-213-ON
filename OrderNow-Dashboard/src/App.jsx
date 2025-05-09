@@ -7,6 +7,8 @@ import ProductForm from './components/product-form/ProductForm';
 import Layout from './pages/Layout'
 import Home from './pages/Home'
 import RestaurantStatusPage from './pages/RestaurantStatusPage'
+import Businesses from './pages/Businesses';
+import Products from './pages/Products';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path='/status' element={<RestaurantStatusPage/>}/>
         <Route path='/product/register' element={<ProductForm />}/>
         <Route path='/product/:id/update' element={<ProductForm productId={1}/>}/>
+        <Route path='/business' element={<Businesses />}/>
+        <Route path='/product' element={<Products />} />
       </Routes>
     </Layout>
   );
