@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const supertokens = require("supertokens-node");
+const Dashboard = require("supertokens-node/recipe/dashboard");
 const Session = require("supertokens-node/recipe/session");
 const EmailPassword = require("supertokens-node/recipe/emailpassword");
 const { verifySession } = require("supertokens-node/recipe/session/framework/express");
@@ -24,7 +25,8 @@ supertokens.init({
     },
     recipeList: [
         EmailPassword.init(),
-        Session.init()
+        Session.init(),
+        Dashboard.init(),
     ]
 });
 
