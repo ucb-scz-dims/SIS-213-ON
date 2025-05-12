@@ -9,7 +9,7 @@ import Notification from "../components/Notification/Notification";
 import EditSelect from "../components/EditSelect/EditSelect";
 import OrderResume from "../components/OrderResume/OrderResume";
 import Button from "../components/atoms/Button";
-import { MESSAGES, SUBMESSAGES, VALIDATIONS, NAVIGATE } from "../assets/constants";
+import { MESSAGES, SUBMESSAGES, VALIDATIONS} from "../assets/constants";
 
 const Checkout = () => {
   const navigate = useNavigate();
