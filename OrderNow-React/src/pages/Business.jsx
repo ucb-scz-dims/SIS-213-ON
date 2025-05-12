@@ -28,15 +28,15 @@ function Business() {
     const fetchAll = async () => {
       setLoading(true);
 
-      const { data: biz, error: errBiz } = await supaBaseCom
+      const { data: bussines, error: errbussines } = await supaBaseCom
         .from("businesses")
         .select("*, rating")
         .eq("id", id)
         .single();
-      if (errBiz) {
+      if (errbussines) {
         return alert("No pude cargar el negocio.");
       }
-      setBusiness(biz);
+      setBusiness(bussines);
       
       const dayNum = getDayNumber();
       const { data: sched, error: errSched } = await supaBaseCom
