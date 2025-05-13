@@ -6,27 +6,18 @@ function CheckboxFilter({ title, items, resetName, onChange}) {
   const [selectedItems, setSelectedItems] = useState([])
 
   const handleChange = (event) => {
-    const checked = event.target.checked;
-    const targetKey = event.target.id;
-    let newSelectedItems;
-    if (checked) {
-        setCounterSelected(counterSelected + 1);
-        newSelectedItems = [...selectedItems, targetKey];
-        setSelectedItems(newSelectedItems);
-    } 
+    
+    let newSelectedItems = [];
+
+    if(event.target.id !== "reset") {
+      setCounterSelected((prevCounterSelected) => (event.target.checked ? (prevCounterSelected + 1) : (prevCounterSelected - 1)));
+      newSelectedItems = (event.target.checked ? ([...selectedItems, event.target.id]) : (selectedItems.filter(id => id !== event.target.id)));
+    }
     else {
-        newSelectedItems = selectedItems.filter(id => id !== targetKey);
-        setSelectedItems(newSelectedItems);
-        setCounterSelected(counterSelected - 1);
+      setCounterSelected(0);
     }
 
-    onChange(newSelectedItems);
-  };
-
-  const handleChangeReset = () => {
-    const newSelectedItems = [];
-    setCounterSelected(0);
-    setSelectedItems(newSelectedItems);
+    setSelectedItems(newSelectedItems)
     onChange(newSelectedItems);
   }
   
@@ -64,7 +55,8 @@ function CheckboxFilter({ title, items, resetName, onChange}) {
               <Button
                 type="button"
                 className="text-sm text-gray-700 underline transition-colors hover:text-gray-900"
-                onClick={handleChangeReset}
+                onClick={handleChange}
+                id="reset"
               >
                 {resetName}
               </Button>
@@ -83,7 +75,7 @@ function CheckboxFilter({ title, items, resetName, onChange}) {
                     type="checkbox"
                     className="size-5 rounded border-gray-300 shadow-sm"
                     id={key}
-                    onChange={(event) => handleChange(event)}
+                    onChange={handleChange}
                     checked={selectedItems.includes(key)}
                   />
 
