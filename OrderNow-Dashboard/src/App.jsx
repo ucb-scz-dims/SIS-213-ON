@@ -7,6 +7,7 @@ import ProductForm from './components/product-form/ProductForm';
 import Layout from './pages/Layout'
 import Home from './pages/Home'
 import RestaurantStatusPage from './pages/RestaurantStatusPage'
+import Businesses from './pages/Businesses';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path='/status' element={<RestaurantStatusPage/>}/>
         <Route path='/product/register' element={<ProductForm />}/>
         <Route path='/product/:id/update' element={<ProductForm productId={1}/>}/>
+        <Route path='/business' element={<Businesses />}/>
       </Routes>
     </Layout>
   );
