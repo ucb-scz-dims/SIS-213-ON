@@ -1,4 +1,3 @@
-'use client';
 import SuperTokens from 'supertokens-web-js';
 import Session from 'supertokens-web-js/recipe/session';
 import EmailPassword from 'supertokens-web-js/recipe/emailpassword'
@@ -36,7 +35,7 @@ export async function sesionExist() {
 
 export async function getUserId() {
     try{
-        if(await sesionExist()) return await Session.getUserId;
+        if(await sesionExist()) return await Session.getUserId();
         return null;
     }catch(e){
         window.alert("error consumiendo userId de st.");
@@ -67,9 +66,6 @@ export async function signUpClicked(email, password) {
         } 
         else if (response.status === "SIGN_UP_NOT_ALLOWED") {
             window.alert(response.reason);
-        }
-        else if(checkEmail(email)){
-            window.alert("correo ya registrado.");
         } 
         else {
             return response.user.id;
@@ -89,13 +85,10 @@ export async function signUpClicked(email, password) {
 export async function signInClicked(email, password) {
     try{
         let response = await signIn({
-            formFields: [{
-                id: "email",
-                value: email
-            }, {
-                id: "password",
-                value: password
-            }]
+            formFields: [
+                {id: "email", value: email},
+                {id: "password", value: password}
+            ]
         })
         if (response.status === "FIELD_ERROR") {
             response.formFields.forEach(formField => {
@@ -121,16 +114,20 @@ export async function signInClicked(email, password) {
     }
 }
 
+
 export async function logout () {
-    await Session.signOut(); 
-    window.location.href = "/auth/signIn";
+    try{
+        await Session.signOut(); 
+        window.location.href = "/auth/signIn";
+    }catch(e){
+        window.alert("problema cerrando sesion, intenta de nuevo");
+    }
 }
 
 export async function checkEmail(email) {
     try {
         let response = await doesEmailExist({email});
-        if (response.doesExist) return true;
-        return false;
+        return response.doesExist;
     } catch (err) {
         if (err.isSuperTokensGeneralError === true) {
             window.alert(err.message);

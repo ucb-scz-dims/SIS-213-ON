@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import Button from "../atoms/Button";
 import { signInClicked } from "../../Supertokens.jsx";
+import { checkEmail } from "../../Supertokens.jsx";
 import { Link } from "react-router-dom";
-import { GetUserId } from "../../SupaBase.jsx";
 
 const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if(signInClicked(email, password)){
-            if(GetUserId(email, password)!= null){
-                window.location.href = "/";
-            }else{window.alert("perfil no existe en sb.");}
-        }else{window.alert("cuenta no existe, registrese primero");}
+        if(!checkEmail(email)) {window.alert("correo no registrado, registrese primero."); return;}
+        if(await signInClicked(email, password)) window.location.href = "/";
     };
 
     return (
