@@ -39,12 +39,12 @@ const RegisterForm = () => {
         if (!firstName.trim() || !email.trim() || !password || !confirmPassword || !phone || !birthDate || !gender) {
             return "Todos los campos deben ser completados.";
         }
-        if (checkEmail(email)) return "El correo ya existe, inicia sesion.";
+        if (!checkEmail(email)) return "El correo ya existe, inicia sesion.";
         if (password !== confirmPassword) return "contraseñas no coinciden.";
         const phoneRegex = /^\d{8}$/;
         if (!phoneRegex.test(phone)) return "El número de teléfono debe tener 8 dígitos.";
         if (isAdult(birthDate)) return "El usuario NO puede ser un menor de edad";
-        return "correcto";
+        return "correct";
     }
     const handleSubmit = async (e) => {
         e.preventDefault();
