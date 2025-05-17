@@ -1,6 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { BusinessService } from "../services/BusinessService";
 
 function Businesses() {
+
+  const [businesses, setBusinesses] = useState([]);
+ 
+  const fetchBusinesses = async () => {
+    try {
+      const data = await BusinessService.getAllBusiness();
+      console.log(data);
+      setBusinesses(data);
+    }
+    catch(error) {
+      alert(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchBusinesses();
+  }, []);
+
   return (
     <div className="w-[80%] m-auto mt-30 flex flex-col items-center gap-5 mb-30">
       <h1 className="text-3xl font-bold text-center text-gray-800">
@@ -28,86 +47,37 @@ function Businesses() {
             </tr>
           </thead>
           <tbody>
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td className="px-6 py-4">Pizza Roma</td>
-              <td className="px-6 py-4">Pizzería italiana con horno de leña</td>
-              <td className="px-6 py-4">Avenida Siempre Viva 123</td>
-              <td className="px-6 py-4">
-                <div className="flex items-center">
-                  <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>{" "}
-                  Abierto
-                </div>
-              </td>
-               <td className="px-6 py-4">
-                <a
-                  href="#"
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >
-                  Editar
-                </a>
-              </td>
-            </tr>
-
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td className="px-6 py-4">Sushi Go!</td>
-              <td className="px-6 py-4">Especialistas en sushi y comida japonesa</td>
-              <td className="px-6 py-4">Calle Falsa 456</td>
-              <td className="px-6 py-4">
-                <div className="flex items-center">
-                  <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>{" "}
-                  Abierto
-                </div>
-              </td>
-              <td className="px-6 py-4">
-                <a
-                  href="#"
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >
-                  Editar
-                </a>
-              </td>
-            </tr>
-
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td className="px-6 py-4">La Parrilla del Sur</td>
-              <td className="px-6 py-4">Carnes a la parrilla estilo uruguayo</td>
-              <td className="px-6 py-4">Bulevar Central 789</td>
-              <td className="px-6 py-4">
-                <div className="flex items-center">
-                  <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>{" "}
-                  Abierto
-                </div>
-              </td>
-              <td className="px-6 py-4">
-                <a
-                  href="#"
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >
-                  Editar
-                </a>
-              </td>
-            </tr>
-
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td className="px-6 py-4">El Rincón Mexicano</td>
-              <td className="px-6 py-4">Tacos y platillos tradicionales mexicanos</td>
-              <td className="px-6 py-4">Av. Reforma 654</td>
-              <td className="px-6 py-4">
-                <div className="flex items-center">
-                  <div className="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div>{" "}
-                  Cerrado
-                </div>
-              </td>
-              <td className="px-6 py-4">
-                <a
-                  href="#"
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >
-                  Editar
-                </a>
-              </td>
-            </tr>
-            
+             {businesses.map((business) => (
+                <tr key={business.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  <td className="px-6 py-4">{ business.name }</td>
+                  <td className="px-6 py-4">{ business.description }</td>
+                  <td className="px-6 py-4">{ business.address }</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center">
+                      {BusinessService.isOpen(business) ? (
+                        <>
+                          <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                          Abierto
+                        </>
+                      
+                      ): (
+                        <>
+                          <div className="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div>
+                          Cerrado
+                        </>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <a
+                      href="#"
+                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    >
+                      Editar
+                    </a>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
