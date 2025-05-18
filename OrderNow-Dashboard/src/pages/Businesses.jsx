@@ -72,12 +72,12 @@ function Businesses() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <a
-                      href="#"
+                    <Link
+                      to={`/business/${business.id}`}
                       className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                     >
                       Editar
-                    </a>
+                    </Link>
                   </td>
                 </tr>
               ))}
