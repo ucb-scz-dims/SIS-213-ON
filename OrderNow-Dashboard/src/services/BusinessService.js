@@ -76,7 +76,6 @@ export const BusinessService = {
 
 
     async createBusiness(newBusiness) {
-        
         const { error } = await this.supabaseClient
             .schema('com')
             .from('businesses')
@@ -84,7 +83,7 @@ export const BusinessService = {
             name: newBusiness.name,
             address: newBusiness.address,
             description: newBusiness.description,
-            is_open: true,
+            is_open: newBusiness.is_open,
             user_id: 1,
             });
 
@@ -93,6 +92,7 @@ export const BusinessService = {
     },
 
     async updateBusiness(business, id) {
+
         const { error } = await this.supabaseClient
             .schema('com')
             .from('businesses')
@@ -100,8 +100,12 @@ export const BusinessService = {
                 name: business.name,
                 description: business.description,
                 address: business.address,
+                is_open: business.is_open,
             })
             .eq('id', id);
+
+        if(error)
+            throw new Error(error.message);
     },
 
 
@@ -113,12 +117,12 @@ export const BusinessService = {
                 id,
                 name,
                 description,
-                address
+                address,
+                is_open
             `)
             .eq('id', businessId)
             .single()
 
-        debugger;
         if(error)
             throw new Error(error.message);
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Store, Home, Phone, AlignLeft } from 'lucide-react';
+import { Store, Home, BookOpenCheck, AlignLeft } from 'lucide-react';
 import validateBusinessForm from '../../utils/validate-business-form';
 import { BusinessService } from '../../services/BusinessService';
 import { Link, useParams } from 'react-router-dom'
@@ -15,6 +15,7 @@ export default function RegistrationForm() {
     name: '',
     address: '',
     description: '',
+    is_open: 'true'
   });
 
   const fetchBussiness = async () => {
@@ -24,6 +25,7 @@ export default function RegistrationForm() {
         name: business.name,
         address: business.address,
         description: business.description,
+        is_open: business.is_open
       });
     }
     catch(error) {
@@ -59,25 +61,30 @@ export default function RegistrationForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+   
     if (!validateForm())
       return;
 
     const success = await saveBusiness(formData);
-
+   
     if(!success) {
       alert("No se a podido realizar la operación. Intentar otra vez");
       return;
     }
 
-    console.log('Form submitted:', formData);
     setSubmitted(true);
+
+    setTimeout(() => {
+      setSubmitted(false);
+    }, 2000);
+
+
     if(!isEditing.current){
       setFormData({
         name: '',
         address: '',
         description: '',
-        phone: ''
+        is_open: 'true'
       });
     }
     
@@ -114,6 +121,7 @@ export default function RegistrationForm() {
               name="name"
               value={formData.name}
               onChange={handleChange}
+              placeholder="Nombre"
               className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
                 errors.name ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'
               }`}
@@ -131,6 +139,7 @@ export default function RegistrationForm() {
               name="address"
               value={formData.address}
               onChange={handleChange}
+              placeholder="Direccion"
               className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
                 errors.address ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'
               }`}
@@ -146,6 +155,7 @@ export default function RegistrationForm() {
             <input
               type="text"
               name="description"
+              placeholder="Descripcion corta"
               value={formData.description}
               onChange={handleChange}
               className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
@@ -155,23 +165,28 @@ export default function RegistrationForm() {
             {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
           </div>
 
-          {/* <div>
+          <div>
             <label className="flex items-center gap-2 text-gray-700 mb-2">
-              <Phone size={20} />
-              <span>Teléfono</span>
+              <BookOpenCheck size={20} />
+              <span>Disponibilidad</span>
             </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
+            <select
+              name="is_open"
+              value={formData.is_open}
               onChange={handleChange}
-              placeholder="+591 XXXXXXXX"
               className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
-                errors.phone ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'
+                errors.is_open
+                  ? "border-red-500 focus:ring-red-200"
+                  : "border-gray-300 focus:ring-blue-200"
               }`}
-            />
-            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-          </div> */}
+            >
+              <option value="true">Abierto</option>
+              <option value="false">Cerrado</option>
+            </select>
+            {errors.is_open && (
+              <p className="text-red-500 text-sm mt-1">{errors.is_open}</p>
+            )}
+        </div>
 
         </div>
         <button
@@ -182,6 +197,7 @@ export default function RegistrationForm() {
         </button>
       </form>
 
+        {/* TODO: Modificar la ruta cuando el componente de los horarios este creado */}
         {isEditing.current && (<Link to="/" className="text-center text-blue-500">
          ¿Quieres editar los horarios del restaurante?
         </Link>)}
