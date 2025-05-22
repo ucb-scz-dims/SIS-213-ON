@@ -3,12 +3,16 @@ import { formatDate } from "../utils/formatDate";
 import OrderDetail from "../components/order-detail/OrderDetail";
 import getSupaBaseClient from "../supabase/supabase-client";
 import { ORDER_STATUS } from "../config/order-status";
+import { ORDER_STATUS_NAMES } from "../config/order-status";
 import ConfirmationModal from "../components/confirmation-modal/ConfirmationModal";
 import Button from "../components/Button/Button";
-import { Link } from 'react-router-dom';
 import TotalOrdersCard from "../components/TotalOrderCard/TotalOrderCard";
+import CheckboxFilter from "../components/filter/CheckboxFilter";
+import FilterService from "../services/FilterService";
+
 
 const supaBase = getSupaBaseClient();
+const filterService = new FilterService();
 
 const OrdersDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -20,7 +24,9 @@ const OrdersDashboard = () => {
   const [confirmAction, setConfirmAction] = useState(null);
   const [titleConfirmationModal, setTitleConfirmationModal] = useState("");
   const [bodyConfirmationModal, setBodyConfirmationModal] = useState("");
+  const [seletedStatusFilters, setSeletedStatusFilters] = useState([]);
   const isUpdating = useRef(false);
+  const ordersRef = useRef([]);
 
   const closeDetailModal = () => setDetailModalOpen(false);
   const closeConfirmationModal = () => setConfirmationModalOpen(false);
@@ -116,7 +122,8 @@ const OrdersDashboard = () => {
       };
     });
 
-    setOrders(enrichedOrders);
+    ordersRef.current = enrichedOrders;
+    setOrders(filterService.filterByStatus(ordersRef.current, seletedStatusFilters));
     setLoading(false);
   };
 
@@ -135,7 +142,7 @@ const OrdersDashboard = () => {
               Pedidos del Restaurante
             </h1>
 
-
+           
 
             {loading ? (
               <p className="text-center text-gray-500">Cargando pedidos...</p>
@@ -144,6 +151,10 @@ const OrdersDashboard = () => {
                 <div className="p-6">
                   <TotalOrdersCard totalOrders={orders.length} />
                 </div>
+                <CheckboxFilter title="Estado" items={ORDER_STATUS_NAMES} resetName="Reiniciar" onChange={(items) => {
+                 setSeletedStatusFilters(items);
+                 setOrders(filterService.filterByStatus(ordersRef.current, items));
+                }}/>
                 <div className="hidden md:grid grid-cols-10 bg-gray-100 text-gray-600 font-semibold px-8 py-3 shadow-sm text-sm">
                   <span className="w-12">ID</span>
                   <span className="w-28">Fecha</span>

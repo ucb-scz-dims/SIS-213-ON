@@ -12,13 +12,14 @@ const NavBar = () => {
   const links = [
     { url: '/', text: 'Home' },
     { url: '/orders', text: 'Ver Pedidos' },
+    { url: '/product', text: 'Productos'},
     { url: '/product/register', text: 'Crear producto' },
-    { url: '/product/1/update', text: 'Modificar producto' },
+    { url: '/business', text: 'Restaurantes'},
     { url: '/status', text: 'Cierre Temporal' },
   ];
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900 fixed top-0 left-0 w-full">
+    <nav className="bg-white border-gray-200 dark:bg-gray-900 fixed top-0 left-0 w-full z-10">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="/" className="flex items-center">
           <img src="https://flowbite.com/docs/images/logo.svg" className="h-8 mr-3" alt="Flowbite Logo" />
