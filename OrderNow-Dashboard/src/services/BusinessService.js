@@ -72,6 +72,62 @@ export const BusinessService = {
 
             business.sortedSchedules = sortedSchedules;
         }
+    },
+
+
+    async createBusiness(newBusiness) {
+        const { error } = await this.supabaseClient
+            .schema('com')
+            .from('businesses')
+            .insert({
+            name: newBusiness.name,
+            address: newBusiness.address,
+            description: newBusiness.description,
+            is_open: newBusiness.is_open,
+            user_id: 1,
+            });
+
+        if(error)
+            throw new Error(error.message);
+    },
+
+    async updateBusiness(business, id) {
+
+        const { error } = await this.supabaseClient
+            .schema('com')
+            .from('businesses')
+            .update({
+                name: business.name,
+                description: business.description,
+                address: business.address,
+                is_open: business.is_open,
+            })
+            .eq('id', id);
+
+        if(error)
+            throw new Error(error.message);
+    },
+
+
+    async getBusinessById(businessId) {
+        const { error, data } = await this.supabaseClient
+            .schema('com')
+            .from('businesses')
+            .select(`
+                id,
+                name,
+                description,
+                address,
+                is_open
+            `)
+            .eq('id', businessId)
+            .single()
+
+        if(error)
+            throw new Error(error.message);
+
+
+        return data;
     }
 };
 
