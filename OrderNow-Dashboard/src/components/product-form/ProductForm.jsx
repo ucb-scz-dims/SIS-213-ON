@@ -3,10 +3,12 @@ import { CircleDollarSign, Link, Box, AlignLeft, CircleAlert, AArrowDown, Podcas
 import getSupaBaseClient from '../../supabase/supabase-client';
 import { validateProductForm } from '../../utils/validateProductForm';
 import Button from '../Button/Button';
+import { useParams } from 'react-router-dom';
 
 const supabaseClient = getSupaBaseClient();
 
-export default function ProductForm({ productId }) {
+export default function ProductForm() {
+  const { id } = useParams();
 
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
@@ -26,7 +28,7 @@ export default function ProductForm({ productId }) {
         .schema("com")
         .from("products")
         .select()
-        .eq('id', productId)
+        .eq('id', id)
         .single()
 
       if(error) {
@@ -57,12 +59,12 @@ export default function ProductForm({ productId }) {
   }
 
   useEffect(() => {
-    if(!productId) {
+    if(!id) {
       return;
     }
 
     fetchProduct();
-  }, [productId]);
+  }, [id]);
 
   const validateForm = () => {
     const newErrors = validateProductForm(formData);
@@ -99,13 +101,13 @@ export default function ProductForm({ productId }) {
         image_url: (productData.urlImage === "" ? null : productData.urlImage),
         available: (productData.productState === "true")
       })
-      .eq('id', productId);
+      .eq('id', id);
 
     return error;
   }
 
   const submitForm = async (productData) => {
-    if(isEditing && !productId) {
+    if(isEditing && !id) {
       console.error("El identificador del producto no fue encontrado");
       alert("Hubo un error al identificar el producto. Recargue la página");
       return false;
