@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TarjetaRestaurante from '../components/TarjetaRestaurante';
+import SkeletonTarjetaRestaurante from '../components/SkeletonTarjetaRestaurante';
 import getSupaBaseClient from '../supabase-client';
 
 const Businesses = () => {
@@ -7,17 +8,26 @@ const Businesses = () => {
   const [categories, setCategories] = useState([]);
   const [businessCategories, setBusinessCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
   const supaBaseCom = getSupaBaseClient('com');
 
   useEffect(() => {
-    fetchData('businesses', (data) => {
-      const ordered = data.sort((a, b) => b.is_open - a.is_open);
-      setBusinesses(ordered);
-    });
-    fetchData('category', setCategories);
-    fetchData('business_category', setBusinessCategories);
+    const loadAll = async () => {
+      setLoading(true);
+      await Promise.all([
+        fetchData('businesses', (data) => {
+          const ordered = data.sort((a, b) => b.is_open - a.is_open);
+          setBusinesses(ordered);
+        }),
+        fetchData('category', setCategories),
+        fetchData('business_category', setBusinessCategories)
+      ]);
+      setLoading(false);
+    };
+
+    loadAll();
   }, []);
-  
+
   const fetchData = async (table, setter) => {
     const { data, error } = await supaBaseCom
       .from(table)
@@ -40,12 +50,12 @@ const Businesses = () => {
 
   const filteredBusinesses = selectedCategory
     ? businesses
-      .filter((b) =>
-        businessCategories.some(
-          (bc) => bc.business_id === b.id && bc.category_id === selectedCategory
+        .filter((b) =>
+          businessCategories.some(
+            (bc) => bc.business_id === b.id && bc.category_id === selectedCategory
+          )
         )
-      )
-      .sort((a, b) => getWeight(b.id) - getWeight(a.id))
+        .sort((a, b) => getWeight(b.id) - getWeight(a.id))
     : businesses;
 
   return (
@@ -63,8 +73,9 @@ const Businesses = () => {
             {categories.map((category) => (
               <li
                 key={category.id}
-                className={`text-gray-700 hover:text-black cursor-pointer ${selectedCategory === category.id ? 'font-bold text-black' : ''
-                  }`}
+                className={`text-gray-700 hover:text-black cursor-pointer ${
+                  selectedCategory === category.id ? 'font-bold text-black' : ''
+                }`}
                 onClick={() => setSelectedCategory(category.id)}
               >
                 {category.name}
@@ -78,30 +89,36 @@ const Businesses = () => {
       <div>
         <h1 className="text-4xl font-bold mb-1">Disponibles</h1>
         <h2 className='mb-5.5'>
-        {filteredBusinesses.filter(a => a.is_open).length} restaurante{filteredBusinesses.filter(a => a.is_open).length === 1 ? '' : 's'} disponible{filteredBusinesses.filter(a => a.is_open).length === 1 ? '' : 's'}
+          {filteredBusinesses.filter(a => a.is_open).length} restaurante
+          {filteredBusinesses.filter(a => a.is_open).length === 1 ? '' : 's'} disponible
+          {filteredBusinesses.filter(a => a.is_open).length === 1 ? '' : 's'}
         </h2>
-        {filteredBusinesses.some(r => r.is_open) && (
-          filteredBusinesses.map((item) =>
-            item.is_open && (
-              <TarjetaRestaurante
-                key={item.id}
-                id={item.id}
-                nombre={item.name}
-                descripcion={item.description}
-                estrellas={item.rating}
-                minimum_order_amount={item.minimum_order_amount}
-                delivery_time_min={item.delivery_time_min}
-                delivery_time_max={item.delivery_time_max}
-              />
-            )
-          )
-        )}
 
-        {filteredBusinesses.some(r => !r.is_open) && ( 
+        {loading
+          ? [...Array(10)].map((_, idx) => <SkeletonTarjetaRestaurante key={idx} />)
+          : filteredBusinesses.some(r => r.is_open) &&
+            filteredBusinesses.map((item) =>
+              item.is_open && (
+                <TarjetaRestaurante
+                  key={item.id}
+                  id={item.id}
+                  nombre={item.name}
+                  descripcion={item.description}
+                  estrellas={item.rating}
+                  minimum_order_amount={item.minimum_order_amount}
+                  delivery_time_min={item.delivery_time_min}
+                  delivery_time_max={item.delivery_time_max}
+                />
+              )
+            )}
+
+        {!loading && filteredBusinesses.some(r => !r.is_open) && (
           <>
             <h1 className="text-4xl font-bold mb-1 mt-10">No disponibles</h1>
             <h2 className='mb-5.5'>
-            {filteredBusinesses.filter(a => !a.is_open).length} restaurante{filteredBusinesses.filter(a => !a.is_open).length === 1 ? '' : 's'} no disponible{filteredBusinesses.filter(a => !a.is_open).length === 1 ? '' : 's'}
+              {filteredBusinesses.filter(a => !a.is_open).length} restaurante
+              {filteredBusinesses.filter(a => !a.is_open).length === 1 ? '' : 's'} no disponible
+              {filteredBusinesses.filter(a => !a.is_open).length === 1 ? '' : 's'}
             </h2>
             {filteredBusinesses.map((item) =>
               !item.is_open && (
