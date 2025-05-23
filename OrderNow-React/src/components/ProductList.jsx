@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import getSupaBaseClient from '../supabase-client';
 import ProductCard from './ProductCard';
 
-const ProductsList = ({ businessId, isMenuEnabled }) => {
+const ProductsList = ({ businessId, isMenuEnabled, bestSellerIds = [] }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortOption, setSortOption] = useState('none');
@@ -74,6 +74,7 @@ const ProductsList = ({ businessId, isMenuEnabled }) => {
                 key={product.id}
                 product={product}
                 isMenuEnabled={isMenuEnabled}
+                isBestSeller={bestSellerIds.includes(product.id)}
               />
             ))}
           </div>
@@ -89,6 +90,7 @@ const ProductsList = ({ businessId, isMenuEnabled }) => {
                 key={product.id}
                 product={product}
                 isMenuEnabled={isMenuEnabled}
+                isBestSeller={bestSellerIds.includes(product.id)}
               />
             ))}
           </div>

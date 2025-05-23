@@ -19,6 +19,7 @@ function Business() {
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bestSellerIds, setBestSellerIds] = useState([]);
 
   const getDayNumber = () => {
     const d = new Date().getDay();
@@ -40,7 +41,7 @@ function Business() {
         return alert("No pude cargar el negocio.");
       }
       setBusiness(bussines);
-      
+
       const dayNum = getDayNumber();
       const { data: sched, error: errSched } = await supaBaseCom
         .from("schedule")
@@ -52,12 +53,24 @@ function Business() {
         return alert("No pude cargar horarios.");
       }
       setTodaySchedule(sched || []);
+      const { data: bestSellers, error: errBestSellers } = await supaBaseCom
+        .from('best_sellers_for_business')
+        .select(`product_id`)
+        .eq('business_id', id)
+        .order('total_vendidos', { ascending: false })
+        .limit(5);
+
+      if (errBestSellers) {
+        console.error("Error cargando productos más vendidos:", errBestSellers);
+      } else if (bestSellers) {
+        setBestSellerIds(bestSellerIds.map((item) => item.product_id));
+      }
 
       setLoading(false);
     };
 
     fetchAll();
-  }, [id, supaBaseCom, setRestaurantId]);
+  }, [id, supaBaseCom, setRestaurantId, bestSellerIds]);
 
   if (loading)
     return <div className="pt-24 text-center">Cargando detalles...</div>;
@@ -78,23 +91,23 @@ function Business() {
     const start = toMinutes(opening_time);
     const end = toMinutes(clossing_time);
     return nowMinutes >= start && nowMinutes < end;
-    
+
   });
   const isActuallyOpen = business.is_open && isOpenNow;
 
   const scheduleText =
     todaySchedule.length > 0
       ? todaySchedule
-          .map(
-            ({ opening_time, clossing_time }) =>
-              `${opening_time.slice(0, 5)} – ${clossing_time.slice(0, 5)}`
-          )
-          .join("  |  ")
+        .map(
+          ({ opening_time, clossing_time }) =>
+            `${opening_time.slice(0, 5)} – ${clossing_time.slice(0, 5)}`
+        )
+        .join("  |  ")
       : "Cerrado hoy";
 
   return (
 
-    
+
     <main className="max-w-6xl mx-auto px-4 pt-24 pb-8">
       <ClosedBusinessModal
         isOpen={!isActuallyOpen && !showMenu}
@@ -108,9 +121,8 @@ function Business() {
       )}
 
       <div
-        className={`bg-white rounded-lg shadow-md p-6 mb-8 transition-all ${
-          isActuallyOpen ? "" : "opacity-50 grayscale"
-        }`}
+        className={`bg-white rounded-lg shadow-md p-6 mb-8 transition-all ${isActuallyOpen ? "" : "opacity-50 grayscale"
+          }`}
       >
         <div className="flex items-center gap-6">
           {/* Imagen placeholder */}

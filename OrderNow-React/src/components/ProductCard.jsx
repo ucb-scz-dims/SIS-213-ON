@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import ProductDetailsModal from './ProductDetailsModal';
 import ProductAvailability from './atoms/ProductAvailability';
 
-const ProductCard = ({ product, isMenuEnabled }) => {
+const ProductCard = ({ product, isMenuEnabled, isBestSeller }) => {
   const [showModal, setShowModal] = useState(false);
-  
+
   const handleCardClick = () => {
     if (isMenuEnabled && product.available) {
       setShowModal(true);
@@ -19,14 +19,19 @@ const ProductCard = ({ product, isMenuEnabled }) => {
     <>
       <div
         onClick={handleCardClick}
-        className={`relative bg-white rounded-lg shadow-md p-4 transition-all ${
-          !isMenuEnabled || !product.available 
-            ? 'opacity-50 grayscale cursor-not-allowed' 
+        className={`relative bg-white rounded-lg shadow-md p-4 transition-all ${!isMenuEnabled || !product.available
+            ? 'opacity-50 grayscale cursor-not-allowed'
             : 'cursor-pointer hover:shadow-lg'
-        }`}
+          }`}
       >
+        {isBestSeller && (
+          <div className="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full shadow-md z-10">
+            Popular
+          </div>
+        )}
+
         <ProductAvailability isAvailable={product.available} />
-        
+
         <div className="w-full h-40 bg-gray-100 rounded-lg mb-4 overflow-hidden">
           {product.image_url && product.image_url !== 'NA' ? (
             <img
