@@ -9,13 +9,14 @@ import Home from './pages/Home'
 import RestaurantStatusPage from './pages/RestaurantStatusPage'
 import Businesses from './pages/Businesses';
 import Products from './pages/Products';
+import OrdersDashboardContainer from './containers/OrdersDashboardContainer';
 
 function App() {
   return (
     <Layout>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/orders' element={<OrderDashboard/>}/>
+        <Route path='/orders' element={<OrdersDashboardContainer/>}/>
         <Route path='/about' element={<About />} />
         <Route path='/registration' element={<RegistrationForm />}/>
         <Route path='/business/:id' element={<RegistrationForm />}/>
