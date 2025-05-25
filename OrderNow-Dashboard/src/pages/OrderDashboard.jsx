@@ -9,7 +9,7 @@ import Button from "../components/Button/Button";
 import TotalOrdersCard from "../components/TotalOrderCard/TotalOrderCard";
 import CheckboxFilter from "../components/filter/CheckboxFilter";
 import FilterService from "../services/FilterService";
-
+import CardTemplate from "../components/card-template/card-template";
 
 const supaBase = getSupaBaseClient();
 const filterService = new FilterService();
@@ -51,11 +51,9 @@ const OrdersDashboard = () => {
   };
 
   const handleOrderStatusChange = async () => {
-    if (!selectedOrderId || !confirmAction)
-      return;
+    if (!selectedOrderId || !confirmAction) return;
 
-    if (isUpdating.current)
-      return
+    if (isUpdating.current) return;
 
     isUpdating.current = true;
     const { error } = await supaBase
@@ -123,7 +121,9 @@ const OrdersDashboard = () => {
     });
 
     ordersRef.current = enrichedOrders;
-    setOrders(filterService.filterByStatus(ordersRef.current, seletedStatusFilters));
+    setOrders(
+      filterService.filterByStatus(ordersRef.current, seletedStatusFilters)
+    );
     setLoading(false);
   };
 
@@ -134,15 +134,11 @@ const OrdersDashboard = () => {
   return (
     <>
       <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center gap-8">
-
-
         <div className="min-h-screen p-6 md:p-12 font-sans">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
               Pedidos del Restaurante
             </h1>
-
-           
 
             {loading ? (
               <p className="text-center text-gray-500">Cargando pedidos...</p>
@@ -151,10 +147,17 @@ const OrdersDashboard = () => {
                 <div className="p-6">
                   <TotalOrdersCard totalOrders={orders.length} />
                 </div>
-                <CheckboxFilter title="Estado" items={ORDER_STATUS_NAMES} resetName="Reiniciar" onChange={(items) => {
-                 setSeletedStatusFilters(items);
-                 setOrders(filterService.filterByStatus(ordersRef.current, items));
-                }}/>
+                <CheckboxFilter
+                  title="Estado"
+                  items={ORDER_STATUS_NAMES}
+                  resetName="Reiniciar"
+                  onChange={(items) => {
+                    setSeletedStatusFilters(items);
+                    setOrders(
+                      filterService.filterByStatus(ordersRef.current, items)
+                    );
+                  }}
+                />
                 <div className="hidden md:grid grid-cols-10 bg-gray-100 text-gray-600 font-semibold px-8 py-3 shadow-sm text-sm">
                   <span className="w-12">ID</span>
                   <span className="w-28">Fecha</span>
@@ -167,45 +170,11 @@ const OrdersDashboard = () => {
                 </div>
 
                 {orders.map((order) => (
-                  <div
+                  <CardTemplate
                     key={order.id}
-                    className="bg-white border border-gray-200 py-4 px-5 rounded-1xl shadow hover:shadow-md transition-all duration-200 flex flex-col md:grid md:grid-cols-11 items-center gap-2 md:gap-4 text-sm"
-                  >
-                    <div className="w-12 font-bold text-indigo-600">
-                      #{order.id}
-                    </div>
-                    <div className="w-28">{formatDate(order.date)}</div>
-                    <div className="col-span-3 truncate">{order.address}</div>
-                    <div className="w-28">{order.consumer_name}</div>
-                    <div className="w-20 font-medium text-green-700 text-right">
-                      Bs. {order.total_price.toFixed(2)}
-                    </div>
-                    <div className="w-24">{order.status}</div>
-                    <div className="w-100 flex space-x-2">
-                      <Button
-                        text="Aceptar"
-                        onClick={() => {
-                          openConfirmationModal(order.id, ORDER_STATUS.ACCEPTED);
-                        }}
-                        disabled={order.state_type_id !== ORDER_STATUS.PENDING}
-                        className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
-                      />
-                      <Button
-                        text="Rechazar"
-                        onClick={() => {
-                          openConfirmationModal(order.id, ORDER_STATUS.CANCELED);
-                        }}
-                        disabled={order.state_type_id !== ORDER_STATUS.PENDING}
-                        className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
-                      />
-                      <Button
-                        text="Ver detalle"
-                        onClick={() => openDetailModal(order.id)}
-                        disabled={order.state_type_id !== ORDER_STATUS.PENDING}
-                        className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 font-bold disabled:opacity-20 rounded-full"
-                      />
-                    </div>
-                  </div>
+                    data={order}
+                    functions={[openConfirmationModal, openDetailModal]}
+                  />
                 ))}
               </div>
             )}

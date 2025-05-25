@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ProductService from '../services/ProductService';
+import CardActions from '../components/card-actions/card-action';
 
 
 function Products({ businessId }) {
@@ -75,12 +76,7 @@ function Products({ businessId }) {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <Link
-                      to={`/product/${product.id}/update`}
-                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                    >
-                      Editar
-                    </Link>
+                    <CardActions data={product} />
                   </td>
                 </tr>
               ))}
