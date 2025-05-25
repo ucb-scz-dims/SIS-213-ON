@@ -1,99 +1,15 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import _ from "lodash";
+// src/components/SearchBar/SearchBarView.js
+import React from "react";
 
-const ELASTICSEARCH_URL = "http://localhost:9200";
-const ELASTICSEARCH_INDEX = "restaurants";
-
-const SearchBar = () => {
-    const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
-
-    const toggleSearchMenu = () => {
-        setIsSearchMenuOpen(!isSearchMenuOpen);
-    };
-
-
-    const searchElasticsearch = async (query) => {
-        if (!query.trim()) {
-            setSearchResults([]);
-            return;
-        }
-
-        setIsLoading(true);
-        try {
-
-            const searchQuery = {
-                query: {
-                    multi_match: {
-                        query: query,
-                        fields: ["name", "categories"],
-                        fuzziness: "AUTO"
-                    }
-                }
-            };
-
-            const response = await fetch(`${ELASTICSEARCH_URL}/${ELASTICSEARCH_INDEX}/_search`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-
-                },
-                body: JSON.stringify(searchQuery)
-            });
-
-            if (!response.ok) {
-                throw new Error("Error en la búsqueda de Elasticsearch");
-            }
-
-            const data = await response.json();
-
-
-            const hits = data.hits.hits.map(hit => ({
-                id: hit._id,
-                ...hit._source,
-                score: hit._score
-            }));
-
-            setSearchResults(hits);
-        } catch (error) {
-            console.error("Error de búsqueda en Elasticsearch:", error);
-            setSearchResults([]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const debouncedSearch = useCallback(
-        _.debounce((query) => {
-            searchElasticsearch(query);
-        }, 300),
-        []
-    );
-
-    useEffect(() => {
-        debouncedSearch(searchTerm);
-
-
-        return () => {
-            debouncedSearch.cancel();
-        };
-    }, [searchTerm, debouncedSearch]);
-
-    const handleInputChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
-
-    const handleResultClick = (result) => {
-
-        navigate(`/product/${result.id}`);
-        setSearchTerm("");
-        setSearchResults([]);
-    };
-
+export default function SearchBarView({
+    isSearchMenuOpen,
+    toggleSearchMenu,
+    query,
+    onQueryChange,
+    results,
+    loading,
+    onSelect
+}) {
     return (
         <div className="flex md:order-3 relative">
             <button
@@ -121,6 +37,7 @@ const SearchBar = () => {
                 </svg>
                 <span className="sr-only">Buscar</span>
             </button>
+
             <div className="relative hidden md:block">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <svg
@@ -145,24 +62,23 @@ const SearchBar = () => {
                     id="search-navbar"
                     className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Buscar..."
-                    value={searchTerm}
-                    onChange={handleInputChange}
+                    value={query}
+                    onChange={e => onQueryChange(e.target.value)}
                 />
 
-
-                {searchResults.length > 0 && (
+                {results.length > 0 && (
                     <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
-                        {isLoading ? (
+                        {loading ? (
                             <div className="p-3 text-center text-gray-500 dark:text-gray-400">
                                 Cargando...
                             </div>
                         ) : (
                             <ul>
-                                {searchResults.map((result) => (
+                                {results.map(result => (
                                     <li key={result.id}>
                                         <button
                                             className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                            onClick={() => handleResultClick(result)}
+                                            onClick={() => onSelect(result)}
                                         >
                                             <p className="font-medium">{result.name}</p>
                                             {result.categories && (
@@ -178,6 +94,8 @@ const SearchBar = () => {
                     </div>
                 )}
             </div>
+
+            {/* botón menú móvil */}
             <button
                 onClick={toggleSearchMenu}
                 type="button"
@@ -203,6 +121,7 @@ const SearchBar = () => {
                 </svg>
             </button>
 
+            {/* menú móvil desplegable */}
             <div
                 className={`items-center justify-between ${isSearchMenuOpen ? "block" : "hidden"
                     } w-full md:hidden absolute top-full left-0 mt-1 z-10`}
@@ -232,24 +151,24 @@ const SearchBar = () => {
                             id="search-navbar-mobile"
                             className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Buscar..."
-                            value={searchTerm}
-                            onChange={handleInputChange}
+                            value={query}
+                            onChange={e => onQueryChange(e.target.value)}
                         />
                     </div>
 
-                    {searchResults.length > 0 && (
+                    {results.length > 0 && (
                         <div className="mt-2">
-                            {isLoading ? (
+                            {loading ? (
                                 <div className="p-2 text-center text-gray-500 dark:text-gray-400">
                                     Cargando...
                                 </div>
                             ) : (
                                 <ul className="border border-gray-200 dark:border-gray-700 rounded-lg">
-                                    {searchResults.map((result) => (
+                                    {results.map(result => (
                                         <li key={result.id}>
                                             <button
                                                 className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                onClick={() => handleResultClick(result)}
+                                                onClick={() => onSelect(result)}
                                             >
                                                 <p className="font-medium">{result.name}</p>
                                                 {result.categories && (
@@ -268,6 +187,4 @@ const SearchBar = () => {
             </div>
         </div>
     );
-};
-
-export default SearchBar;
+}
