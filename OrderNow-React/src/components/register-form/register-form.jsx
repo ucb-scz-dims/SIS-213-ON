@@ -43,7 +43,7 @@ const RegisterForm = () => {
         if (password !== confirmPassword) return "contraseñas no coinciden.";
         const phoneRegex = /^\d{8}$/;
         if (!phoneRegex.test(phone)) return "El número de teléfono debe tener 8 dígitos.";
-        if (isAdult(birthDate)) return "El usuario NO puede ser un menor de edad";
+        if (!isAdult(birthDate)) return "El usuario NO puede ser un menor de edad";
         return "correct";
     }
     const handleSubmit = async (e) => {

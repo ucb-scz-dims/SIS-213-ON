@@ -20,11 +20,12 @@ async function CreateData(schema, table, columns_names, columns_values, column_r
             .from(table)
             .insert([
                 body
-            ]).single();
-        if (error || data == undefined) {
-            console.error("Error al guardar los datos en Supabase:", error.message);
+            ]).select();
+        if (error) {
+            console.error("Error al guardar los datos en Supabase:", error);
             process_state = false;
         }
+        console.log(data);
         return column_return!="ninguno"? data?.[0]?.[column_return] : process_state;
     }
     catch(e){
@@ -43,7 +44,7 @@ async function GetDataValue(schema, table, reference_column, reference_value, co
         const {data, error} = await supabase
             .from(table)
             .eq(reference_column, reference_value)
-            .single();
+            .select();
         if (error) {
             console.error("Error al obtener el atributo:", error.message);
         }
