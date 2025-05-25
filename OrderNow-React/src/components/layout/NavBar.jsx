@@ -1,13 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart, useRestaurant } from "../../context/CartContext";
-import SearchBar from "../SearchBar/SearchBar";
+import SearchBar from "../SearchBar/SearchBarContainer";
+import SearchBarContainer from "../SearchBar/SearchBarContainer";
 
 const NavBar = () => {
   const { restaurantId } = useRestaurant();
   const products = useCart();
   const getQuantity = products.reduce(
-    (acc, product) => acc + 1,
+    (acc) => acc + 1,
     0
   );
 
@@ -57,7 +58,7 @@ const NavBar = () => {
             </div>
           )}
           {/* Search bar component */}
-          <SearchBar />
+          <SearchBarContainer />
         </div>
       </div>
     </nav>
