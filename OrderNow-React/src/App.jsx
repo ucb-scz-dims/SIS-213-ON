@@ -12,6 +12,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Checkout from "./pages/Checkout";
 import { CartProvider } from "./context/CartContext";
+import OrderInProgress from "./pages/OrderInProgress";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="/auth/signUp" element={<RegisterPage />} />
             <Route path="/cart/test" element={<Cart />}></Route>
             <Route path="/checkout" element={<VerifySesion><Checkout/></VerifySesion>}/>
+            <Route path="/orderprogress" element={<OrderInProgress />}/>
           </Routes>
         </Layout>
       </Router>
