@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import getSupaBaseClient from "../supabase-client";
-import ProductsList from "../components/ProductList";
+import ProductsListContainer from "../components/ProductList/ProductsListContainer";
 import IconInfo from "../components/IconInfo";
 import Modal from "../components/information/InfoRestaurante";
 import Rating from "../components/atoms/Rating";
@@ -153,7 +153,7 @@ function Business() {
 
       <section className="mb-12">
         <h2 className="text-xl font-bold mb-6 text-gray-800">Menú</h2>
-        <ProductsList businessId={id} isMenuEnabled={isActuallyOpen} />
+        <ProductsListContainer businessId={id} isMenuEnabled={isActuallyOpen} bestSellerIds={bestSellerIds} />
       </section>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
