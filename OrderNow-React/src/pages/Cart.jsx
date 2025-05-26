@@ -2,7 +2,7 @@ import OrderCard from "../components/OrderCard";
 import Button from "../components/atoms/Button";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useCart, useCartDispatch } from "../context/CartContext";
 
 function Cart() {
@@ -10,9 +10,7 @@ function Cart() {
   const dispatch = useCartDispatch();
 
   let totalPrice = products.reduce(
-    (partialSum, { price, quantity }) => partialSum + price * quantity,
-    0
-  );
+    (partialSum, { price, quantity }) => partialSum + price * quantity, 0);
   const [price, setPrice] = useState(totalPrice);
 
   const onIncrease = (product) => {
