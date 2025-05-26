@@ -14,7 +14,7 @@ const Home = () => {
       const supabase = getSupaBaseClient('com');
       const { data, error } = await supabase
         .from('orders')
-        .select('date, total_price, business_id, state_type_id, state_types(name), businesses(name)')
+        .select('id, date, total_price, business_id, state_type_id, state_types(name), businesses(name)')
         .neq('state_type_id', 4)
         .order('date', { ascending: false });
 
@@ -38,7 +38,7 @@ const Home = () => {
           )}
           {orders.map(order => (
             <li
-              key={order.business_id}
+              key={order.id}
               className="flex justify-between items-center p-3 cursor-pointer hover:bg-gray-50"
               onClick={() => handleOrderClick(order)}
             >
