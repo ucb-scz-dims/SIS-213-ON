@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import useSupabaseFetch from "../services/useSupabaseFetch";
 import ProductsList from "../components/ProductList";
 import IconInfo from "../components/IconInfo";
 import Modal from "../components/information/InfoRestaurante";
 import Rating from "../components/atoms/Rating";
 import { useRestaurant } from "../context/CartContext";
 import ClosedBusinessModal from "../components/ClosedBusinessModal";
+import useSupabaseFetch from '../hooks/useSupabaseFetch';
 
 function Business() {
   const { id } = useParams();

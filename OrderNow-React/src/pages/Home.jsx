@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import BusinessTypeCard from '../components/BusinessTypeCard';
 import CardSlider from '../components/CardSlider';
 import MapModal from '../components/MapModal';
-import useSupabaseFetch from '../services/useSupabaseFetch';
+import useSupabaseFetch from '../hooks/useSupabaseFetch';
 
 const Home = () => {
   const [isMapOpen, setIsMapOpen] = useState(false);

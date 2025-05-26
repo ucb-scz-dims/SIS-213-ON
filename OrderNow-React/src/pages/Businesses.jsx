@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import TarjetaRestaurante from '../components/TarjetaRestaurante';
-import useSupabaseFetch from '../services/useSupabaseFetch';
+import useSupabaseFetch from '../hooks/useSupabaseFetch';
 
 const Businesses = () => {
   const [isOpen, setIsOpen] = useState(true);
