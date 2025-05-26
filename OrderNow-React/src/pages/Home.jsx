@@ -1,44 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import BusinessTypeCard from '../components/BusinessTypeCard';
 import CardSlider from '../components/CardSlider';
-import getSupaBaseClient from '../supabase-client';
 import MapModal from '../components/MapModal';
+import useSupabaseFetch from '../hooks/useSupabaseFetch';
 
 const Home = () => {
-  const [orders, setOrders] = useState([]);
   const [isMapOpen, setIsMapOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      const supabase = getSupaBaseClient('com');
-      const { data, error } = await supabase
-        .from('orders')
-        .select('date, total_price, business_id, state_type_id, state_types(name), businesses(name)')
-        .neq('state_type_id', 4)
-        .order('date', { ascending: false });
-
-      if (!error) setOrders(data || []);
-    };
-    fetchOrders();
-  }, []);
+  const [, setSelectedOrder] = useState(null);
 
   const handleOrderClick = (order) => {
     setSelectedOrder(order);
     setIsMapOpen(true);
   };
 
+  const { data: orders, loading, error } = useSupabaseFetch('orders', {
+    select: 'id, date, total_price, business_id, state_type_id, state_types(name), businesses(name)',
+    filters: [
+      { type: 'neq', column: 'state_type_id', value: 4 }
+    ],
+    order: { column: 'date', ascending: false }
+  });
+
   return (
     <>
       <div className="w-full max-w-3xl mx-auto mt-6">
         <h3 className="text-lg font-semibold mb-2">Tus órdenes recientes</h3>
         <ul className="divide-y divide-gray-200 bg-white rounded shadow text-sm">
-          {orders.length === 0 && (
+          {loading && <div className="pt-24 text-center">Cargando órdenes...</div>}
+          {error && <div className="pt-24 text-center text-red-600">Error: {error.message}</div>}
+          {orders && orders.length === 0 && (
             <li className="p-3 text-gray-500">No tienes órdenes recientes.</li>
           )}
-          {orders.map(order => (
+          {orders && orders.map(order => (
             <li
-              key={order.business_id}
+              key={order.id}
               className="flex justify-between items-center p-3 cursor-pointer hover:bg-gray-50"
               onClick={() => handleOrderClick(order)}
             >
